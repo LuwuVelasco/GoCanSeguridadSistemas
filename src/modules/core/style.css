@@ -1047,3 +1047,29 @@
     .footer { padding-block-start: 40px; }
   
   }
+
+  .offer-card.has-bg-image {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius-10); /* Asumiendo que deseas mantener el borde redondeado */
+}
+
+.bg-blur {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    filter: blur(1.7px);
+    z-index: 1;
+}
+
+.offer-card.has-bg-image .card-subtitle,
+.offer-card.has-bg-image .h3,
+.offer-card.has-bg-image .btn {
+    position: relative;
+    z-index: 2;
+}
+
