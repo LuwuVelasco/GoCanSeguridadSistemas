@@ -44,8 +44,8 @@ Arquetecto de Software: Luciana Velasco, Damaris Nina, Franz Carvajal, Carlos Ca
 Para más información o soporte, contactar a:
 - Franz Carvajal -> franz.carvajal04@gmail.com
 - Carlos Caba -> carlocaba2004@gmail.com
-- Luciana Velasco -> 
-- Jesús Imaña -> 
+- Luciana Velasco -> lucivp22@gmail.com
+- Jesús Imaña -> imajesus08@gmai.com
 - Damaris Nina -> damarisninaleonardini@gmail.com
 
 Este `README.md` proporciona una visión general clara y completa del proyecto, cómo comenzar a trabajar con él, y cómo contribuir, lo cual es vital para cualquier colaborador actual o futuro del proyecto.
