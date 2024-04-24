@@ -230,8 +230,8 @@
   .has-scrollbar::-webkit-scrollbar-button { width: calc(25% - 30px); }
   
   .grid-list {
-    display: grid;
-    gap: 30px;
+    display: grid;  
+    gap: 30px;  
   }
   
   .w-100 { width: 100%; }
