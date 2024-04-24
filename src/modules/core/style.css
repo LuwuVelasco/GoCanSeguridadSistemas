@@ -230,9 +230,9 @@
   .has-scrollbar::-webkit-scrollbar-button { width: calc(25% - 30px); }
   
   .grid-list {
-    display: grid;  
-    gap: 30px;  
-  }
+    display: flex;
+    gap: 30px;
+}
   
   .w-100 { width: 100%; }
   
@@ -422,7 +422,11 @@
   .product .img-cover.hover,
   .product-card .card-action-btn { display: none; }
   
-  .product-card { text-align: center; }
+  .product-card { 
+    text-align: center;
+    flex: 0 0 auto; /* Evita que los elementos se estiren o encojan */
+    width: 320px; 
+   }
   
   .product-card .card-banner {
     border: 1px solid var(--platinum);
