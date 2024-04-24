@@ -55,3 +55,19 @@ const activeElemOnScroll = function () {
 }
 
 addEventOnElem(window, "scroll", activeElemOnScroll);
+
+// Función básica para mover el carrusel
+let currentSlide = 0;
+function moveCarousel(step) {
+  const slideContainer = document.querySelector('.carousel-slide');
+  const slideWidth = document.querySelector('.product-card').clientWidth;
+  currentSlide += step;
+
+  if (currentSlide < 0) {
+    currentSlide = 0; // Evitar ir más allá del primer elemento
+  }
+
+  // Calcular el nuevo desplazamiento
+  const newTransform = -currentSlide * (slideWidth + 15); // 15 es el margen derecho de .product-card
+  slideContainer.style.transform = `translateX(${newTransform}px)`;
+}

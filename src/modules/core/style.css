@@ -1073,3 +1073,34 @@
     z-index: 2;
 }
 
+/* Estilos básicos para el carrusel */
+.carousel-container {
+  position: relative;
+  overflow: hidden;
+  max-width: 1080px; /* o el ancho que prefieras */
+  margin: auto;
+}
+
+.carousel-slide {
+  display: flex;
+  width: 100%;
+  transition: transform 0.5s ease;
+}
+.carousel-button {
+  position: absolute;
+  top: 50%; /* Centra los botones verticalmente */
+  transform: translateY(-50%); /* Ajuste fino de la posición vertical */
+  background-color: #fff; /* Color de fondo */
+  border: none; /* Sin borde */
+  cursor: pointer; /* Cursor tipo pointer para indicar interactividad */
+  z-index: 1; /* Asegura que los botones estén sobre otros elementos */
+  padding: 10px; /* Espaciado interno para un mejor aspecto */
+}
+
+.prev {
+  left: 10px; /* Posición del botón izquierdo */
+}
+
+.next {
+  right: 10px; /* Posición del botón derecho */
+}

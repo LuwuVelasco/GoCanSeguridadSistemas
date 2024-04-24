@@ -291,7 +291,12 @@
             <span class="span">Catálogo</span> en línea
           </h2>
 
-          <ul class="grid-list">
+          <div class="carousel-container">
+            <button class="carousel-button prev" onclick="moveCarousel(-1)">&#10094;</button>
+      
+            <!-- Contenedor deslizante para las tarjetas de productos -->
+            <div class="carousel-slide">
+              <ul class="grid-list">
 
             <li>
               <div class="product-card">
@@ -606,6 +611,10 @@
             </li>
 
           </ul>
+      </div>
+
+      <button class="carousel-button next" onclick="moveCarousel(1)">&#10095;</button>
+    </div>
 
         </div>
       </section>
