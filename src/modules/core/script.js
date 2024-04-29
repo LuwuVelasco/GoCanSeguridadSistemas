@@ -71,3 +71,20 @@ function moveCarousel(step) {
   const newTransform = -currentSlide * (slideWidth + 15); // 15 es el margen derecho de .product-card
   slideContainer.style.transform = `translateX(${newTransform}px)`;
 }
+document.querySelectorAll('.product-card').forEach(card => {
+  card.querySelectorAll('.rating .star').forEach(star => {
+      star.addEventListener('click', function() {
+          let currentRating = this.getAttribute('data-value');
+          let stars = this.parentElement.querySelectorAll('.star');
+          
+          stars.forEach(innerStar => {
+              let ratingValue = innerStar.getAttribute('data-value');
+              if (ratingValue <= currentRating) {
+                  innerStar.classList.add('active');
+              } else {
+                  innerStar.classList.remove('active');
+              }
+          });
+      });
+  });
+});
