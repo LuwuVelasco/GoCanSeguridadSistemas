@@ -47,5 +47,6 @@ Para más información o soporte, contactar a:
 - Luciana Velasco -> lucivp22@gmail.com
 - Jesús Imaña -> imajesus08@gmai.com
 - Damaris Nina -> damarisninaleonardini@gmail.com
+- Mateo Valenzuela -> matevalen.xd@gmail.com
 
 Este `README.md` proporciona una visión general clara y completa del proyecto, cómo comenzar a trabajar con él, y cómo contribuir, lo cual es vital para cualquier colaborador actual o futuro del proyecto.
