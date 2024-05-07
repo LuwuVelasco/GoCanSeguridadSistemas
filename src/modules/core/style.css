@@ -1073,33 +1073,88 @@
     z-index: 2;
 }
 
+/* Estilos adicionales para el modal para asegurar que ocupa toda la pantalla */
 .modal {
+  display: flex;
   position: fixed;
-  left: 0;
   top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 1050;
+  backdrop-filter: blur(8px);
 }
 
 .modal-content {
-  background-color: #fff;
+  width: 95%;
+  max-width: 500px; /* Ajusta este valor si necesitas más espacio */
   padding: 20px;
-  border-radius: 10px;
-  width: 90%;
-  max-width: 500px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: var(--shadow-1);
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Espaciado uniforme entre elementos del formulario */
+  position: relative;
 }
 
 .close {
-  float: right;
-  font-size: 28px;
-  cursor: pointer;
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 10px;
+  cursor: pointer; /* Estilo del cursor como indicador de acción */
+  font-size: 2.4rem; /* Tamaño más grande si es necesario */
 }
 
-.close:hover {
-  color: red;
+/* Ajustes para el input y select para tener el mismo estilo y tamaño */
+input[type="text"],
+input[type="datetime-local"],
+select {
+  width: 100%;
+  padding: 12px 15px;
+  border: 2px solid var(--silver-chalice);
+  border-radius: var(--radius-4);
+  margin-bottom: 15px; /* Espaciado entre campos */
+}
+
+button[type="submit"] {
+  padding: 12px;
+  width: 100%;
+  background-color: var(--portland-orange);
+  border-radius: var(--radius-10);
+  transition: background-color 0.3s;
+  font-size: 1.1rem; /* Hacer el texto un poco más grande */
+  color: var(--white);
+}
+
+button[type="submit"]:hover {
+  background-color: var(--bittersweet);
+}
+
+
+/* Estilo básico para el combo box */
+select {
+  width: 100%; /* Toma todo el ancho disponible */
+  padding: 7px 15px; /* Espacio interno adecuado */
+  border: 2px solid var(--silver-chalice); /* Borde más visible y elegante */
+  border-radius: var(--radius-10); /* Bordes redondeados */
+  background-color: var(--white); /* Fondo claro */
+  color: var(--eerie-black); /* Texto oscuro para más contraste */
+  appearance: none; /* Desactiva la apariencia predeterminada */
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="%2348BFE3" d="M7 10l5 5 5-5z"/></svg>'); /* Ícono de flecha personalizado */
+  background-repeat: no-repeat;
+  background-position: right 10px center; /* Posiciona el ícono a la derecha, centrado verticalmente */
+  background-size: 12px; /* Tamaño del ícono */
+  cursor: pointer; /* Indica que el elemento es interactivo */
+  transition: border-color 0.3s; /* Transición suave para el color del borde */
+}
+
+/* Estilo al enfocar el combo box */
+select:focus {
+  outline: none; /* Elimina el contorno predeterminado */
+  border-color: var(--portland-orange); /* Cambia el color del borde al enfocarse */
+  box-shadow: 0 0 8px rgba(72, 191, 227, 0.5); /* Sombra suave alrededor del campo */
 }

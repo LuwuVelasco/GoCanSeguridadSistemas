@@ -23,6 +23,8 @@
     - custom css link
   -->
   <link rel="stylesheet" href="../core/style.css">
+  <link rel="stylesheet" href="../core/style.css?v=1.1">
+
 
   <!-- 
     - google font link
@@ -80,9 +82,8 @@
           </li>
 
           <li class="navbar-item">
-            <a href="#" class="navbar-link" data-nav-link>Reservas</a>
+            <a href="#" class="navbar-link" data-nav-link="reservas">Reservas</a>
           </li>
-
 
         </ul>
 
@@ -129,20 +130,41 @@
         </div>
       </section>
 
-      <!-- Ventana Modal para Reservas -->
+
+<!-- Ventana Modal para Reservas -->
 <div id="reserveModal" class="modal" style="display:none;">
   <div class="modal-content">
       <div class="modal-header">Agendar Cita</div>
       <span class="close">&times;</span>
       <form id="reserveForm">
           <input type="text" id="propietario" placeholder="Nombre del Propietario" required>
-          <input type="text" id="servicio" placeholder="Tipo de Servicio" required>
+          <!-- Campo de selección de servicio como un combo box -->
+          <select id="servicio" required>
+            <option value="">Seleccionar servicio...</option>
+            <option value="vacunas">Vacunas</option>
+            <option value="traumatologia">Traumatología</option>
+            <option value="odontologia">Odontología</option>
+            <option value="desparacitacion">Desparasitación</option>
+            <option value="consulta_general">Consulta General</option>
+          </select>
           <input type="text" id="doctor" placeholder="Doctor" required>
           <input type="datetime-local" id="fechaHora" required>
           <button type="submit">Reservar</button>
       </form>
   </div>
 </div>
+
+<!-- Ventana Modal para Ver Reservas -->
+<div id="viewReservationsModal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <div class="modal-header">Reservas Registradas</div>
+    <span class="close">&times;</span>
+    <div id="reservationsList">
+      <!-- Aquí se cargará dinámicamente la lista de reservas desde la BDD -->
+    </div>
+  </div>
+</div>
+
 
 
       <!-- 
@@ -951,7 +973,9 @@
   <!-- 
     - custom js link
   -->
-  <script src="../core/script.js" defer></script>
+  <link rel="stylesheet" href="../core/style.css?v=1.2"> <!-- Cambia la versión según sea necesario -->
+  <script src="../core/script.js?v=1.2" defer></script> <!-- Cambia la versión según sea necesario -->
+
 
   <!-- 
     - ionicon link

@@ -23,7 +23,10 @@ document.getElementById('navReserveLink').addEventListener('click', function(eve
 });
 
 document.getElementById('openReserveModal').addEventListener('click', function() {
-  document.getElementById('reserveModal').style.display = 'block';
+  const modal = document.getElementById('reserveModal');
+  modal.style.display = 'flex'; // Asegurarse de que se usa flex para mantenerlo centrado.
+  modal.style.alignItems = 'center'; // Alineación vertical centrada
+  modal.style.justifyContent = 'center'; // Alineación horizontal centrada
 });
 
 document.querySelector('.modal .close').addEventListener('click', function() {
@@ -36,6 +39,39 @@ document.getElementById('reserveForm').addEventListener('submit', function(event
   console.log('Reserva hecha');
   this.closest('.modal').style.display = 'none';
 });
+
+// Evento para abrir la ventana modal de Reservas
+document.querySelector('[data-nav-link="reservas"]').addEventListener('click', function(event) {
+  event.preventDefault();
+  fetchReservations(); // Función para cargar las reservas desde la BDD
+  document.getElementById('viewReservationsModal').style.display = 'flex';
+});
+
+// Cerrar la ventana modal de Reservas
+document.querySelector('#viewReservationsModal .close').addEventListener('click', function() {
+  this.closest('.modal').style.display = 'none';
+});
+
+// Función para cargar las reservas desde la BDD (simulación)
+function fetchReservations() {
+  // Aquí deberías implementar una solicitud AJAX/Fetch para traer los datos de la BDD
+  // Para efectos de demostración, aquí se simula con datos estáticos
+  const reservationsList = document.getElementById('reservationsList');
+  reservationsList.innerHTML = ''; // Limpiar el contenido actual
+  // Simulación de datos recibidos (deberías reemplazar esto con datos reales de la BDD)
+  const data = [
+    { propietario: 'Juan Pérez', servicio: 'Vacunación', fecha: '2024-05-10 15:00' },
+    { propietario: 'Ana López', servicio: 'Consulta General', fecha: '2024-05-11 14:00' }
+  ];
+  
+  // Crear elementos para cada reserva y añadirlos al DOM
+  data.forEach(res => {
+    const div = document.createElement('div');
+    div.classList.add('reservation');
+    div.textContent = `Propietario: ${res.propietario}, Servicio: ${res.servicio}, Fecha: ${res.fecha}`;
+    reservationsList.appendChild(div);
+  });
+}
 
 
 const navToggler = document.querySelector("[data-nav-toggler]");
@@ -75,3 +111,4 @@ const activeElemOnScroll = function () {
 }
 
 addEventOnElem(window, "scroll", activeElemOnScroll);
+
