@@ -11,14 +11,14 @@ if (!$conexion) {
 $email = $_POST['email'];
 $password = $_POST['password'];
 
-// Consulta para buscar al usuario por email y contraseña
-$sql = "SELECT id_usuario FROM usuario WHERE email = $1 AND password = $2";
+// Consulta para buscar al usuario por email, contraseña y obtener el campo cargo
+$sql = "SELECT id_usuario, cargo FROM usuario WHERE email = $1 AND password = $2";
 $result = pg_prepare($conexion, "login_query", $sql);
 $result = pg_execute($conexion, "login_query", array($email, $password));
 
 if ($row = pg_fetch_assoc($result)) {
     // Si la consulta devuelve un resultado, las credenciales son correctas
-    echo json_encode(["estado" => "success"]);
+    echo json_encode(["estado" => "success", "cargo" => $row['cargo']]);
 } else {
     // No se encontró un usuario con esas credenciales
     echo json_encode(["estado" => "error", "mensaje" => "El email o la contraseña son incorrectos"]);
