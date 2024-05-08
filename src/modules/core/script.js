@@ -60,17 +60,25 @@ addEventOnElem(window, "scroll", activeElemOnScroll);
 let currentSlide = 0;
 function moveCarousel(step) {
   const slideContainer = document.querySelector('.carousel-slide');
+  const slides = document.querySelectorAll('.product-card');
   const slideWidth = document.querySelector('.product-card').clientWidth;
+  const totalWidth = slideContainer.scrollWidth;
+  const visibleWidth = slideContainer.offsetWidth;
+  const maxSlide = Math.floor((totalWidth - visibleWidth) / (slideWidth + 15)); // 15 es el margen entre tarjetas
+
   currentSlide += step;
 
   if (currentSlide < 0) {
     currentSlide = 0; // Evitar ir más allá del primer elemento
+  } else if (currentSlide > maxSlide) {
+    currentSlide = maxSlide; // Evitar ir más allá del último elemento visible
   }
 
   // Calcular el nuevo desplazamiento
   const newTransform = -currentSlide * (slideWidth + 15); // 15 es el margen derecho de .product-card
   slideContainer.style.transform = `translateX(${newTransform}px)`;
 }
+
 document.querySelectorAll('.product-card').forEach(card => {
   card.querySelectorAll('.rating .star').forEach(star => {
       star.addEventListener('click', function() {
