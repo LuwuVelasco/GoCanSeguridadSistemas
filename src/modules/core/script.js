@@ -88,3 +88,19 @@ document.querySelectorAll('.product-card').forEach(card => {
       });
   });
 });
+document.addEventListener('DOMContentLoaded', function() {
+  // Selecciona cada tarjeta de producto dentro del carrusel
+  const productCards = document.querySelectorAll('.product-card');
+
+  productCards.forEach(card => {
+    const stars = card.querySelectorAll('.star');
+    const reviewCount = card.querySelector('.review-count');
+
+    stars.forEach(star => {
+      star.addEventListener('click', function() {
+        const ratingValue = parseInt(star.getAttribute('data-value'), 10);
+        reviewCount.textContent = `(${ratingValue})`;
+      });
+    });
+  });
+});
