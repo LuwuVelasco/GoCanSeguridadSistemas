@@ -56,3 +56,23 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Get the 'Registro veterinarios' button by its ID
+    const registerVetsButton = document.getElementById('bt3');
+
+    // Event listener to open the modal
+    registerVetsButton.addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent default action (if it's a link or has any default action)
+        const modal = document.getElementById('reserveModal');
+        modal.style.display = 'flex'; // Change display to 'flex' to show the modal
+        modal.style.alignItems = 'center'; // Center align items vertically
+        modal.style.justifyContent = 'center'; // Center align items horizontally
+    });
+
+    // Get the close button of the modal and add event listener to close the modal
+    const closeModalButton = document.querySelector('.modal .close');
+    closeModalButton.addEventListener('click', function() {
+        this.closest('.modal').style.display = 'none'; // Hide the modal when the close button is clicked
+    });
+});

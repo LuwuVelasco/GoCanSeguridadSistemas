@@ -15,7 +15,7 @@
         <div class="container">
             <a href="#" class="logo">GoCan</a>
     
-            <nav class="navbar" data-navbar>
+            <!--<nav class="navbar" data-navbar>
                 <ul class="navbar-list">
                     <li class="navbar-item">
                         <a href="#shop" class="navbar-link" data-nav-link>Registro empleado</a>
@@ -27,13 +27,13 @@
                         <a href="#contacto" class="navbar-link" data-nav-link>Registro reporte</a>
                     </li>
                 </ul>
-            </nav>
+            </nav>-->
     
             <div class="profile" onclick="toggleDropdown()">
-                <img src="assets/service-image.png">
+                <img src="../../assets/Images/user-md.png">
                 <div class="account">
-                    <h5>Reza MK</h5>
-                    <p>Example@gmail.com</p>
+                    <h5>Elmer Gonzales</h5>
+                    <p>e.gonzales@gmail.com</p>
                 </div>
                 <div class="profile-dropdown" id="profileDropdown">
                     <ul>
@@ -54,26 +54,26 @@
             </section>
             <div class="main">
                 <h3 class="separator">
-                    Quick Access
+                    Opciones
                 </h3>
 
                 <div class="quick-access">
-                    <div class="item">
-                        <i class="ri-file-3-line"></i>
+                    <div id = "bt1" class="item">
+                        <i class="fi fi-sr-clipboard-list"></i>
                         <h5>Registro reportes</h5>
                     </div>
-                    <div class="item">
-                        <i class="ri-file-chart-line"></i>
+                    <div id = "bt2" class="item">
+                        <i class="fi fi-sr-time-past"></i>
                         <h5>Historial citas</h5>
                     </div>
-                    <div class="item">
-                        <i class="ri-team-line"></i>
+                    <div id = "bt3" class="item">
+                        <i class="fi fi-sr-stethoscope"></i>
                         <h5>Registro veterinarios</h5>
                     </div>
                 </div>
 
                 <h3 class="separator">
-                    Recent
+                    Citas Próximas
                 </h3>
 
                 <table>
@@ -125,6 +125,27 @@
             </div>
         </article>
     </main>
+
+    <div id="reserveModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-header">Registrar Veterinario</div>
+            <span class="close">&times;</span>
+            <form id="reserveForm">
+                <input type="text" id="propietario" placeholder="Nombre del Veterinario" required>
+                <!-- Campo de selección de servicio como un combo box -->
+                <select id="servicio" required>
+                <option value="">Seleccionar servicio...</option>
+                <option value="vacunas">Vacunas</option>
+                <option value="traumatologia">Traumatología</option>
+                <option value="odontologia">Odontología</option>
+                <option value="desparacitacion">Desparasitación</option>
+                <option value="consulta_general">Consulta General</option>
+                </select>
+                <button type="submit">Registrar</button>
+                <button type="submit">Cancelar</button>
+            </form>
+        </div>
+    </div>
 
     <script src="admin.js"></script>
 </body>
