@@ -308,6 +308,7 @@
   .header .action-btn:is(:hover, :focus) { transform: scale(1.1); }
   
   .navbar {
+    height: 25px;
     position: fixed;
     top: 85px;
     left: -320px;
