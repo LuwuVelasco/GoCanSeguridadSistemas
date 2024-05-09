@@ -22,8 +22,12 @@ function iniciarSesion() {
     .then(response => response.json())
     .then(data => {
         if (data.estado === "success") {
-            // Redirigir al usuario al index
-            window.location.href = 'http://localhost/GoCan/src/modules/core/';
+            // Redirigir al usuario basado en el valor de cargo
+            if (data.cargo) {
+                window.location.href = 'http://localhost/GoCan/src/modules/core/index.html';
+            } else {
+                window.location.href = 'http://localhost/GoCan/src/modules/coreadmin/indexadmin.html';
+            }
         } else {
             alert(data.mensaje); // Mostrar mensaje de error
         }

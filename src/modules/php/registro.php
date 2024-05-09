@@ -8,6 +8,7 @@ $email = $data->email;
 $nombre = $data->nombre;
 $password = $data->password;
 $token = null; // Definido como null porque es gestionado internamente
+$cargo = true;
 
 $conexion = pg_connect("dbname=gocan user=postgres password=admin");
 if (!$conexion) {
@@ -16,7 +17,7 @@ if (!$conexion) {
 }
 
 // Asegúrate de que los identificadores sean únicos o simplemente no los uses.
-$sql_usuario = "INSERT INTO usuario (email, nombre, password, token) VALUES ($1, $2, $3, $4) RETURNING id_usuario";
+$sql_usuario = "INSERT INTO usuario (email, nombre, password, token, cargo) VALUES ($1, $2, $3, $4, $5) RETURNING id_usuario";
 $stmt = pg_prepare($conexion, "insert_usuario", $sql_usuario);
 
 if ($stmt === false) {
@@ -24,7 +25,7 @@ if ($stmt === false) {
     exit();
 }
 
-$resultado_usuario = pg_execute($conexion, "insert_usuario", array($email, $nombre, $password, $token));
+$resultado_usuario = pg_execute($conexion, "insert_usuario", array($email, $nombre, $password, $token, $cargo));
 if (!$resultado_usuario) {
     echo json_encode(["estado" => "error_insertar_usuario"]);
     exit();
