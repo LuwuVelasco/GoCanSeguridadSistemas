@@ -24,7 +24,7 @@ function iniciarSesion() {
         if (data.estado === "success") {
             // Redirigir al usuario basado en el valor de cargo
             if (data.cargo) {
-                window.location.href = 'http://localhost/GoCan/src/modules/core/index.html';
+                window.location.href = 'http://localhost/GoCan/src/modules/citas/citas.html';
             } else {
                 window.location.href = 'http://localhost/GoCan/src/modules/coreadmin/indexadmin.html';
             }
