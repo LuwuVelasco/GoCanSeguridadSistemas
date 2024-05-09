@@ -7,18 +7,20 @@ function registrarUsuario() {
     let nombre = document.getElementById('nombre').value;
     let password = document.getElementById('password').value;
     let token = null;
+    let cargo = true;
 
     console.log("email:", email);
     console.log("nombre:", nombre);
     console.log("password:", password);
     console.log("token:", token);
+    console.log("cargo:", cargo);
 
     fetch("http://localhost/GoCan/src/modules/php/registro.php", {
         method: "POST",
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ email: email, nombre: nombre, password: password, token: token }),
+        body: JSON.stringify({ email: email, nombre: nombre, password: password, token: token, cargo: cargo }),
     })
     .then(response => {
         if (response.ok) {
