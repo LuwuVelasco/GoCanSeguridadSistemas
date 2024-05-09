@@ -8,24 +8,14 @@ function registrarProducto(event) {
   let card = event.target.closest(".product-card");
 
   if (!card) {
-    console.error(
-      "No se pudo encontrar el contenedor de la tarjeta de producto."
-    );
+    console.error("No se pudo encontrar el contenedor de la tarjeta de producto.");
     return;
   }
 
-  let nombre = card.querySelector(".nombre")
-    ? card.querySelector(".nombre").textContent
-    : "Elemento nombre no encontrado";
-  let descripcion = card.querySelector(".descripcion")
-    ? card.querySelector(".descripcion").textContent
-    : "Elemento descripción no encontrado";
-  let precio = card.querySelector(".precio")
-    ? card.querySelector(".precio").getAttribute("value")
-    : "Elemento precio no encontrado";
-  let categoria = card.querySelector(".categoria")
-    ? card.querySelector(".categoria").textContent
-    : "Elemento categoria no encontrado";
+  let nombre = card.querySelector(".nombre") ? card.querySelector(".nombre").textContent : "Elemento nombre no encontrado";
+  let descripcion = card.querySelector(".descripcion") ? card.querySelector(".descripcion").textContent : "Elemento descripción no encontrado";
+  let precio = card.querySelector(".precio") ? card.querySelector(".precio").getAttribute("value") : "Elemento precio no encontrado";
+  let categoria = card.querySelector(".categoria") ? card.querySelector(".categoria").textContent : "Elemento categoria no encontrado";
 
   console.log("nombre:", nombre);
   console.log("descripcion:", descripcion);
@@ -44,19 +34,24 @@ function registrarProducto(event) {
       categoria: categoria,
     }),
   })
-    .then((response) =>
-      response.ok
-        ? response.json()
-        : Promise.reject("Error al registrar el producto")
-    )
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.text().then(text => {
+        try {
+          return JSON.parse(text);
+        } catch (error) {
+          throw new Error("Response was not JSON: " + text);
+        }
+      });
+    })
     .then((data) => {
       console.log(data);
-      alert(
-        "Producto registrado correctamente. ID de producto: " + data.id_producto
-      );
+      alert("Producto registrado correctamente. ID de producto: " + data.id_producto);
     })
     .catch((error) => {
       console.error("Error:", error);
-      alert("Error al registrar el producto");
+      alert("Error al registrar el producto: " + error.message);
     });
 }

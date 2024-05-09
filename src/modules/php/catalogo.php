@@ -8,6 +8,7 @@ $nombre = $data->nombre;
 $descripcion = $data->descripcion;
 $precio = $data->precio;
 $categoria = $data->categoria;
+$id_usuario = 101;
 
 $conexion = pg_connect("dbname=gocan user=postgres password=admin");
 if (!$conexion) {
@@ -15,7 +16,7 @@ if (!$conexion) {
     exit();
 }
 
-$sql_producto = "INSERT INTO producto (nombre, descripcion, precio, categoria) VALUES ($1, $2, $3, $4) RETURNING id_usuario";
+$sql_producto = "INSERT INTO producto (nombre, descripcion, precio, categoria, id_usuario) VALUES ($1, $2, $3, $4,$5) RETURNING id_producto";
 $stmt = pg_prepare($conexion, "insert_producto", $sql_producto);
 
 if ($stmt === false) {
@@ -23,12 +24,11 @@ if ($stmt === false) {
     exit();
 }
 
-$resultado_producto = pg_execute($conexion, "insert_producto", array($nombre, $descripcion, $precio, $categoria));
+$resultado_producto = pg_execute($conexion, "insert_producto", array($nombre, $descripcion, $precio, $categoria, $id_usuario));
 if (!$resultado_producto) {
     echo json_encode(["estado" => "error_insertar_producto"]);
     exit();
 }
-$id_usuario = pg_fetch_result($resultado_producto, 5, 'id_usuario');
 $id_producto = pg_fetch_result($resultado_producto, 0, 'id_producto');
 echo json_encode(["estado" => "producto_registrado", "id_producto" => $id_producto]);
 
