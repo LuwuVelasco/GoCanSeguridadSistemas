@@ -736,3 +736,42 @@ main > article, .hero, .main {
   width: 80%;
   position: relative;
 }
+
+/* Agregamos estilos para los botones */
+.button {
+    background: #fff;
+    
+    border: 2px solid transparent;
+    border-radius: 20px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(136, 148, 171, 0.2), 0 24px 20px -24px rgba(71, 82, 107, 0.1);
+    cursor: pointer;
+}
+
+.button:hover {
+    box-shadow: none;
+    border-color: #999;
+}
+
+.button i {
+    font-size: 46px;
+    padding: 10px;
+    border-radius: 16px;
+}
+
+.button h5 {
+    font-size: 18px;
+    font-weight: 500;
+    color: #364670;
+    margin: 15px 0 8px;
+}
+
+.button p {
+    color: #999;
+    font-size: 14px;
+}

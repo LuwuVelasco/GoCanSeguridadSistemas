@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.2.0/remixicon.min.css">
-    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.3.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>    <link rel="stylesheet" href="../core/style.css">
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.3.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
+    <link rel="stylesheet" href="../core/style.css">
     <link rel="stylesheet" href="styleAdmi.css">
     <title>GoCan / Administrador</title>
 </head>
@@ -14,21 +15,7 @@
     <header class="header" data-header>
         <div class="container">
             <a href="#" class="logo">GoCan</a>
-    
-            <!--<nav class="navbar" data-navbar>
-                <ul class="navbar-list">
-                    <li class="navbar-item">
-                        <a href="#shop" class="navbar-link" data-nav-link>Registro empleado</a>
-                    </li>
-                    <li class="navbar-item">
-                        <a href="#category" class="navbar-link" data-nav-link>Historial Citas</a>
-                    </li>
-                    <li class="navbar-item">
-                        <a href="#contacto" class="navbar-link" data-nav-link>Registro reporte</a>
-                    </li>
-                </ul>
-            </nav>-->
-    
+
             <div class="profile" onclick="toggleDropdown()">
                 <img src="../../assets/Images/user-md.png">
                 <div class="account">
@@ -41,14 +28,13 @@
                         <li><a href="#signOut">Cerrar sesión</a></li>
                     </ul>
                 </div>
-            </div>            
+            </div>
         </div>
-    </header>        
+    </header>
 
     <main>
         <article>
-            <section id="home" aria-label="home"
-                style="background-image: url('../../assets/Images/banner_InicioAd.png')">
+            <section id="home" aria-label="home" style="background-image: url('../../assets/Images/banner_InicioAd.png')">
                 <div class="container">
                 </div>
             </section>
@@ -58,15 +44,15 @@
                 </h3>
 
                 <div class="quick-access">
-                    <div id = "bt1" class="item">
+                    <div id="bt1" class="button">
                         <i class="fi fi-sr-clipboard-list"></i>
                         <h5>Registro reportes</h5>
                     </div>
-                    <div id = "bt2" class="item">
+                    <div id="bt2" class="button">
                         <i class="fi fi-sr-time-past"></i>
                         <h5>Historial citas</h5>
                     </div>
-                    <div id = "bt3" class="item">
+                    <div id="bt3" class="button" onclick="openModal()">
                         <i class="fi fi-sr-stethoscope"></i>
                         <h5>Registro veterinarios</h5>
                     </div>
@@ -116,10 +102,8 @@
             <div class="right-section">
 
                 <div class="widgets">
-                    
-                    <div class="bottom">
-                        <!--<button>New Upload <i class="ri-add-line"></i></button>-->
 
+                    <div class="bottom">
                     </div>
                 </div>
             </div>
@@ -132,14 +116,13 @@
             <span class="close">&times;</span>
             <form id="reserveForm">
                 <input type="text" id="propietario" placeholder="Nombre del Veterinario" required>
-                <!-- Campo de selección de servicio como un combo box -->
                 <select id="servicio" required>
-                <option value="">Seleccionar servicio...</option>
-                <option value="vacunas">Vacunas</option>
-                <option value="traumatologia">Traumatología</option>
-                <option value="odontologia">Odontología</option>
-                <option value="desparacitacion">Desparasitación</option>
-                <option value="consulta_general">Consulta General</option>
+                    <option value="">Seleccionar servicio...</option>
+                    <option value="vacunas">Vacunas</option>
+                    <option value="traumatologia">Traumatología</option>
+                    <option value="odontologia">Odontología</option>
+                    <option value="desparacitacion">Desparasitación</option>
+                    <option value="consulta_general">Consulta General</option>
                 </select>
                 <button type="submit">Registrar</button>
                 <button type="submit">Cancelar</button>
@@ -148,6 +131,7 @@
     </div>
 
     <script src="admin.js"></script>
+    <script src="admin.js?v=1.2"></script>
 </body>
 
 </html>
