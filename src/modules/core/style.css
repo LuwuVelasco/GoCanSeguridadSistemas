@@ -1226,3 +1226,11 @@ body {
 .next {
   right: 10px; /* Posición del botón derecho */
 }
+.invisible {
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
