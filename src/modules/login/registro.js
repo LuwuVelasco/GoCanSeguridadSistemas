@@ -7,7 +7,7 @@ function registrarUsuario() {
     let nombre = document.getElementById('nombre').value;
     let password = document.getElementById('password').value;
     let token = null;
-    let cargo = true;
+    let cargo = null;
 
     console.log("email:", email);
     console.log("nombre:", nombre);

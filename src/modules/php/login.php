@@ -25,4 +25,3 @@ if ($row = pg_fetch_assoc($result)) {
 }
 
 pg_close($conexion);
-?>

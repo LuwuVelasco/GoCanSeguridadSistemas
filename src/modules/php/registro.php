@@ -8,7 +8,7 @@ $email = $data->email;
 $nombre = $data->nombre;
 $password = $data->password;
 $token = null; // Definido como null porque es gestionado internamente
-$cargo = true;
+$cargo = null;
 
 $conexion = pg_connect("dbname=gocan user=postgres password=admin");
 if (!$conexion) {
@@ -35,4 +35,3 @@ $id_usuario = pg_fetch_result($resultado_usuario, 0, 'id_usuario');
 echo json_encode(["estado" => "usuario_registrado", "id_usuario" => $id_usuario]);
 
 pg_close($conexion);
-?>
