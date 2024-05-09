@@ -1,43 +1,46 @@
-document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('favorito').addEventListener('click', registrarProducto);
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll(".favorito").forEach((button) => {
+    button.addEventListener("click", registrarProducto);
+  });
 });
 
-function registrarProducto() {
-    var nombre = document.getElementById('nombre').textContent;
-    var descripcion = document.getElementById('descripcion').textContent;
-    var precio = document.getElementById('precio').value;
-    var categoria = document.getElementById('categoria').textContent;
-
+function registrarProducto(event) {
+    let card = event.target.closest('.product-card');
+  
+    if (!card) {
+      console.error('No se pudo encontrar el contenedor de la tarjeta de producto.');
+      return;
+    }
+  
+    let nombre = card.querySelector('.nombre') ? card.querySelector('.nombre').textContent : 'Elemento nombre no encontrado';
+    let descripcion = card.querySelector('.descripcion') ? card.querySelector('.descripcion').textContent : 'Elemento descripción no encontrado';
+    let precio = card.querySelector('.precio') ? card.querySelector('.precio').getAttribute('value') : 'Elemento precio no encontrado';
+    let categoria = card.querySelector('.categoria') ? card.querySelector('.categoria').textContent : 'Elemento categoria no encontrado';
+  
     console.log("nombre:", nombre);
     console.log("descripcion:", descripcion);
     console.log("precio:", precio);
     console.log("categoria:", categoria);
-
+  
     fetch("http://localhost/GoCan/src/modules/php/catalogo.php", {
-        method: "POST",
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ nombre: nombre, descripcion: descripcion, precio: precio, categoria: categoria }),
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        nombre: nombre,
+        descripcion: descripcion,
+        precio: precio,
+        categoria: categoria,
+      }),
     })
-    .then(response => {
-        if (response.ok) {
-            return response.json();
-        } else {
-            throw new Error('Error al registrar el producto');
-        }
-    })
+    .then(response => response.ok ? response.json() : Promise.reject('Error al registrar el producto'))
     .then(data => {
-        console.log(data);
-        alert('Producto registrado correctamente. ID de producto: ' + data.id_producto);
-        document.getElementById('nombre').textContent = '';
-        document.getElementById('descripcion').textContent='';
-        document.getElementById('precio').value='';
-        document.getElementById('categoria').textContent='';
-        data.id_usuario;
+      console.log(data);
+      alert("Producto registrado correctamente. ID de producto: " + data.id_producto);
     })
     .catch(error => {
-        console.error('Error:', error);
-        alert('Error al registrar el producto');
+      console.error("Error:", error);
+      alert("Error al registrar el producto");
     });
-}
+  }
