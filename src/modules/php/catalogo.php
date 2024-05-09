@@ -28,7 +28,7 @@ if (!$resultado_producto) {
     echo json_encode(["estado" => "error_insertar_producto"]);
     exit();
 }
-$id_usuario = pg_fetch_result($resultado_producto, 5, 'id_producto');
+$id_usuario = pg_fetch_result($resultado_producto, 5, 'id_usuario');
 $id_producto = pg_fetch_result($resultado_producto, 0, 'id_producto');
 echo json_encode(["estado" => "producto_registrado", "id_producto" => $id_producto]);
 
