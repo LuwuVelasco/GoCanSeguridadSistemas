@@ -7,19 +7,18 @@ function registrarUsuario() {
     let email = document.getElementById('email').value;
     let nombre = document.getElementById('nombre').value;
     let password = document.getElementById('password').value;
-    let token = generateToken(); // Generar el token aquí
+    let token = generateToken();
     let cargo = null;
 
     console.log("Datos capturados:", email, nombre, password, token, cargo);
 
-    // Envía primero el token por correo
     emailjs.send("service_zfiz7yd", "template_g2k2wgi", {
         to_email: email,
         nombre: nombre,
         token: token
     }).then(function(response) {
         console.log('Correo electrónico enviado con éxito:', response);
-        promptForToken(token, email, nombre, password); // Solicita al usuario que ingrese el token
+        promptForToken(token, email, nombre, password, cargo);
     }, function(error) {
         console.error('Error al enviar el correo electrónico:', error);
         alert('Error al enviar el correo electrónico');
@@ -28,14 +27,21 @@ function registrarUsuario() {
 
 function promptForToken(sentToken, email, nombre, password, cargo) {
     let userToken = prompt('Por favor, ingrese el token que ha sido enviado a su correo electrónico:');
-    if (userToken === sentToken) {
-        // Si el token coincide, realiza el registro en la base de datos
+    console.log("Token enviado:", sentToken); // Log del token enviado
+    console.log("Token ingresado:", userToken); // Log del token ingresado
+
+    if (userToken.trim() === sentToken.toString().trim()) { 
         fetch("http://localhost/GoCan/src/modules/php/registro.php", {
             method: "POST",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ email: email, nombre: nombre, password: password, token: sentToken, cargo: cargo }),
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                email: email,
+                nombre: nombre,
+                password: password,
+                token: sentToken,
+                cargo: cargo,
+                verified: true
+            })
         })
         .then(response => response.json())
         .then(data => {
@@ -55,8 +61,6 @@ function promptForToken(sentToken, email, nombre, password, cargo) {
 }
 
 function generateToken() {
-    // Generar y devolver un token aleatorio (puedes usar cualquier método aquí)
-    return Math.random().toString(36).substring(2, 15);
+    return Math.floor(Math.random() * 900000) + 100000;
 }
-
 
