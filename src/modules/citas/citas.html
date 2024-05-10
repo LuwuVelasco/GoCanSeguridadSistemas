@@ -148,11 +148,14 @@
             <option value="consulta_general">Consulta General</option>
           </select>
           <input type="text" id="doctor" placeholder="Doctor" required>
-          <input type="datetime-local" id="fechaHora" required>
+          <!-- Separación de campos de fecha y hora -->
+          <input type="date" id="fecha" placeholder="Fecha" required>
+          <input type="time" id="hora" placeholder="Hora" required>
           <button type="submit">Reservar</button>
       </form>
   </div>
 </div>
+
 
 <!-- Ventana Modal para Ver Reservas -->
 <div id="viewReservationsModal" class="modal" style="display:none;">

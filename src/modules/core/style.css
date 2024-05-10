@@ -1110,25 +1110,37 @@
   font-size: 2.4rem; /* Tamaño más grande si es necesario */
 }
 
-/* Ajustes para el input y select para tener el mismo estilo y tamaño */
-input[type="text"],
-input[type="datetime-local"],
-select {
-  width: 100%;
-  padding: 12px 15px;
-  border: 2px solid var(--silver-chalice);
-  border-radius: var(--radius-4);
-  margin-bottom: 15px; /* Espaciado entre campos */
+/* Estilo general para inputs y select */
+html .modal .modal-content input[type="text"],
+html .modal .modal-content input[type="date"],
+html .modal .modal-content input[type="time"],
+html .modal .modal-content select {
+  width: 100%; /* Asegura que todos los campos tomen todo el ancho del formulario */
+  padding: 8px 10px; /* Espacio interior para que el texto no esté tan pegado al borde */
+  margin-bottom: 10px; /* Margen inferior para separar los campos entre sí */
+  border: 1px solid var(--silver-chalice); /* Borde más definido */
+  border-radius: var(--radius-4); /* Bordes redondeados */
+  font-size: 1.1rem; /* Tamaño de letra adecuado */
 }
 
-button[type="submit"] {
-  padding: 12px;
-  width: 100%;
+/* Específico para la separación entre fecha y hora */
+input[type="date"] {
+  margin-right: 5%; /* Espacio adicional a la derecha del campo de fecha */
+}
+
+input[type="time"] {
+  margin-left: 0%; /* Espacio adicional a la izquierda del campo de hora */
+}
+
+/* Botón de submit más atractivo */
+html .modal .modal-content button[type="submit"] {
   background-color: var(--portland-orange);
-  border-radius: var(--radius-10);
-  transition: background-color 0.3s;
-  font-size: 1.1rem; /* Hacer el texto un poco más grande */
   color: var(--white);
+  padding: 10px 15px;
+  border: none;
+  border-radius: var(--radius-10);
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 button[type="submit"]:hover {
