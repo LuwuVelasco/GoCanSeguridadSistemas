@@ -27,7 +27,7 @@ localStorage.setItem('id_usuario', data.id_usuario);
 console.log('id_usuario guardado:', localStorage.getItem('id_usuario'));
             // Redirigir al usuario basado en el valor de cargo
             if (!data.cargo) {
-                window.location.href = 'http://localhost/GoCan/src/modules/core/index.html';
+                window.location.href = 'http://localhost/GoCan/src/modules/citas/citas.html';
             } else {
                 window.location.href = 'http://localhost/GoCan/src/modules/coreadmin/indexadmin.html';
             }

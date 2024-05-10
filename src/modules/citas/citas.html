@@ -324,331 +324,816 @@
 
       <section class="section product" id="shop" aria-label="product">
         <div class="container">
-
           <h2 class="h2 section-title">
             <span class="span">Catálogo</span> en línea
           </h2>
 
-          <ul class="grid-list">
+          <div class="carousel-container">
+            <button class="carousel-button prev" onclick="moveCarousel(-1)">
+              &#10094;
+            </button>
+            <div class="carousel-slide">
+              <ul class="grid-list">
+                <li>
+                  <div class="product-card">
+                    <div
+                      class="card-banner img-holder"
+                      style="--width: 360; --height: 360"
+                    >
+                      <img
+                        src="../../assets/Images/Catalogo/C1A.png"
+                        width="360"
+                        height="360"
+                        loading="lazy"
+                        alt="Commodo leo sed porta"
+                        class="img-cover default"
+                      />
+                      <img
+                        src="../../assets/Images/Catalogo/C1B.jpg"
+                        width="360"
+                        height="360"
+                        loading="lazy"
+                        alt="Commodo leo sed porta"
+                        class="img-cover hover"
+                      />
 
-            <li>
-              <div class="product-card">
-
-                <div class="card-banner img-holder" style="--width: 360; --height: 360;">
-                  <img src="../../assets/Images/Próximamente.png" width="360" height="360" loading="lazy"
-                    alt="Commodo leo sed porta" class="img-cover default">
-                  <img src="../../assets/Images/Próximamente.png" width="360" height="360" loading="lazy"
-                    alt="Commodo leo sed porta" class="img-cover hover">
-
-                  <button class="card-action-btn" aria-label="add to card" title="Add To Card">
-                    <ion-icon name="bookmark-outline" aria-hidden="true"></ion-icon>
-                  </button>
-                </div>
-
-                <div class="card-content">
-
-                  <div class="wrapper">
-                    <div class="rating-wrapper">
-                      <ion-icon name="star" aria-hidden="true"></ion-icon>
-                      <ion-icon name="star" aria-hidden="true"></ion-icon>
-                      <ion-icon name="star" aria-hidden="true"></ion-icon>
-                      <ion-icon name="star" aria-hidden="true"></ion-icon>
-                      <ion-icon name="star" aria-hidden="true"></ion-icon>
+                      <button
+                        class="card-action-btn favorito"
+                        aria-label="add to card"
+                        title="Add To Card"
+                      >
+                        <ion-icon
+                          name="bookmark-outline"
+                          aria-hidden="true"
+                        ></ion-icon>
+                      </button>
                     </div>
 
-                    <span class="span">(1)</span>
+                    <div class="card-content">
+                      <div class="wrapper">
+                        <div class="rating">
+                          <span class="star" data-value="5">&#9733;</span>
+                          <span class="star" data-value="4">&#9733;</span>
+                          <span class="star" data-value="3">&#9733;</span>
+                          <span class="star" data-value="2">&#9733;</span>
+                          <span class="star" data-value="1">&#9733;</span>
+                        </div>
+                        <!-- Número de reseñas -->
+                        <span class="review-count">(0)</span>
+                      </div>
+
+                      <h3 class="h3">
+                        <a
+                          href="#"
+                          class="card-title nombre"
+                          >AlimentoDog Chow Adulto: Medianos</a
+                        >
+                        <p class="invisible descripcion">Alimento balanceado para perros adultos de tamaño mediano, formulado para apoyar la salud general, incluyendo digestión, huesos y pelaje.
+                        </p>
+                      </h3>
+
+                      <data class="card-price precio" value="88"
+                        >88 bs</data
+                      >
+                      <p class="invisible categoria">Comida</p>
+                    </div>
                   </div>
+                </li>
 
-                  <h3 class="h3">
-                    <a href="#" class="card-title">Prodcuto 1</a>
-                  </h3>
+                <li>
+                  <div class="product-card">
+                    <div
+                      class="card-banner img-holder"
+                      style="--width: 360; --height: 360"
+                    >
+                      <img
+                        src="../../assets/Images/Catalogo/C2A.jpg"
+                        width="360"
+                        height="360"
+                        loading="lazy"
+                        alt="Purus consequat congue sit"
+                        class="img-cover default"
+                      />
+                      <img
+                        src="../../assets/Images/Catalogo/C2B.jpg"
+                        width="360"
+                        height="360"
+                        loading="lazy"
+                        alt="Purus consequat congue sit"
+                        class="img-cover hover"
+                      />
 
-                  <data class="card-price" value="15">0 bs</data>
-
-                </div>
-
-              </div>
-            </li>
-
-            <li>
-              <div class="product-card">
-
-                <div class="card-banner img-holder" style="--width: 360; --height: 360;">
-                  <img src="../../assets/Images/Próximamente.png" width="360" height="360" loading="lazy"
-                    alt="Purus consequat congue sit" class="img-cover default">
-                  <img src="../../assets/Images/Próximamente.png" width="360" height="360" loading="lazy"
-                    alt="Purus consequat congue sit" class="img-cover hover">
-
-                  <button class="card-action-btn" aria-label="add to card" title="Add To Card">
-                    <ion-icon name="bookmark-outline" aria-hidden="true"></ion-icon>
-                  </button>
-                </div>
-
-                <div class="card-content">
-
-                  <div class="wrapper">
-                    <div class="rating-wrapper gray">
-                      <ion-icon name="star" aria-hidden="true"></ion-icon>
-                      <ion-icon name="star" aria-hidden="true"></ion-icon>
-                      <ion-icon name="star" aria-hidden="true"></ion-icon>
-                      <ion-icon name="star" aria-hidden="true"></ion-icon>
-                      <ion-icon name="star" aria-hidden="true"></ion-icon>
+                      <button
+                      class="card-action-btn favorito"
+                        aria-label="add to card"
+                        title="Add To Card"
+                      >
+                        <ion-icon
+                          name="bookmark-outline"
+                          aria-hidden="true"
+                        ></ion-icon>
+                      </button>
                     </div>
 
-                    <span class="span">(0)</span>
+                    <div class="card-content">
+                      <div class="wrapper">
+                        <div class="rating">
+                          <span class="star" data-value="5">&#9733;</span>
+                          <span class="star" data-value="4">&#9733;</span>
+                          <span class="star" data-value="3">&#9733;</span>
+                          <span class="star" data-value="2">&#9733;</span>
+                          <span class="star" data-value="1">&#9733;</span>
+                        </div>
+                        <!-- Número de reseñas -->
+                        <span class="review-count">(0)</span>
+                      </div>
+
+                      <h3 class="h3">
+                        <a
+                          href="#"
+                          class="card-title nombre"
+                          >Alimento Dog Chow Adulto: Pequeños</a
+                        >
+                        <p class="invisible descripcion">Alimento completo para perros adultos de raza pequeña, diseñado para optimizar la salud digestiva y mantener un pelaje brillante.
+                        </p>
+                      </h3>
+
+                      <data class="card-price precio" value="86"
+                        >86 bs</data
+                      >
+                      <p class="invisible categoria">Comida</p>
+                    </div>
                   </div>
+                </li>
 
-                  <h3 class="h3">
-                    <a href="#" class="card-title">Producto 2</a>
-                  </h3>
+                <li>
+                  <div class="product-card">
+                    <div
+                      class="card-banner img-holder"
+                      style="--width: 360; --height: 360"
+                    >
+                      <img
+                        src="../../assets/Images/Catalogo/C3A.png"
+                        width="360"
+                        height="360"
+                        loading="lazy"
+                        alt="Morbi vel arcu scelerisque"
+                        class="img-cover default"
+                      />
+                      <img
+                        src="../../assets/Images/Catalogo/C3A.png"
+                        width="360"
+                        height="360"
+                        loading="lazy"
+                        alt="Morbi vel arcu scelerisque"
+                        class="img-cover hover"
+                      />
 
-                  <data class="card-price" value="45">0 bs</data>
-
-                </div>
-
-              </div>
-            </li>
-
-            <li>
-              <div class="product-card">
-
-                <div class="card-banner img-holder" style="--width: 360; --height: 360;">
-                  <img src="../../assets/Images/Próximamente.png" width="360" height="360" loading="lazy"
-                    alt="Morbi vel arcu scelerisque" class="img-cover default">
-                  <img src="../../assets/Images/Próximamente.png" width="360" height="360" loading="lazy"
-                    alt="Morbi vel arcu scelerisque" class="img-cover hover">
-
-                  <button class="card-action-btn" aria-label="add to card" title="Add To Card">
-                    <ion-icon name="bookmark-outline" aria-hidden="true"></ion-icon>
-                  </button>
-                </div>
-
-                <div class="card-content">
-
-                  <div class="wrapper">
-                    <div class="rating-wrapper gray">
-                      <ion-icon name="star" aria-hidden="true"></ion-icon>
-                      <ion-icon name="star" aria-hidden="true"></ion-icon>
-                      <ion-icon name="star" aria-hidden="true"></ion-icon>
-                      <ion-icon name="star" aria-hidden="true"></ion-icon>
-                      <ion-icon name="star" aria-hidden="true"></ion-icon>
+                      <button
+                      class="card-action-btn favorito"
+                        aria-label="add to card"
+                        title="Add To Card"
+                      >
+                        <ion-icon
+                          name="bookmark-outline"
+                          aria-hidden="true"
+                        ></ion-icon>
+                      </button>
                     </div>
 
-                    <span class="span">(0)</span>
+                    <div class="card-content">
+                      <div class="wrapper">
+                        <div class="rating">
+                          <span class="star" data-value="5">&#9733;</span>
+                          <span class="star" data-value="4">&#9733;</span>
+                          <span class="star" data-value="3">&#9733;</span>
+                          <span class="star" data-value="2">&#9733;</span>
+                          <span class="star" data-value="1">&#9733;</span>
+                        </div>
+                        <!-- Número de reseñas -->
+                        <span class="review-count">(0)</span>
+                      </div>
+
+                      <h3 class="h3">
+                        <a
+                          href="#"
+                          class="card-title nombre"
+                          >Sobre de Comida Dog Chow Cena Carne: Adultos</a
+                        >
+                        <p class="invisible descripcion">Sobre de comida para perros adultos, sabor carne, diseñado para ofrecer una cena nutritiva y sabrosa.
+                        </p>
+                      </h3>
+
+                      <data class="card-price precio" value="7"
+                        >7 bs</data
+                      >
+                      <p class="invisible categoria">Comida</p>
+                    </div>
                   </div>
+                </li>
 
-                  <h3 class="h3">
-                    <a href="#" class="card-title">Producto 3</a>
-                  </h3>
+                <li>
+                  <div class="product-card">
+                    <div
+                      class="card-banner img-holder"
+                      style="width: 360; height: 360"
+                    >
+                      <img
+                        src="../../assets/Images/Catalogo/C4A.jpg"
+                        width="360"
+                        height="360"
+                        loading="lazy"
+                        alt="Morbi vel arcu scelerisque"
+                        class="img-cover default"
+                      />
+                      <img
+                        src="../../assets/Images/Catalogo/C4B.png"
+                        width="360"
+                        height="360"
+                        loading="lazy"
+                        alt="Morbi vel arcu scelerisque"
+                        class="img-cover hover"
+                      />
 
-                  <data class="card-price" value="45">0 bs</data>
-
-                </div>
-
-              </div>
-            </li>
-
-            <li>
-              <div class="product-card">
-
-                <div class="card-banner img-holder" style="--width: 360; --height: 360;">
-                  <img src="../../assets/Images/Próximamente.png" width="360" height="360" loading="lazy"
-                    alt="Morbi vel arcu scelerisque" class="img-cover default">
-                  <img src="../../assets/Images/Próximamente.png" width="360" height="360" loading="lazy"
-                    alt="Morbi vel arcu scelerisque" class="img-cover hover">
-
-                  <button class="card-action-btn" aria-label="add to card" title="Add To Card">
-                    <ion-icon name="bookmark-outline" aria-hidden="true"></ion-icon>
-                  </button>
-                </div>
-
-                <div class="card-content">
-
-                  <div class="wrapper">
-                    <div class="rating-wrapper gray">
-                      <ion-icon name="star" aria-hidden="true"></ion-icon>
-                      <ion-icon name="star" aria-hidden="true"></ion-icon>
-                      <ion-icon name="star" aria-hidden="true"></ion-icon>
-                      <ion-icon name="star" aria-hidden="true"></ion-icon>
-                      <ion-icon name="star" aria-hidden="true"></ion-icon>
+                      <button
+                      class="card-action-btn favorito"
+                        aria-label="add to card"
+                        title="Add To Card"
+                      >
+                        <ion-icon
+                          name="bookmark-outline"
+                          aria-hidden="true"
+                        ></ion-icon>
+                      </button>
                     </div>
 
-                    <span class="span">(0)</span>
+                    <div class="card-content">
+                      <div class="wrapper">
+                        <div class="rating">
+                          <span class="star" data-value="5">&#9733;</span>
+                          <span class="star" data-value="4">&#9733;</span>
+                          <span class="star" data-value="3">&#9733;</span>
+                          <span class="star" data-value="2">&#9733;</span>
+                          <span class="star" data-value="1">&#9733;</span>
+                        </div>
+                        <!-- Número de reseñas -->
+                        <span class="review-count">(0)</span>
+                      </div>
+
+                      <h3 class="h3">
+                        <a
+                          href="#"
+                          class="card-title nombre"
+                          >Alimento Dog Chow Pollo Molido Todas las Etapas</a
+                        >
+                        <p class="invisible descripcion">Alimento de pollo molido para perros de todas las etapas de vida, proporciona nutrición completa y equilibrada.
+                        </p>
+                      </h3>
+                      <data class="card-price precio" value="55"
+                        >55 bs</data
+                      >
+                      <p class="invisible categoria">Comida</p>
+                    </div>
                   </div>
+                </li>
 
-                  <h3 class="h3">
-                    <a href="#" class="card-title">Producto 4</a>
-                  </h3>
+                <li>
+                  <div class="product-card">
+                    <div
+                      class="card-banner img-holder"
+                      style="--width: 360; --height: 360"
+                    >
+                      <img
+                        src="../../assets/Images/Catalogo/C5A.jpg"
+                        width="360"
+                        height="360"
+                        loading="lazy"
+                        alt="Morbi vel arcu scelerisque"
+                        class="img-cover default"
+                      />
+                      <img
+                        src="../../assets/Images/Catalogo/C5B.png"
+                        width="360"
+                        height="360"
+                        loading="lazy"
+                        alt="Morbi vel arcu scelerisque"
+                        class="img-cover hover"
+                      />
 
-                  <data class="card-price" value="49">0 bs</data>
-
-                </div>
-
-              </div>
-            </li>
-
-            <li>
-              <div class="product-card">
-
-                <div class="card-banner img-holder" style="--width: 360; --height: 360;">
-                  <img src="../../assets/Images/Próximamente.png" width="360" height="360" loading="lazy"
-                    alt="Morbi vel arcu scelerisque" class="img-cover default">
-                  <img src="../../assets/Images/Próximamente.png" width="360" height="360" loading="lazy"
-                    alt="Morbi vel arcu scelerisque" class="img-cover hover">
-
-                  <button class="card-action-btn" aria-label="add to card" title="Add To Card">
-                    <ion-icon name="bookmark-outline" aria-hidden="true"></ion-icon>
-                  </button>
-                </div>
-
-                <div class="card-content">
-
-                  <div class="wrapper">
-                    <div class="rating-wrapper gray">
-                      <ion-icon name="star" aria-hidden="true"></ion-icon>
-                      <ion-icon name="star" aria-hidden="true"></ion-icon>
-                      <ion-icon name="star" aria-hidden="true"></ion-icon>
-                      <ion-icon name="star" aria-hidden="true"></ion-icon>
-                      <ion-icon name="star" aria-hidden="true"></ion-icon>
+                      <button
+                      class="card-action-btn favorito"
+                        aria-label="add to card"
+                        title="Add To Card"
+                      >
+                        <ion-icon
+                          name="bookmark-outline"
+                          aria-hidden="true"
+                        ></ion-icon>
+                      </button>
                     </div>
 
-                    <span class="span">(0)</span>
+                    <div class="card-content">
+                      <div class="wrapper">
+                        <div class="rating">
+                          <span class="star" data-value="5">&#9733;</span>
+                          <span class="star" data-value="4">&#9733;</span>
+                          <span class="star" data-value="3">&#9733;</span>
+                          <span class="star" data-value="2">&#9733;</span>
+                          <span class="star" data-value="1">&#9733;</span>
+                        </div>
+                        <!-- Número de reseñas -->
+                        <span class="review-count">(0)</span>
+                      </div>
+
+                      <h3 class="h3">
+                        <a
+                          href="#"
+                          class="card-title nombre"
+                          >Comida para Perros DOGUI Adulto</a
+                        >
+                        <p class="invisible descripcion">Alimento balanceado especialmente diseñado para perros adultos, ofreciendo una nutrición completa y equilibrada para su bienestar.
+                        </p>
+                      </h3>
+
+                      <data class="card-price precio" value="55.5"
+                        >55.5 bs</data
+                      >
+                      <p class="invisible categoria">Comida</p>
+                    </div>
                   </div>
+                </li>
 
-                  <h3 class="h3">
-                    <a href="#" class="card-title">Producto 5</a>
-                  </h3>
+                <li>
+                  <div class="product-card">
+                    <div
+                      class="card-banner img-holder"
+                      style="--width: 360; --height: 360"
+                    >
+                      <img
+                        src="../../assets/Images/Catalogo/C6A.png"
+                        width="360"
+                        height="360"
+                        loading="lazy"
+                        alt="Nam justo libero porta ege"
+                        class="img-cover default"
+                      />
+                      <img
+                        src="../../assets/Images/Catalogo/C6B.png"
+                        width="360"
+                        height="360"
+                        loading="lazy"
+                        alt="Nam justo libero porta ege"
+                        class="img-cover hover"
+                      />
 
-                  <data class="card-price" value="85">0 bs</data>
-
-                </div>
-
-              </div>
-            </li>
-
-            <li>
-              <div class="product-card">
-
-                <div class="card-banner img-holder" style="--width: 360; --height: 360;">
-                  <img src="../../assets/Images/Próximamente.png" width="360" height="360" loading="lazy"
-                    alt="Nam justo libero porta ege" class="img-cover default">
-                  <img src="../../assets/Images/Próximamente.png" width="360" height="360" loading="lazy"
-                    alt="Nam justo libero porta ege" class="img-cover hover">
-
-                  <button class="card-action-btn" aria-label="add to card" title="Add To Card">
-                    <ion-icon name="bookmark-outline" aria-hidden="true"></ion-icon>
-                  </button>
-                </div>
-
-                <div class="card-content">
-
-                  <div class="wrapper">
-                    <div class="rating-wrapper gray">
-                      <ion-icon name="star" aria-hidden="true"></ion-icon>
-                      <ion-icon name="star" aria-hidden="true"></ion-icon>
-                      <ion-icon name="star" aria-hidden="true"></ion-icon>
-                      <ion-icon name="star" aria-hidden="true"></ion-icon>
-                      <ion-icon name="star" aria-hidden="true"></ion-icon>
+                      <button
+                      class="card-action-btn favorito"
+                        aria-label="add to card"
+                        title="Add To Card"
+                      >
+                        <ion-icon
+                          name="bookmark-outline"
+                          aria-hidden="true"
+                        ></ion-icon>
+                      </button>
                     </div>
 
-                    <span class="span">(0)</span>
+                    <div class="card-content">
+                      <div class="wrapper">
+                        <div class="rating">
+                          <span class="star" data-value="5">&#9733;</span>
+                          <span class="star" data-value="4">&#9733;</span>
+                          <span class="star" data-value="3">&#9733;</span>
+                          <span class="star" data-value="2">&#9733;</span>
+                          <span class="star" data-value="1">&#9733;</span>
+                        </div>
+                        <!-- Número de reseñas -->
+                        <span class="review-count">(0)</span>
+                      </div>
+
+                      <h3 class="h3">
+                        <a
+                          href="#"
+                          class="card-title nombre"
+                          >Alimneto Doguito purina carne</a
+                        >
+                        <p class="invisible descripcion">Una nutritiva y deliciosa opción para perros adultos, formulada con carne de alta calidad para una alimentación balanceada y sabrosa.
+                        </p>
+                      </h3>
+
+                      <data class="card-price precio" value="11"
+                        >11 bs</data
+                      >
+                      <p class="invisible categoria">Comida</p>
+                    </div>
                   </div>
+                </li>
 
-                  <h3 class="h3">
-                    <a href="#" class="card-title">Producto 6</a>
-                  </h3>
+                <li>
+                  <div class="product-card">
+                    <div
+                      class="card-banner img-holder"
+                      style="--width: 360; --height: 360"
+                    >
+                      <img
+                        src="../../assets/Images/Catalogo/C7A.png"
+                        width="360"
+                        height="360"
+                        loading="lazy"
+                        alt="Nam justo libero porta ege"
+                        class="img-cover default"
+                      />
+                      <img
+                        src="../../assets/Images/Catalogo/C7B.png"
+                        width="360"
+                        height="360"
+                        loading="lazy"
+                        alt="Nam justo libero porta ege"
+                        class="img-cover hover"
+                      />
 
-                  <data class="card-price" value="85">0 bs</data>
-
-                </div>
-
-              </div>
-            </li>
-
-            <li>
-              <div class="product-card">
-
-                <div class="card-banner img-holder" style="--width: 360; --height: 360;">
-                  <img src="../../assets/Images/Próximamente.png" width="360" height="360" loading="lazy"
-                    alt="Nam justo libero porta ege" class="img-cover default">
-                  <img src="../../assets/Images/Próximamente.png" width="360" height="360" loading="lazy"
-                    alt="Nam justo libero porta ege" class="img-cover hover">
-
-                  <button class="card-action-btn" aria-label="add to card" title="Add To Card">
-                    <ion-icon name="bookmark-outline" aria-hidden="true"></ion-icon>
-                  </button>
-                </div>
-
-                <div class="card-content">
-
-                  <div class="wrapper">
-                    <div class="rating-wrapper gray">
-                      <ion-icon name="star" aria-hidden="true"></ion-icon>
-                      <ion-icon name="star" aria-hidden="true"></ion-icon>
-                      <ion-icon name="star" aria-hidden="true"></ion-icon>
-                      <ion-icon name="star" aria-hidden="true"></ion-icon>
-                      <ion-icon name="star" aria-hidden="true"></ion-icon>
+                      <button
+                      class="card-action-btn favorito"
+                        aria-label="add to card"
+                        title="Add To Card"
+                      >
+                        <ion-icon
+                          name="bookmark-outline"
+                          aria-hidden="true"
+                        ></ion-icon>
+                      </button>
                     </div>
 
-                    <span class="span">(0)</span>
+                    <div class="card-content">
+                      <div class="wrapper">
+                        <div class="rating">
+                          <span class="star" data-value="5">&#9733;</span>
+                          <span class="star" data-value="4">&#9733;</span>
+                          <span class="star" data-value="3">&#9733;</span>
+                          <span class="star" data-value="2">&#9733;</span>
+                          <span class="star" data-value="1">&#9733;</span>
+                        </div>
+                        <!-- Número de reseñas -->
+                        <span class="review-count">(0)</span>
+                      </div>
+
+                      <h3 class="h3">
+                        <a
+                          href="#"
+                          class="card-title nombre"
+                          >Alimento Royal Canin Medio Adulto</a
+                        >
+                        <p class="invisible descripcion">Comida diseñada específicamente para perros adultos de tamaño mediano, proporcionando una nutrición completa y equilibrada para su salud y bienestar.
+                        </p>
+                      </h3>
+
+                      <data class="card-price precio" value="90"
+                        >90 bs</data
+                      >
+                      <p class="invisible categoria">Comida</p>
+                    </div>
                   </div>
+                </li>
 
-                  <h3 class="h3">
-                    <a href="#" class="card-title">Producto 7</a>
-                  </h3>
+                <li>
+                  <div class="product-card">
+                    <div
+                      class="card-banner img-holder"
+                      style="--width: 360; --height: 360"
+                    >
+                      <img
+                        src="../../assets/Images/Catalogo/C8A.png"
+                        width="360"
+                        height="360"
+                        loading="lazy"
+                        alt="Etiam commodo leo sed"
+                        class="img-cover default"
+                      />
+                      <img
+                        src="../../assets/Images/Catalogo/C8B.png"
+                        width="360"
+                        height="360"
+                        loading="lazy"
+                        alt="Etiam commodo leo sed"
+                        class="img-cover hover"
+                      />
 
-                  <data class="card-price" value="85">0 bs</data>
-
-                </div>
-
-              </div>
-            </li>
-
-            <li>
-              <div class="product-card">
-
-                <div class="card-banner img-holder" style="--width: 360; --height: 360;">
-                  <img src="../../assets/Images/Próximamente.png" width="360" height="360" loading="lazy"
-                    alt="Etiam commodo leo sed" class="img-cover default">
-                  <img src="../../assets/Images/Próximamente.png" width="360" height="360" loading="lazy"
-                    alt="Etiam commodo leo sed" class="img-cover hover">
-
-                  <button class="card-action-btn" aria-label="add to card" title="Add To Card">
-                    <ion-icon name="bookmark-outline" aria-hidden="true"></ion-icon>
-                  </button>
-                </div>
-
-                <div class="card-content">
-
-                  <div class="wrapper">
-                    <div class="rating-wrapper gray">
-                      <ion-icon name="star" aria-hidden="true"></ion-icon>
-                      <ion-icon name="star" aria-hidden="true"></ion-icon>
-                      <ion-icon name="star" aria-hidden="true"></ion-icon>
-                      <ion-icon name="star" aria-hidden="true"></ion-icon>
-                      <ion-icon name="star" aria-hidden="true"></ion-icon>
+                      <button
+                      class="card-action-btn favorito"
+                        aria-label="add to card"
+                        title="Add To Card"
+                      >
+                        <ion-icon
+                          name="bookmark-outline"
+                          aria-hidden="true"
+                        ></ion-icon>
+                      </button>
                     </div>
 
-                    <span class="span">(0)</span>
+                    <div class="card-content">
+                      <div class="wrapper">
+                        <div class="rating">
+                          <span class="star" data-value="5">&#9733;</span>
+                          <span class="star" data-value="4">&#9733;</span>
+                          <span class="star" data-value="3">&#9733;</span>
+                          <span class="star" data-value="2">&#9733;</span>
+                          <span class="star" data-value="1">&#9733;</span>
+                        </div>
+                        <!-- Número de reseñas -->
+                        <span class="review-count">(0)</span>
+                      </div>
+
+                      <h3 class="h3">
+                        <a
+                          href="#"
+                          class="card-title nombre"
+                          >Alimento Royal Canin Mini Junior</a
+                        >
+                        <p class="invisible descripcion">Comida especialmente formulada para cachorros de razas pequeñas, brindándoles la nutrición adecuada para su crecimiento y desarrollo óptimos.
+                        </p>
+                      </h3>
+
+                      <data class="card-price precio" value="72"
+                        >72 bs</data
+                      >
+                      <p class="invisible categoria">Comida</p>
+                    </div>
                   </div>
+                </li>
 
-                  <h3 class="h3">
-                    <a href="#" class="card-title">Producto 8</a>
-                  </h3>
+                <li>
+                  <div class="product-card">
+                    <div
+                      class="card-banner img-holder"
+                      style="--width: 360; --height: 360"
+                    >
+                      <img
+                        src="../../assets/Images/Catalogo/C9A.png"
+                        width="360"
+                        height="360"
+                        loading="lazy"
+                        alt="Etiam commodo leo sed"
+                        class="img-cover default"
+                      />
+                      <img
+                        src="../../assets/Images/Catalogo/C9B.png"
+                        width="360"
+                        height="360"
+                        loading="lazy"
+                        alt="Etiam commodo leo sed"
+                        class="img-cover hover"
+                      />
 
-                  <data class="card-price" value="55">0 bs</data>
+                      <button
+                      class="card-action-btn favorito"
+                        aria-label="add to card"
+                        title="Add To Card"
+                      >
+                        <ion-icon
+                          name="bookmark-outline"
+                          aria-hidden="true"
+                        ></ion-icon>
+                      </button>
+                    </div>
 
-                </div>
+                    <div class="card-content">
+                      <div class="wrapper">
+                        <div class="rating">
+                          <span class="star" data-value="5">&#9733;</span>
+                          <span class="star" data-value="4">&#9733;</span>
+                          <span class="star" data-value="3">&#9733;</span>
+                          <span class="star" data-value="2">&#9733;</span>
+                          <span class="star" data-value="1">&#9733;</span>
+                        </div>
+                        <!-- Número de reseñas -->
+                        <span class="review-count">(0)</span>
+                      </div>
 
-              </div>
-            </li>
+                      <h3 class="h3">
+                        <a
+                          href="#"
+                          class="card-title nombre"
+                          >Whiskas Sabor carne para adultos</a
+                        >
+                        <p class="invisible descripcion">Alimento diseñado para gatos adultos, ofreciendo un sabor a carne irresistible y una nutrición completa para mantener su salud y vitalidad.
+                        </p>
+                      </h3>
 
-          </ul>
+                      <data class="card-price precio" value="50"
+                        >50 bs</data
+                      >
+                      <p class="invisible categoria">Comida</p>
+                    </div>
+                  </div>
+                </li>
 
+                <li>
+                  <div class="product-card">
+                    <div
+                      class="card-banner img-holder"
+                      style="--width: 360; --height: 360"
+                    >
+                      <img
+                        src="../../assets/Images/Catalogo/C10A.png"
+                        width="360"
+                        height="360"
+                        loading="lazy"
+                        alt="Etiam commodo leo sed"
+                        class="img-cover default"
+                      />
+                      <img
+                        src="../../assets/Images/Catalogo/C10B.jpg"
+                        width="360"
+                        height="360"
+                        loading="lazy"
+                        alt="Etiam commodo leo sed"
+                        class="img-cover hover"
+                      />
+
+                      <button
+                      class="card-action-btn favorito"
+                        aria-label="add to card"
+                        title="Add To Card"
+                      >
+                        <ion-icon
+                          name="bookmark-outline"
+                          aria-hidden="true"
+                        ></ion-icon>
+                      </button>
+                    </div>
+
+                    <div class="card-content">
+                      <div class="wrapper">
+                        <div class="rating">
+                          <span class="star" data-value="5">&#9733;</span>
+                          <span class="star" data-value="4">&#9733;</span>
+                          <span class="star" data-value="3">&#9733;</span>
+                          <span class="star" data-value="2">&#9733;</span>
+                          <span class="star" data-value="1">&#9733;</span>
+                        </div>
+                        <!-- Número de reseñas -->
+                        <span class="review-count">(0)</span>
+                      </div>
+
+                      <h3 class="h3">
+                        <a
+                          href="#"
+                          class="card-title nombre"
+                          >Whiskas Sabor pollo para adultos</a
+                        >
+                        <p class="invisible descripcion">Alimento especialmente creado para gatos adultos, con un delicioso sabor a pollo y una fórmula que proporciona la nutrición completa que necesitan para mantenerse saludables y activos.
+                        </p>
+                      </h3>
+
+                      <data class="card-price precio" value="42"
+                        >42 bs</data
+                      >
+                      <p class="invisible categoria">Comida</p>
+                    </div>
+                  </div>
+                </li>
+
+                <li>
+                  <div class="product-card">
+                    <div
+                      class="card-banner img-holder"
+                      style="--width: 360; --height: 360"
+                    >
+                      <img
+                        src="../../assets/Images/Catalogo/C11A.jpg"
+                        width="360"
+                        height="360"
+                        loading="lazy"
+                        alt="Etiam commodo leo sed"
+                        class="img-cover default"
+                      />
+                      <img
+                        src="../../assets/Images/Catalogo/C11B.jpg"
+                        width="360"
+                        height="360"
+                        loading="lazy"
+                        alt="Etiam commodo leo sed"
+                        class="img-cover hover"
+                      />
+
+                      <button
+                      class="card-action-btn favorito"
+                        aria-label="add to card"
+                        title="Add To Card"
+                      >
+                        <ion-icon
+                          name="bookmark-outline"
+                          aria-hidden="true"
+                        ></ion-icon>
+                      </button>
+                    </div>
+
+                    <div class="card-content">
+                      <div class="wrapper">
+                        <div class="rating">
+                          <span class="star" data-value="5">&#9733;</span>
+                          <span class="star" data-value="4">&#9733;</span>
+                          <span class="star" data-value="3">&#9733;</span>
+                          <span class="star" data-value="2">&#9733;</span>
+                          <span class="star" data-value="1">&#9733;</span>
+                        </div>
+                        <!-- Número de reseñas -->
+                        <span class="review-count">(0)</span>
+                      </div>
+
+                      <h3 class="h3">
+                        <a
+                          href="#"
+                          class="card-title nombre"
+                          >Felix Purina Fantastic Comida Húmeda para Gato
+                          Adulto Pack Surtido Carnes</a
+                        >
+                        <p class="invisible descripcion">Selección variada de alimentos húmedos para gatos adultos, ofreciendo una mezcla deliciosa de carnes para satisfacer el paladar de tu felino y proporcionarle una alimentación equilibrada.
+                        </p>
+                      </h3>
+
+                      <data class="card-price precio" value="66"
+                        >66 bs</data
+                      >
+                      <p class="invisible categoria">Comida</p>
+                    </div>
+                  </div>
+                </li>
+
+                <li>
+                  <div class="product-card">
+                    <div
+                      class="card-banner img-holder"
+                      style="--width: 360; --height: 360"
+                    >
+                      <img
+                        src="../../assets/Images/Catalogo/C12A.png"
+                        width="360"
+                        height="360"
+                        loading="lazy"
+                        alt="Etiam commodo leo sed"
+                        class="img-cover default"
+                      />
+                      <img
+                        src="../../assets/Images/Catalogo/C12A.png"
+                        width="360"
+                        height="360"
+                        loading="lazy"
+                        alt="Etiam commodo leo sed"
+                        class="img-cover hover"
+                      />
+
+                      <button
+                      class="card-action-btn favorito"
+                        aria-label="add to card"
+                        title="Add To Card"
+                      >
+                        <ion-icon
+                          name="bookmark-outline"
+                          aria-hidden="true"
+                        ></ion-icon>
+                      </button>
+                    </div>
+
+                    <div class="card-content">
+                      <div class="wrapper">
+                        <div class="rating">
+                          <span class="star" data-value="5">&#9733;</span>
+                          <span class="star" data-value="4">&#9733;</span>
+                          <span class="star" data-value="3">&#9733;</span>
+                          <span class="star" data-value="2">&#9733;</span>
+                          <span class="star" data-value="1">&#9733;</span>
+                        </div>
+                        <!-- Número de reseñas -->
+                        <span class="review-count">(0)</span>
+                      </div>
+
+                      <h3 class="h3">
+                        <a
+                          href="#"
+                          class="card-title nombre"
+                          >Gato Castrado Podium Cat</a
+                        >
+                        <p class="invisible descripcion">Alimento especialmente diseñado para gatos castrados, con una fórmula que ayuda a mantener un peso saludable y cuidar la salud del tracto urinario, proporcionando una nutrición completa y equilibrada para su bienestar.
+                        </p>
+                      </h3>
+
+                      <data class="card-price precio" value="28"
+                        >28 bs</data
+                      >
+                      <p class="invisible categoria">Comida</p>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+            <button class="carousel-button next" onclick="moveCarousel(1)">
+              &#10095;
+            </button>
+          </div>
         </div>
       </section>
-
-
 
 
 
@@ -978,6 +1463,8 @@
   -->
   <link rel="stylesheet" href="../core/style.css?v=1.2"> <!-- Cambia la versión según sea necesario -->
   <script src="../core/script.js?v=1.2" defer></script> <!-- Cambia la versión según sea necesario -->
+  <script src="../core/catalogo.js" defer></script>
+  <script src="../core/favoritos.js" defer></script>
 
 
   <!-- 
