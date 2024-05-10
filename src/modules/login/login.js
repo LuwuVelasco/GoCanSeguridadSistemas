@@ -79,32 +79,18 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-function sendVerificationCode() {
-    const email = document.getElementById('forgotEmail').value;
-    const verificationCode = generateRandomCode(); // Generar código aleatorio
-    console.log('Código de verificación:', verificationCode);
-
-    // Aquí debes enviar el correo electrónico con el código de verificación
-    emailjs.send("service_kck40bs", "template_hi16edm", {
-        to_email: email,
-        verification_code: verificationCode
-    }).then(function(response) {    
-        console.log('Correo electrónico enviado con éxito:', response);
-        document.getElementById('forgotPasswordModal').style.display = 'none';
-        document.getElementById('resetPasswordModal').style.display = 'block';
-    }, function(error) {
-        console.error('Error al enviar el correo electrónico:', error);
-        alert('Error al enviar el correo electrónico');
-    });
-}
-
-
 function resetPassword() {
     const email = document.getElementById('forgotEmail').value;
     const verificationCode = document.getElementById('verificationCode').value;
     const newPassword = document.getElementById('newPassword').value;
 
-    // Primero, cambiamos la contraseña del correo electrónico
+    // Verificar que el código de verificación ingresado sea igual al código generado aleatoriamente
+    if (verificationCode !== sessionStorage.getItem('verificationCode')) {
+        alert('El código de verificación es incorrecto');
+        return;
+    }
+
+    // Si el código de verificación es correcto, procedemos a cambiar la contraseña
     fetch('http://localhost/GoCan/src/modules/php/new_password.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -113,25 +99,8 @@ function resetPassword() {
     .then(response => response.json())
     .then(data => {
         if (data.estado === "success") {
-            // Si el cambio de contraseña del correo electrónico es exitoso, procedemos a cambiarla en la base de datos
-            fetch('http://localhost/GoCan/src/modules/php/new_password.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: `email=${encodeURIComponent(email)}&verification_code=${encodeURIComponent(verificationCode)}&new_password=${encodeURIComponent(newPassword)}`
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.estado === "success") {
-                    alert('Contraseña cambiada exitosamente');
-                    document.getElementById('resetPasswordModal').style.display = 'none';
-                } else {
-                    alert(data.mensaje); // Mostrar mensaje de error
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error al procesar la solicitud');
-            });
+            alert('Contraseña cambiada exitosamente');
+            document.getElementById('resetPasswordModal').style.display = 'none';
         } else {
             alert(data.mensaje); // Mostrar mensaje de error
         }
@@ -139,6 +108,28 @@ function resetPassword() {
     .catch(error => {
         console.error('Error:', error);
         alert('Error al procesar la solicitud');
+    });
+}
+
+function sendVerificationCode() {
+    const email = document.getElementById('forgotEmail').value;
+    const verificationCode = generateRandomCode(); // Generar código aleatorio
+    console.log('Código de verificación:', verificationCode);
+
+    // Almacenar el código de verificación en sessionStorage para la comparación posterior
+    sessionStorage.setItem('verificationCode', verificationCode);
+
+    // Aquí debes enviar el correo electrónico con el código de verificación
+    emailjs.send("service_kck40bs", "template_hi16edm", {
+        to_email: email,
+        verification_code: verificationCode
+    }).then(function(response) {
+        console.log('Correo electrónico enviado con éxito:', response);
+        document.getElementById('forgotPasswordModal').style.display = 'none';
+        document.getElementById('resetPasswordModal').style.display = 'block';
+    }, function(error) {
+        console.error('Error al enviar el correo electrónico:', error);
+        alert('Error al enviar el correo electrónico');
     });
 }
 
