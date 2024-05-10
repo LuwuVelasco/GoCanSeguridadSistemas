@@ -716,31 +716,57 @@ main > article, .hero, .main {
 }
 
 .modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 9999;
-  display: none;
-  justify-content: center;
-  align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1050;
+    display: flex;
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center; /* Centra verticalmente */
+    backdrop-filter: blur(8px);
+  }
+  
+  .modal-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: var(--shadow-1);
+    position: relative;
+    width: 80%; /* Adjust this value based on your layout needs */
+    max-width: 500px; /* Ensures modal does not stretch too far */
+    display: flex;
+    flex-direction: column; /* Ensures stacked elements within the modal */
+    align-items: center; /* Centers the content horizontally */
+    justify-content: center; /* Helps with vertical centering */
+    padding: 20px;
+    gap: 20px; /* Espaciado uniforme entre elementos del formulario */
+  }
+
+.modal-content form {
+    display: flex; /* Apply flexbox layout to form */
+    flex-wrap: wrap;  /* Allows form items to wrap */
+    justify-content: space-between; /* Distributes space between items */
+    align-items: center; /* Align items vertically */
 }
 
-.modal-content {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 5px;
-  max-width: 500px;
-  width: 80%;
-  position: relative;
+.modal-content #sbt {
+    display: flex; /* Using flex to align buttons */
+    justify-content: center; /* Centering buttons horizontally */
+    width: 100%; /* Taking full width to center correctly */
+    margin-top: 5px; /* Optional: adds some space above the buttons */
+}
+
+#reserveForm button {
+    margin: 0 10px; /* Giving equal spacing on both sides */
+    flex: 1; /* Each button takes equal space */
 }
 
 /* Agregamos estilos para los botones */
 .button {
     background: #fff;
-    
     border: 2px solid transparent;
     border-radius: 20px;
     padding: 20px;
@@ -751,6 +777,7 @@ main > article, .hero, .main {
     transition: all 0.3s ease;
     box-shadow: 0 2px 6px rgba(136, 148, 171, 0.2), 0 24px 20px -24px rgba(71, 82, 107, 0.1);
     cursor: pointer;
+    width: 250px;
 }
 
 .button:hover {

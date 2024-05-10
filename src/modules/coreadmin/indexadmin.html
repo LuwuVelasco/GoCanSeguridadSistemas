@@ -19,8 +19,8 @@
             <div class="profile" onclick="toggleDropdown()">
                 <img src="../../assets/Images/user-md.png">
                 <div class="account">
-                    <h5>Elmer Gonzales</h5>
-                    <p>e.gonzales@gmail.com</p>
+                    <h5>Usuario</h5>
+                    <p>usuario@gmail.com</p>
                 </div>
                 <div class="profile-dropdown" id="profileDropdown">
                     <ul>
@@ -113,7 +113,7 @@
     <div id="reserveModal" class="modal" style="display:none;">
         <div class="modal-content">
             <div class="modal-header">Registrar Veterinario</div>
-            <span class="close">&times;</span>
+            <span class="close" onclick="closeModal()">&times;</span>
             <form id="reserveForm">
                 <input type="text" id="propietario" placeholder="Nombre del Veterinario" required>
                 <select id="servicio" required>
@@ -124,8 +124,10 @@
                     <option value="desparacitacion">Desparasitación</option>
                     <option value="consulta_general">Consulta General</option>
                 </select>
-                <button type="submit">Registrar</button>
-                <button type="submit">Cancelar</button>
+                <div id="sbt">
+                    <button type="submit">Registrar</button>
+                    <button type="submit" onclick="closeModal()">Cancelar</button>
+                </div>
             </form>
         </div>
     </div>

@@ -60,6 +60,9 @@ document.addEventListener('DOMContentLoaded', function() {
 function openModal() {
     var modal = document.getElementById('reserveModal');
     modal.style.display = 'block';
+    modal.style.alignItems = 'center'; // Alineación vertical centrada
+    modal.style.justifyContent = 'center'; // Alineación horizontal centrada
+    modal.style.display = 'flex';
 }
 
 function closeModal() {
