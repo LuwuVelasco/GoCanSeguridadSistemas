@@ -18,12 +18,12 @@ try {
     $stmt->bindParam(':especialidad', $especialidad);
 
     if ($stmt->execute()) {
-        echo "<p>Veterinario registrado con éxito.</p>";
+        echo "Veterinario registrado con éxito.";
     } else {
-        echo "<p>Error al registrar el veterinario.</p>";
+        echo "Error al registrar el veterinario.";
     }
 } catch (PDOException $e) {
-    echo "<p>Error de conexión o consulta: " . $e->getMessage() . "</p>";
+    echo "Error de conexión o consulta: " . $e->getMessage();
 }
 
 $conn = null;

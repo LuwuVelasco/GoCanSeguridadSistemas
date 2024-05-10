@@ -17,12 +17,16 @@ document.getElementById('reserveForm').addEventListener('submit', function(event
         body: formData
     })
     .then(response => response.text())  // Convierte la respuesta a texto.
-    .then(html => {
-        document.getElementById('reserveModal').innerHTML = html; // Muestra la respuesta dentro del modal.
-        openModal();  // Abre el modal para mostrar el resultado.
+    .then(text => {
+        alert(text);  // Muestra la respuesta como una alerta del navegador.
+        closeModal();  // Cierra el modal después de mostrar la alerta.
     })
-    .catch(error => console.error('Error:', error));  // Maneja errores.
+    .catch(error => {
+        console.error('Error:', error);
+        alert("Ha ocurrido un error al intentar registrar.");  // Muestra un mensaje de error si la petición falla.
+    });
 });
+
 
 
 
