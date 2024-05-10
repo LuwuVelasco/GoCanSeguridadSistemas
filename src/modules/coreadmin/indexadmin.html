@@ -114,23 +114,25 @@
         <div class="modal-content">
             <div class="modal-header">Registrar Veterinario</div>
             <span class="close" onclick="closeModal()">&times;</span>
-            <form id="reserveForm">
-                <input type="text" id="propietario" placeholder="Nombre del Veterinario" required>
-                <select id="servicio" required>
-                    <option value="">Seleccionar servicio...</option>
+            <form id="reserveForm" method="post" action="../php/empleados.php">
+                <input type="text" id="nombre" name="nombre" placeholder="Nombre del Veterinario" required>
+                <input type="text" id="cargo" name="cargo" placeholder="Cargo del Veterinario" required>
+                <select id="especialidad" name="especialidad" required>
+                    <option value="">Seleccionar especialidad...</option>
                     <option value="vacunas">Vacunas</option>
                     <option value="traumatologia">Traumatología</option>
                     <option value="odontologia">Odontología</option>
                     <option value="desparacitacion">Desparasitación</option>
                     <option value="consulta_general">Consulta General</option>
                 </select>
-                <div id="sbt">
+                <div>
                     <button type="submit">Registrar</button>
-                    <button type="submit" onclick="closeModal()">Cancelar</button>
+                    <button type="button" onclick="closeModal()">Cancelar</button>
                 </div>
             </form>
         </div>
     </div>
+    
 
     <script src="admin.js"></script>
     <script src="admin.js?v=1.2"></script>

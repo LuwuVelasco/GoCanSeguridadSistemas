@@ -6,6 +6,26 @@ const leftSection = document.querySelector('.left-section');
 
 let isMenuOpen = false;
 
+document.getElementById('reserveForm').addEventListener('submit', function(event) {
+    event.preventDefault();  // Previene el envío normal del formulario.
+
+    const formData = new FormData(this);  // Recolecta los datos del formulario.
+
+    // Realiza la petición al servidor
+    fetch(this.action, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.text())  // Convierte la respuesta a texto.
+    .then(html => {
+        document.getElementById('reserveModal').innerHTML = html; // Muestra la respuesta dentro del modal.
+        openModal();  // Abre el modal para mostrar el resultado.
+    })
+    .catch(error => console.error('Error:', error));  // Maneja errores.
+});
+
+
+
 sidebarItems.forEach(sideItem => {
     sideItem.addEventListener('click', () => {
         sidebarItems.forEach(item => {
