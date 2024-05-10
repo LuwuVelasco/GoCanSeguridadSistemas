@@ -37,3 +37,96 @@ function iniciarSesion() {
         alert('Error al procesar la solicitud');
     });
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    emailjs.init("qzlkC2mOywaQA8mot"); // Asegúrate de usar tu userID correcto aquí
+
+    
+    const forgotPasswordLink = document.getElementById('forgotPassword');
+    const forgotPasswordModal = document.getElementById('forgotPasswordModal');
+    const resetPasswordModal = document.getElementById('resetPasswordModal');
+
+    if (forgotPasswordLink) {
+        forgotPasswordLink.addEventListener('click', function(event) {
+            event.preventDefault();
+            forgotPasswordModal.style.display = 'block';
+        });
+    }
+
+    const sendVerificationCodeBtn = document.getElementById('sendVerificationCodeBtn');
+    if (sendVerificationCodeBtn) {
+        sendVerificationCodeBtn.addEventListener('click', function(event) {
+            event.preventDefault();
+            sendVerificationCode();
+        });
+    }
+
+    const resetPasswordBtn = document.getElementById('resetPasswordBtn');
+    if (resetPasswordBtn) {
+        resetPasswordBtn.addEventListener('click', function(event) {
+            event.preventDefault();
+            resetPassword();
+        });
+    }
+
+    // Cerrar el modal cuando se hace clic en la 'X'
+    const closeButtons = document.querySelectorAll('.close');
+    closeButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            forgotPasswordModal.style.display = 'none';
+            resetPasswordModal.style.display = 'none';
+        });
+    });
+});
+
+function sendVerificationCode() {
+    const email = document.getElementById('forgotEmail').value;
+    const verificationCode = generateRandomCode(); // Generar código aleatorio
+    console.log('Código de verificación:', verificationCode);
+
+    // Aquí debes enviar el correo electrónico con el código de verificación
+    emailjs.send("service_kck40bs", "template_hi16edm", {
+        to_email: email,
+        verification_code: verificationCode
+    }).then(function(response) {
+        console.log('Correo electrónico enviado con éxito:', response);
+        document.getElementById('forgotPasswordModal').style.display = 'none';
+        document.getElementById('resetPasswordModal').style.display = 'block';
+    }, function(error) {
+        console.error('Error al enviar el correo electrónico:', error);
+        alert('Error al enviar el correo electrónico');
+    });
+}
+
+
+function resetPassword() {
+    const verificationCode = document.getElementById('verificationCode').value;
+    const newPassword = document.getElementById('newPassword').value;
+    const email = document.getElementById('forgotEmail').value;
+
+    // Enviar el código de verificación y la nueva contraseña al servidor
+    fetch('http://localhost/GoCan/src/modules/php/reset_password.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `email=${encodeURIComponent(email)}&verification_code=${encodeURIComponent(verificationCode)}&new_password=${encodeURIComponent(newPassword)}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.estado === "success") {
+            alert(data.mensaje); // Muestra un mensaje de éxito
+            // Redirige al usuario a la página de inicio de sesión o a otra página
+            window.location.href = 'http://localhost/GoCan/src/modules/login.html';
+        } else {
+            alert(data.mensaje); // Muestra un mensaje de error
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error al procesar la solicitud');
+    });
+}
+
+function generateRandomCode() {
+    // Función para generar un código aleatorio de 5 caracteres
+    return Math.random().toString(36).substring(2, 7).toUpperCase();
+}
