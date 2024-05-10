@@ -1,36 +1,32 @@
 <?php
-header('Content-Type: application/json');
+$host = "localhost";
+$port = "5432";
+$dbname = "gocan";
+$username = "postgres";
+$password = "admin";
+$dsn = "pgsql:host=$host;port=$port;dbname=$dbname;user=$username;password=$password";
 
-$json = file_get_contents('php://input');
-$data = json_decode($json);
+try {
+    $conn = new PDO($dsn);
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-$nombre = $data->nombre;
-$descripcion = $data->descripcion;
-$precio = $data->precio;
-$categoria = $data->categoria;
-$id_usuario = 101;
+    // Asumiendo que los datos del producto son enviados como JSON en el cuerpo de la solicitud POST
+    $data = json_decode(file_get_contents("php://input"), true);
 
-$conexion = pg_connect("dbname=gocan user=postgres password=admin");
-if (!$conexion) {
-    echo json_encode(["estado" => "error_conexion"]);
-    exit();
+    // Preparar la sentencia SQL
+    $stmt = $conn->prepare("INSERT INTO producto (nombre, descripcion, precio, categoria, id_usuario) VALUES (:nombre, :descripcion, :precio, :categoria, 1)");
+
+    // Vincular parámetros
+    $stmt->bindParam(':nombre', $data['nombre']);
+    $stmt->bindParam(':descripcion', $data['descripcion']);
+    $stmt->bindParam(':precio', $data['precio']);
+    $stmt->bindParam(':categoria', $data['categoria']);
+
+    // Ejecutar la sentencia
+    $stmt->execute();
+
+    echo "Producto registrado con éxito.";
+} catch (PDOException $e) {
+    die("Error de conexión: " . $e->getMessage());
 }
-
-$sql_producto = "INSERT INTO producto (nombre, descripcion, precio, categoria, id_usuario) VALUES ($1, $2, $3, $4,$5) RETURNING id_producto";
-$stmt = pg_prepare($conexion, "insert_producto", $sql_producto);
-
-if ($stmt === false) {
-    echo json_encode(["estado" => "error_preparar_consulta"]);
-    exit();
-}
-
-$resultado_producto = pg_execute($conexion, "insert_producto", array($nombre, $descripcion, $precio, $categoria, $id_usuario));
-if (!$resultado_producto) {
-    echo json_encode(["estado" => "error_insertar_producto"]);
-    exit();
-}
-$id_producto = pg_fetch_result($resultado_producto, 0, 'id_producto');
-echo json_encode(["estado" => "producto_registrado", "id_producto" => $id_producto]);
-
-pg_close($conexion);
 ?>
