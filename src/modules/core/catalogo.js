@@ -18,7 +18,12 @@ document.addEventListener('DOMContentLoaded', function() {
               body: JSON.stringify(productData)
           })
           .then(response => response.text())
-          .then(data => console.log('Respuesta del servidor:', data))
+          .then(data => {
+            console.log('Respuesta del servidor:', data);
+            // Actualizar el span aquí después de la respuesta del servidor
+            const contadorSpan = document.querySelector('.btn-badge');
+            contadorSpan.textContent = parseInt(contadorSpan.textContent) + 1;
+        })
           .catch(error => console.error('Error:', error));
       });
   });
