@@ -2,7 +2,7 @@
 header('Content-Type: application/json');
 
 // Conectar a la base de datos
-$conexion = pg_connect("dbname=gocan user=postgres password=Jesus.2004");
+$conexion = pg_connect("dbname=gocan user=postgres password=admin");
 if (!$conexion) {
     echo json_encode(["estado" => "error", "mensaje" => "No se pudo conectar a la base de datos"]);
     exit;
