@@ -14,14 +14,14 @@ try {
     $data = json_decode(file_get_contents("php://input"), true);
 
     // Preparar la sentencia SQL
-    $stmt = $conn->prepare("INSERT INTO producto (nombre, descripcion, precio, categoria, id_usuario) VALUES (:nombre, :descripcion, :precio, :categoria, 1)");
+    $stmt = $conn->prepare("INSERT INTO producto (nombre, descripcion, precio, categoria, id_usuario) VALUES (:nombre, :descripcion, :precio, :categoria, :id_usuario)");
 
     // Vincular parámetros
     $stmt->bindParam(':nombre', $data['nombre']);
     $stmt->bindParam(':descripcion', $data['descripcion']);
     $stmt->bindParam(':precio', $data['precio']);
     $stmt->bindParam(':categoria', $data['categoria']);
-
+    $stmt->bindParam(':id_usuario', $data['id_usuario']);
     // Ejecutar la sentencia
     $stmt->execute();
 
