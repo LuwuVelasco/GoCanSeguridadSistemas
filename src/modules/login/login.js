@@ -22,9 +22,12 @@ function iniciarSesion() {
     .then(response => response.json())
     .then(data => {
         if (data.estado === "success") {
+            // En tu login.js, después de establecer el localStorage
+localStorage.setItem('id_usuario', data.id_usuario);
+console.log('id_usuario guardado:', localStorage.getItem('id_usuario'));
             // Redirigir al usuario basado en el valor de cargo
             if (!data.cargo) {
-                window.location.href = 'http://localhost/GoCan/src/modules/citas/citas.html';
+                window.location.href = 'http://localhost/GoCan/src/modules/core/index.html';
             } else {
                 window.location.href = 'http://localhost/GoCan/src/modules/coreadmin/indexadmin.html';
             }

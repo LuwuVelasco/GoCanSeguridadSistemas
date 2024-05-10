@@ -127,3 +127,59 @@ const activeElemOnScroll = function () {
 
 addEventOnElem(window, "scroll", activeElemOnScroll);
 
+// Función básica para mover el carrusel
+let currentSlide = 0;
+function moveCarousel(step) {
+  const slideContainer = document.querySelector('.carousel-slide');
+  const slides = document.querySelectorAll('.product-card');
+  const slideWidth = document.querySelector('.product-card').clientWidth;
+  const totalWidth = slideContainer.scrollWidth;
+  const visibleWidth = slideContainer.offsetWidth;
+  const maxSlide = Math.floor((totalWidth - visibleWidth) / (slideWidth + 15)); // 15 es el margen entre tarjetas
+
+  currentSlide += step;
+
+  if (currentSlide < 0) {
+    currentSlide = 0; // Evitar ir más allá del primer elemento
+  } else if (currentSlide > maxSlide) {
+    currentSlide = maxSlide; // Evitar ir más allá del último elemento visible
+  }
+
+  // Calcular el nuevo desplazamiento
+  const newTransform = -currentSlide * (slideWidth + 15); // 15 es el margen derecho de .product-card
+  slideContainer.style.transform = `translateX(${newTransform}px)`;
+}
+
+document.querySelectorAll('.product-card').forEach(card => {
+  card.querySelectorAll('.rating .star').forEach(star => {
+      star.addEventListener('click', function() {
+          let currentRating = this.getAttribute('data-value');
+          let stars = this.parentElement.querySelectorAll('.star');
+          
+          stars.forEach(innerStar => {
+              let ratingValue = innerStar.getAttribute('data-value');
+              if (ratingValue <= currentRating) {
+                  innerStar.classList.add('active');
+              } else {
+                  innerStar.classList.remove('active');
+              }
+          });
+      });
+  });
+});
+document.addEventListener('DOMContentLoaded', function() {
+  // Selecciona cada tarjeta de producto dentro del carrusel
+  const productCards = document.querySelectorAll('.product-card');
+
+  productCards.forEach(card => {
+    const stars = card.querySelectorAll('.star');
+    const reviewCount = card.querySelector('.review-count');
+
+    stars.forEach(star => {
+      star.addEventListener('click', function() {
+        const ratingValue = parseInt(star.getAttribute('data-value'), 10);
+        reviewCount.textContent = `(${ratingValue})`;
+      });
+    });
+  });
+});

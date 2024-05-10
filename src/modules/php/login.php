@@ -18,7 +18,7 @@ $result = pg_execute($conexion, "login_query", array($email, $password));
 
 if ($row = pg_fetch_assoc($result)) {
     // Si la consulta devuelve un resultado, las credenciales son correctas
-    echo json_encode(["estado" => "success", "cargo" => $row['cargo']]);
+    echo json_encode(["estado" => "success", "id_usuario" => $row['id_usuario'], "cargo" => $row['cargo']]);
 } else {
     // No se encontró un usuario con esas credenciales
     echo json_encode(["estado" => "error", "mensaje" => "El email o la contraseña son incorrectos"]);
