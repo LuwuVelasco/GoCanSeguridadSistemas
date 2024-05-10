@@ -35,10 +35,25 @@ document.querySelector('.modal .close').addEventListener('click', function() {
 
 document.getElementById('reserveForm').addEventListener('submit', function(event) {
   event.preventDefault();
-  // Aquí podrías agregar el código para enviar los datos al servidor
-  console.log('Reserva hecha');
-  this.closest('.modal').style.display = 'none';
+  
+  // Recolectar datos del formulario
+  const formData = new FormData(this);
+
+  // Enviar los datos al servidor usando fetch
+  fetch('../php/citas.php', {
+      method: 'POST',
+      body: formData
+  })
+  .then(response => response.text())
+  .then(data => {
+      console.log('Respuesta del servidor:', data);
+      this.closest('.modal').style.display = 'none';
+      alert('Cita reservada con éxito!');
+      // Aquí puedes actualizar tu lista de reservaciones o lo que necesites
+  })
+  .catch(error => console.error('Error:', error));
 });
+
 
 // Evento para abrir la ventana modal de Reservas
 document.querySelector('[data-nav-link="reservas"]').addEventListener('click', function(event) {

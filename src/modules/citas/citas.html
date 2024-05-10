@@ -137,22 +137,22 @@
       <div class="modal-header">Agendar Cita</div>
       <span class="close">&times;</span>
       <form id="reserveForm">
-          <input type="text" id="propietario" placeholder="Nombre del Propietario" required>
-          <!-- Campo de selección de servicio como un combo box -->
-          <select id="servicio" required>
+        <input type="text" id="propietario" name="propietario" placeholder="Nombre del Propietario" required>
+        <select id="servicio" name="servicio" required>
             <option value="">Seleccionar servicio...</option>
             <option value="vacunas">Vacunas</option>
             <option value="traumatologia">Traumatología</option>
             <option value="odontologia">Odontología</option>
             <option value="desparacitacion">Desparasitación</option>
             <option value="consulta_general">Consulta General</option>
-          </select>
-          <input type="text" id="doctor" placeholder="Doctor" required>
-          <!-- Separación de campos de fecha y hora -->
-          <input type="date" id="fecha" placeholder="Fecha" required>
-          <input type="time" id="hora" placeholder="Hora" required>
-          <button type="submit">Reservar</button>
-      </form>
+        </select>
+        <input type="text" id="doctor" name="doctor" placeholder="Doctor" required>
+        <input type="date" id="fecha" name="fecha" placeholder="Fecha" required>
+        <input type="time" id="hora" name="hora" placeholder="Hora" required>
+        <input type="hidden" id="id_usuario" name="id_usuario" value="ID_DEL_USUARIO">
+        <input type="hidden" id="id_doctor" name="id_doctor" value="ID_DEL_DOCTOR">
+        <button type="submit">Reservar</button>
+    </form>
   </div>
 </div>
 
