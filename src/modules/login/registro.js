@@ -53,7 +53,10 @@ function promptForToken(sentToken, email, nombre, password, cargo) {
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Error al registrar el usuario');
+            alert('Registro exitosamente');
+            document.getElementById('email').value = '';
+            document.getElementById('nombre').value = '';
+            document.getElementById('password').value = '';
         });
     } else {
         alert('El token ingresado no es correcto. Intente nuevamente.');

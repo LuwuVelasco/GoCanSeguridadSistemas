@@ -2,7 +2,7 @@
 header('Content-Type: application/json');
 
 $json = file_get_contents('php://input');
-$data = json_decode($json, true);  // Asegúrate de que estás usando true para obtener un array asociativo
+$data = json_decode($json, true);
 
 echo "Datos recibidos: ";
 print_r($data);
@@ -11,10 +11,9 @@ if (isset($data['token'], $data['verified']) && $data['verified'] == true) {
     if (isset($data['email'], $data['nombre'], $data['password'])) {
         $email = $data['email'];
         $nombre = $data['nombre'];
-        $password = $data['password'];
+        $password = $data['password']; // Encriptar contraseña
         $token = $data['token'];
-        // Asegúrate de manejar correctamente el booleano de 'cargo'
-        $cargo = isset($data['cargo']) ? filter_var($data['cargo'], FILTER_VALIDATE_BOOLEAN) : false;
+        $cargo = ($data['cargo']);
 
         $conexion = pg_connect("dbname=gocan user=postgres password=admin");
         if (!$conexion) {
