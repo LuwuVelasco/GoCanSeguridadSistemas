@@ -88,7 +88,7 @@ function sendVerificationCode() {
     emailjs.send("service_kck40bs", "template_hi16edm", {
         to_email: email,
         verification_code: verificationCode
-    }).then(function(response) {
+    }).then(function(response) {    
         console.log('Correo electrónico enviado con éxito:', response);
         document.getElementById('forgotPasswordModal').style.display = 'none';
         document.getElementById('resetPasswordModal').style.display = 'block';
@@ -100,24 +100,40 @@ function sendVerificationCode() {
 
 
 function resetPassword() {
+    const email = document.getElementById('forgotEmail').value;
     const verificationCode = document.getElementById('verificationCode').value;
     const newPassword = document.getElementById('newPassword').value;
-    const email = document.getElementById('forgotEmail').value;
 
-    // Enviar el código de verificación y la nueva contraseña al servidor
-    fetch('http://localhost/GoCan/src/modules/php/reset_password.php', {
+    // Primero, cambiamos la contraseña del correo electrónico
+    fetch('http://localhost/GoCan/src/modules/php/new_password.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `email=${encodeURIComponent(email)}&verification_code=${encodeURIComponent(verificationCode)}&new_password=${encodeURIComponent(newPassword)}`
+        body: `email=${encodeURIComponent(email)}&new_password=${encodeURIComponent(newPassword)}`
     })
     .then(response => response.json())
     .then(data => {
         if (data.estado === "success") {
-            alert(data.mensaje); // Muestra un mensaje de éxito
-            // Redirige al usuario a la página de inicio de sesión o a otra página
-            window.location.href = 'http://localhost/GoCan/src/modules/login.html';
+            // Si el cambio de contraseña del correo electrónico es exitoso, procedemos a cambiarla en la base de datos
+            fetch('http://localhost/GoCan/src/modules/php/new_password.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `email=${encodeURIComponent(email)}&verification_code=${encodeURIComponent(verificationCode)}&new_password=${encodeURIComponent(newPassword)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.estado === "success") {
+                    alert('Contraseña cambiada exitosamente');
+                    document.getElementById('resetPasswordModal').style.display = 'none';
+                } else {
+                    alert(data.mensaje); // Mostrar mensaje de error
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al procesar la solicitud');
+            });
         } else {
-            alert(data.mensaje); // Muestra un mensaje de error
+            alert(data.mensaje); // Mostrar mensaje de error
         }
     })
     .catch(error => {
@@ -125,6 +141,8 @@ function resetPassword() {
         alert('Error al procesar la solicitud');
     });
 }
+
+
 
 function generateRandomCode() {
     // Función para generar un código aleatorio de 5 caracteres
