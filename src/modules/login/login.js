@@ -1,45 +1,64 @@
 document.addEventListener('DOMContentLoaded', function() {
     const botonIngresar = document.getElementById('ingresarBtn');
+    let intentosFallidos = 0;
+    let bloqueado = false;
+
     if (botonIngresar) {
         botonIngresar.addEventListener('click', function(event) {
             event.preventDefault(); // Prevenir el comportamiento por defecto del botón de submit
-            iniciarSesion();
+            if (!bloqueado) {
+                iniciarSesion();
+            } else {
+                alert('Contraseña Incorrecta, demasiados intentos. Por favor, espere 30 segundos.');
+            }
         });
     } else {
         console.error('El botón de ingreso no se encontró en el DOM');
     }
-});
 
-function iniciarSesion() {
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
+    function iniciarSesion() {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
 
-    fetch('http://localhost/GoCan/src/modules/php/login.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.estado === "success") {
-            // En tu login.js, después de establecer el localStorage
-localStorage.setItem('id_usuario', data.id_usuario);
-console.log('id_usuario guardado:', localStorage.getItem('id_usuario'));
-            // Redirigir al usuario basado en el valor de cargo
-            if (!data.cargo) {
-                window.location.href = 'http://localhost/GoCan/src/modules/citas/citas.html';
+        fetch('http://localhost/GoCan/src/modules/php/login.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.estado === "success") {
+                // En tu login.js, después de establecer el localStorage
+                localStorage.setItem('id_usuario', data.id_usuario);
+                console.log('id_usuario guardado:', localStorage.getItem('id_usuario'));
+                // Redirigir al usuario basado en el valor de cargo
+                if (!data.cargo) {
+                    window.location.href = 'http://localhost/GoCan/src/modules/citas/citas.html';
+                } else {
+                    window.location.href = 'http://localhost/GoCan/src/modules/coreadmin/indexadmin.html';
+                }
             } else {
-                window.location.href = 'http://localhost/GoCan/src/modules/coreadmin/indexadmin.html';
+                intentosFallidos++;
+                if (intentosFallidos >= 3) {
+                    bloquearBoton();
+                }
+                alert(data.mensaje); // Mostrar mensaje de error
             }
-        } else {
-            alert(data.mensaje); // Mostrar mensaje de error
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Error al procesar la solicitud');
-    });
-}
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al procesar la solicitud');
+        });
+    }
+
+    function bloquearBoton() {
+        bloqueado = true;
+        setTimeout(function() {
+            bloqueado = false;
+            intentosFallidos = 0;
+        }, 30000); // Bloquear durante 30 segundos
+    }
+});
 
 document.addEventListener('DOMContentLoaded', function() {
     emailjs.init("qzlkC2mOywaQA8mot"); // Asegúrate de usar tu userID correcto aquí

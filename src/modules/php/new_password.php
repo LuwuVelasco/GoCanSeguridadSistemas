@@ -11,6 +11,7 @@ if (!$conexion) {
 $email = $_POST['email'];
 $newPassword = $_POST['new_password'];
 
+
 // Actualizar la contraseña del usuario en la base de datos
 $sql_update = "UPDATE usuario SET password = $1 WHERE email = $2";
 $result_update = pg_prepare($conexion, "update_query", $sql_update);

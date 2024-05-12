@@ -37,7 +37,6 @@ if (isset($data['token'], $data['verified']) && $data['verified'] == true) {
         $id_usuario = pg_fetch_result($resultado_usuario, 0, 'id_usuario');
         echo json_encode(["estado" => "usuario_registrado", "id_usuario" => $id_usuario]);
         pg_close($conexion);
-
     } else {
         echo json_encode(["estado" => "error_campos"]);
         exit();
@@ -46,4 +45,3 @@ if (isset($data['token'], $data['verified']) && $data['verified'] == true) {
     echo json_encode(["estado" => "error_token"]);
     exit();
 }
-?>
