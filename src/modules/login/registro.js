@@ -10,6 +10,12 @@ function registrarUsuario() {
     let token = generateToken();
     let cargo = null;
 
+    // Validar que la contraseña cumpla con los requisitos
+    if (password.length < 8 || !/[A-Z]/.test(password)) {
+        alert('La contraseña debe tener al menos 8 caracteres y contener al menos una letra mayúscula.');
+        return; // Detener el proceso de registro si la contraseña no cumple los requisitos
+    }
+
     console.log("Datos capturados:", email, nombre, password, token, cargo);
 
     emailjs.send("service_zfiz7yd", "template_g2k2wgi", {
