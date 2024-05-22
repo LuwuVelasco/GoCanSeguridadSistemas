@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.2.0/remixicon.min.css">
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.3.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
+    <link rel="stylesheet" href="styleDoc.css">
+    <title>GoCan / Doctor</title>
+</head>
+
+<body>
+    <header class="header" data-header>
+        <div class="container">
+            <a href="#" class="logo">GoCan</a>
+
+            <div class="profile" onclick="toggleDropdown()">
+                <img src="../../assets/Images/user-md.png">
+                <div class="account">
+                    <h5>Bienvenido</h5>
+                    <!--<p>usuario@gmail.com</p>-->
+                </div>
+                <div class="profile-dropdown" id="profileDropdown">
+                    <ul>
+                        <li><a href="#changeUser">Cambiar de usuario</a></li>
+                        <li><a href="#signOut">Cerrar sesión</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <article>
+            <section id="home" aria-label="home" style="background-image: url('../../assets/Images/banner_InicioAd.png')">
+                <div class="container">
+                </div>
+            </section>
+            <div class="main">
+                <h3 class="separator">
+                    Opciones
+                </h3>
+
+                <div class="quick-access">
+                    <div id="bt1" class="button">
+                        <i class="fi fi-sr-clipboard-list"></i>
+                        <h5>Registro reportes</h5>
+                    </div>
+                    <div id="bt2" class="button">
+                        <i class="fi fi-sr-time-past"></i>
+                        <h5>Historial citas</h5>
+                    </div>
+                </div>
+
+                <div class="separator">
+                    <h3>Citas Próximas</h3>
+                    <button id="sortButton" onclick="sortCitas()">Ordenar por Fecha</button>
+                </div>
+
+                <table>
+                    <tbody>
+                        <!-- Las filas de citas se agregarán aquí dinámicamente -->
+                    </tbody>
+                </table>
+
+            </div>
+
+            <div class="right-section">
+
+                <div class="widgets">
+
+                    <div class="bottom">
+                    </div>
+                </div>
+            </div>
+        </article>
+    </main>
+
+    <div id="reserveModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-header">Registrar Veterinario</div>
+            <span class="close" onclick="closeModal()">&times;</span>
+            <form id="reserveForm" method="post" action="../php/empleados.php">
+                <input type="text" id="nombre" name="nombre" placeholder="Nombre del Veterinario" required>
+                <input type="text" id="cargo" name="cargo" placeholder="Cargo del Veterinario" required>
+                <select id="especialidad" name="especialidad" required>
+                    <option value="">Seleccionar especialidad...</option>
+                    <option value="vacunas">Vacunas</option>
+                    <option value="traumatologia">Traumatología</option>
+                    <option value="odontologia">Odontología</option>
+                    <option value="desparacitacion">Desparasitación</option>
+                    <option value="consulta_general">Consulta General</option>
+                </select>
+                <div>
+                    <button type="submit">Registrar</button>
+                    <button type="button" onclick="closeModal()">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+
+    <script src="doctores.js"></script>
+</body>
+
+</html>

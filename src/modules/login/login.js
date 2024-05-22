@@ -30,10 +30,16 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.estado === "success") {
                 // En tu login.js, después de establecer el localStorage
                 localStorage.setItem('id_usuario', data.id_usuario);
+                localStorage.setItem('id_doctores', data.id_doctores); // Guardar el ID del doctor
                 console.log('id_usuario guardado:', localStorage.getItem('id_usuario'));
-                // Redirigir al usuario basado en el valor de cargo
-                if (!data.cargo) {
-                    window.location.href = 'http://localhost/GoCan/src/modules/citas/citas.html';
+                console.log('id_doctores guardado:', localStorage.getItem('id_doctores'));
+                // Redirigir al usuario basado en el valor de cargo y si es doctor
+                if (data.cargo) {
+                    if (data.id_doctores) {
+                        window.location.href = 'http://localhost/GoCan/src/modules/coreDoctores/indexdoctores.html';
+                    } else {
+                        window.location.href = 'http://localhost/GoCan/src/modules/citas/citas.html';
+                    }
                 } else {
                     window.location.href = 'http://localhost/GoCan/src/modules/coreadmin/indexadmin.html';
                 }
