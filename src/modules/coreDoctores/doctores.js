@@ -1,10 +1,15 @@
 document.addEventListener("DOMContentLoaded", function() {
     let citas = [];
+    const id_doctor = localStorage.getItem('id_doctores');
 
-    fetchCitas();
+    fetchCitas(id_doctor);
 
-    function fetchCitas() {
-        fetch('http://localhost/GoCan/src/modules/php/doctores.php')
+    function fetchCitas(id_doctor) {
+        fetch('http://localhost/GoCan/src/modules/php/doctores.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `id_doctor=${encodeURIComponent(id_doctor)}`
+        })
             .then(response => response.json())
             .then(data => {
                 if (data.estado === "success") {
@@ -19,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function mostrarCitas(citas) {
         const tbody = document.querySelector("table tbody");
-        tbody.innerHTML = '';  // Limpiar la tabla antes de agregar las nuevas filas
+        tbody.innerHTML = '';
 
         citas.forEach(cita => {
             const tr = document.createElement("tr");

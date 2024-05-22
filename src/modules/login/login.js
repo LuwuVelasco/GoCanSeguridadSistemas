@@ -28,12 +28,8 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             if (data.estado === "success") {
-                // En tu login.js, después de establecer el localStorage
                 localStorage.setItem('id_usuario', data.id_usuario);
-                localStorage.setItem('id_doctores', data.id_doctores); // Guardar el ID del doctor
-                console.log('id_usuario guardado:', localStorage.getItem('id_usuario'));
-                console.log('id_doctores guardado:', localStorage.getItem('id_doctores'));
-                // Redirigir al usuario basado en el valor de cargo y si es doctor
+                localStorage.setItem('id_doctores', data.id_doctores);
                 if (data.cargo) {
                     if (data.id_doctores) {
                         window.location.href = 'http://localhost/GoCan/src/modules/coreDoctores/indexdoctores.html';
@@ -48,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (intentosFallidos >= 3) {
                     bloquearBoton();
                 }
-                alert(data.mensaje); // Mostrar mensaje de error
+                alert(data.mensaje);
             }
         })
         .catch(error => {
