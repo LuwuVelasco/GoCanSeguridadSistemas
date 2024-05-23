@@ -10,16 +10,16 @@ document.addEventListener("DOMContentLoaded", function() {
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: `id_doctor=${encodeURIComponent(id_doctor)}`
         })
-            .then(response => response.json())
-            .then(data => {
-                if (data.estado === "success") {
-                    citas = data.citas;
-                    mostrarCitas(citas);
-                } else {
-                    console.error("Error:", data.mensaje);
-                }
-            })
-            .catch(error => console.error("Error:", error));
+        .then(response => response.json())
+        .then(data => {
+            if (data.estado === "success") {
+                citas = data.citas;
+                mostrarCitas(citas);
+            } else {
+                console.error("Error:", data.mensaje);
+            }
+        })
+        .catch(error => console.error("Error:", error));
     }
 
     function mostrarCitas(citas) {
@@ -79,5 +79,20 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         })
         .catch(error => console.error("Error:", error));
+    }
+
+    window.openReportModal = function() {
+        document.getElementById('reportModal').style.display = 'block';
+    }
+
+    window.closeReportModal = function() {
+        document.getElementById('reportModal').style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        const modal = document.getElementById('reportModal');
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
     }
 });
