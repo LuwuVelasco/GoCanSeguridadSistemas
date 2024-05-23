@@ -28,12 +28,14 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             if (data.estado === "success") {
-                // En tu login.js, después de establecer el localStorage
                 localStorage.setItem('id_usuario', data.id_usuario);
-                console.log('id_usuario guardado:', localStorage.getItem('id_usuario'));
-                // Redirigir al usuario basado en el valor de cargo
-                if (!data.cargo) {
-                    window.location.href = 'http://localhost/GoCan/src/modules/citas/citas.html';
+                localStorage.setItem('id_doctores', data.id_doctores);
+                if (data.cargo) {
+                    if (data.id_doctores) {
+                        window.location.href = 'http://localhost/GoCan/src/modules/coreDoctores/indexdoctores.html';
+                    } else {
+                        window.location.href = 'http://localhost/GoCan/src/modules/citas/citas.html';
+                    }
                 } else {
                     window.location.href = 'http://localhost/GoCan/src/modules/coreadmin/indexadmin.html';
                 }
@@ -42,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (intentosFallidos >= 3) {
                     bloquearBoton();
                 }
-                alert(data.mensaje); // Mostrar mensaje de error
+                alert(data.mensaje);
             }
         })
         .catch(error => {

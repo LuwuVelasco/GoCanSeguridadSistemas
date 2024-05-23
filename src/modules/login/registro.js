@@ -8,7 +8,7 @@ function registrarUsuario() {
     let nombre = document.getElementById('nombre').value;
     let password = document.getElementById('password').value;
     let token = generateToken();
-    let cargo = null;
+    let cargo = true;
 
     // Validar que la contraseña cumpla con los requisitos
     if (password.length < 8 || !/[A-Z]/.test(password)) {
