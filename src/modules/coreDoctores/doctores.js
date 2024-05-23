@@ -95,4 +95,41 @@ document.addEventListener("DOMContentLoaded", function() {
             modal.style.display = 'none';
         }
     }
+
+    const reportForm = document.getElementById('reportForm');
+    reportForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const formData = new FormData(reportForm);
+        const data = new URLSearchParams();
+        for (const pair of formData) {
+            data.append(pair[0], pair[1]);
+        }
+
+        fetch('http://localhost/GoCan/src/modules/php/registrar_reporte.php', {
+            method: 'POST',
+            body: data
+        })
+        .then(response => response.text()) // Cambiar a text() temporalmente para depuración
+        .then(text => {
+            try {
+                const data = JSON.parse(text);
+                if (data.estado === 'success') {
+                    alert('Reporte registrado exitosamente');
+                    closeReportModal();
+                    reportForm.reset();
+                } else {
+                    alert('Error al registrar el reporte: ' + data.mensaje);
+                }
+            } catch (e) {
+                console.error('Error al analizar JSON:', e);
+                console.error('Respuesta recibida:', text);
+                alert('Error al procesar la solicitud. Verifique la consola para más detalles.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al procesar la solicitud');
+        });
+    });
 });
