@@ -69,23 +69,18 @@ document.querySelector('#viewReservationsModal .close').addEventListener('click'
 
 // Función para cargar las reservas desde la BDD (simulación)
 function fetchReservations() {
-  // Aquí deberías implementar una solicitud AJAX/Fetch para traer los datos de la BDD
-  // Para efectos de demostración, aquí se simula con datos estáticos
-  const reservationsList = document.getElementById('reservationsList');
-  reservationsList.innerHTML = ''; // Limpiar el contenido actual
-  // Simulación de datos recibidos (deberías reemplazar esto con datos reales de la BDD)
-  const data = [
-    { propietario: 'Juan Pérez', servicio: 'Vacunación', fecha: '2024-05-10 15:00' },
-    { propietario: 'Ana López', servicio: 'Consulta General', fecha: '2024-05-11 14:00' }
-  ];
-  
-  // Crear elementos para cada reserva y añadirlos al DOM
-  data.forEach(res => {
-    const div = document.createElement('div');
-    div.classList.add('reservation');
-    div.textContent = `Propietario: ${res.propietario}, Servicio: ${res.servicio}, Fecha: ${res.fecha}`;
-    reservationsList.appendChild(div);
-  });
+  fetch('http://localhost/GoCan/src/modules/php/reservas.php')
+                .then(response => response.json())
+                .then(data => {
+                    var reservasList = document.getElementById('reservationsList');
+                    reservasList.innerHTML = '';
+
+                    data.forEach(function(reserva) {
+                        var div = document.createElement('div');
+                        div.textContent = `Propietario: ${reserva.propietario}, Servicio: ${reserva.servicio}, Fecha: ${reserva.fecha}, Hora: ${reserva.horario}`;
+                        reservasList.appendChild(div);
+                    });
+                });
 }
 
 

@@ -42,11 +42,15 @@ try {
         $stmt->bindParam(':id_doctor', $id_doctor);
 
         $stmt->execute();
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // Devolver la cantidad de productos en formato JSON
+        echo json_encode($resultado);
         echo "Cita registrada con éxito.";
     } else {
         echo "Doctor no encontrado.";
     }
     } catch (PDOException $e) {
-        echo json_encode(['error' => $e->getMessage()]);
+        die("Error de conexión: " . $e->getMessage());
     }
 ?>
