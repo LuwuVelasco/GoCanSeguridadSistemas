@@ -69,18 +69,25 @@ document.querySelector('#viewReservationsModal .close').addEventListener('click'
 
 // Función para cargar las reservas desde la BDD (simulación)
 function fetchReservations() {
-  fetch('http://localhost/GoCan/src/modules/php/reservas.php')
-                .then(response => response.json())
-                .then(data => {
-                    var reservasList = document.getElementById('reservationsList');
-                    reservasList.innerHTML = '';
+  let id_usuario = localStorage.getItem('id_usuario');
+  fetch('http://localhost/GoCan/src/modules/php/reservas.php', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ id_usuario: id_usuario })
+  })
+  .then(response => response.json())
+  .then(data => {
+      var reservasList = document.getElementById('reservationsList');
+      reservasList.innerHTML = '';
 
-                    data.forEach(function(reserva) {
-                        var div = document.createElement('div');
-                        div.textContent = `Propietario: ${reserva.propietario}, Servicio: ${reserva.servicio}, Fecha: ${reserva.fecha}, Hora: ${reserva.horario}`;
-                        reservasList.appendChild(div);
-                    });
-                });
+      data.forEach(function(reserva) {
+          var div = document.createElement('div');
+          div.textContent = `Propietario: ${reserva.propietario}, Servicio: ${reserva.servicio}, Fecha: ${reserva.fecha}, Hora: ${reserva.horario}`;
+          reservasList.appendChild(div);
+      });
+  });
 }
 
 
