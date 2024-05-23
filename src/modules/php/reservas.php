@@ -16,7 +16,7 @@ try {
         FROM cita 
         WHERE fecha > CURRENT_DATE 
         OR (fecha = CURRENT_DATE AND horario > CURRENT_TIME)
-        OR (fecha = CURRENT_DATE AND horario = '00:00:00' AND CURRENT_TIME < '00:00:00')
+        OR (fecha = CURRENT_DATE AND horario = '00:00:00' OR CURRENT_TIME < '00:00:00')
     ");
     $stmt->execute();
 
