@@ -11,8 +11,13 @@ try {
     $conn = new PDO($dsn);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Consulta para obtener solo las citas futuras comparando fecha y hora con NOW()
-    $stmt = $conn->prepare("SELECT propietario, servicio, fecha, horario FROM cita WHERE (fecha || ' ' || horario)::timestamp > NOW()");
+    $stmt = $conn->prepare("
+        SELECT propietario, servicio, fecha, horario 
+        FROM cita 
+        WHERE fecha > CURRENT_DATE 
+        OR (fecha = CURRENT_DATE AND horario > CURRENT_TIME)
+        OR (fecha = CURRENT_DATE AND horario = '00:00:00' AND CURRENT_TIME < '00:00:00')
+    ");
     $stmt->execute();
 
     $citas = $stmt->fetchAll(PDO::FETCH_ASSOC);
