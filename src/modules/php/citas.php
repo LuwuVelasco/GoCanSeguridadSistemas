@@ -1,41 +1,56 @@
 <?php
-$servername = "localhost";
+$host = "localhost";
+$port = "5432";
+$dbname = "gocan";
 $username = "postgres";
 $password = "admin";
-$dbname = "gocan";
+$dsn = "pgsql:host=$host;port=$port;dbname=$dbname;user=$username;password=$password";
 
 // Intentar crear conexión PDO
 try {
-    $conn = new PDO("pgsql:host=$servername;dbname=$dbname", $username, $password);
-    echo "Conexión establecida";  // Verifica que la conexión es exitosa
+    $conn = new PDO($dsn);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Recolectar datos del POST
-    $propietario = $_POST['propietario'] ?? 'No especificado';
-    $servicio = $_POST['servicio'] ?? 'No especificado';
-    $doctor = $_POST['doctor'] ?? 'No especificado';
-    $fecha = $_POST['fecha'] ?? 'No especificado';
-    $hora = $_POST['hora'] ?? 'No especificado';
+    // Asumiendo que los datos del producto son enviados como JSON en el cuerpo de la solicitud POST
+    $data = json_decode(file_get_contents("php://input"), true);
+    // Extraer datos del JSON
+    $propietario = $data['propietario'];
+    $servicio = $data['servicio'];
+    $doctor = $data['doctor']; // Asumiendo que el nombre del doctor es enviado
+    $fecha = $data['fecha'];
+    $hora = $data['horario'];
+    $id_usuario = $data['id_usuario'];
 
-    // Informar los datos recolectados
-    echo "Datos recibidos: Propietario - $propietario, Servicio - $servicio, Doctor - $doctor, Fecha - $fecha, Hora - $hora";
+    // Obtener el id_doctor basado en el nombre del doctor
+    $stmt = $conn->prepare("SELECT id_doctores FROM doctores WHERE nombre = :nombre");
+    $stmt->bindParam(':nombre', $doctor);
+    $stmt->execute();
 
-    // Preparar y ejecutar la inserción
-    $stmt = $conn->prepare("INSERT INTO cita (propietario, servicio, doctor, fecha, horario) VALUES (:propietario, :servicio, :doctor, :fecha, :horario)");
-    $stmt->bindParam(':propietario', $propietario);
-    $stmt->bindParam(':servicio', $servicio);
-    $stmt->bindParam(':doctor', $doctor);
-    $stmt->bindParam(':fecha', $fecha);
-    $stmt->bindParam(':horario', $hora);
+    // Verificar si se encontró un doctor con el nombre proporcionado
+    if ($stmt->rowCount() > 0) {
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $id_doctor = $row['id_doctores'];
 
-    if ($stmt->execute()) {
-        echo "Cita registrada correctamente";
+        // Preparar y ejecutar la inserción en la tabla cita
+        $stmt = $conn->prepare("INSERT INTO cita (propietario, horario,fecha,servicio,doctor,id_usuario,id_doctor) VALUES (:propietario, :horario, :fecha, :servicio, :doctor,:id_usuario,:id_doctor)");
+        $stmt->bindParam(':propietario', $propietario);
+        $stmt->bindParam(':horario', $hora);
+        $stmt->bindParam(':fecha', $fecha);
+        $stmt->bindParam(':servicio', $servicio);
+        $stmt->bindParam(':doctor', $doctor);
+        $stmt->bindParam(':id_usuario', $id_usuario);
+        $stmt->bindParam(':id_doctor', $id_doctor);
+
+        $stmt->execute();
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // Devolver la cantidad de productos en formato JSON
+        echo json_encode($resultado);
+        echo "Cita registrada con éxito.";
     } else {
-        echo "Error al registrar la cita";
+        echo "Doctor no encontrado.";
     }
-} catch (PDOException $e) {
-    echo "Error de conexión o consulta: " . $e->getMessage();
-}
-
-// Cerrar la conexión
-$conn = null;
+    } catch (PDOException $e) {
+        die("Error de conexión: " . $e->getMessage());
+    }
+?>
