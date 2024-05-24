@@ -1,41 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Inicio de Sesión</title>
-        <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
-        <link rel="stylesheet" href="sesionstyle.css" />
-    </head>
-    <body>
-        <canvas id="c" style="position: fixed; z-index: -1;"></canvas>
-        <div class="container">
-            <form action="">
-                <h1>Inicio de Sesión</h1>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio de Sesión</title>
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="sesionstyle.css">
+    <script src="login.js"></script>
+    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+    <script>
+      (function(){
+        emailjs.init("YOUR_USER_ID_FROM_EMAILJS");
+      })();
+    </script>
 
-                <div class="input-box">
-                <input type="text" placeholder="nombre usuario" required />
-                <!-- <i class="bx bxs-user"></i> -->
-                </div>
-                <div class="input-box">
-                <input type="password" placeholder="contraseña" required />
-                <!-- <i class="bx bxs-lock-alt"></i> -->
-                </div>
+    <style>
+        /* Estilos para los modales */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
 
-                <div class="remember-forgot">
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 400px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="c" style="position: fixed; z-index: -1;"></canvas>
+    <div class="container">
+        <form action="POST" id="loginForm">
+            <h1>Inicio de Sesión</h1>
+        
+            <div class="input-box">
+                <input type="text" id="email" name="email" placeholder="email" required />
+            </div>
+            <div class="input-box">
+                <input type="password" id="password" name="password" placeholder="contraseña" required />
+            </div>
+        
+            <div class="remember-forgot">
                 <label><input type="checkbox" /> Recuérdame</label>
-                <a href="#">¿Olvido la contraseña?</a>
-                </div>
+                <a href="#" id="forgotPassword">¿Olvidó la contraseña?</a>
+            </div>
+        
+            <button type="submit" id="ingresarBtn" class="btn">Ingresar</button>
+        
+            <div class="register-link">
+                <p>¿No tiene cuenta? <a href="registroindex.html">Regístrese</a></p>
+            </div>
+        </form>
+    </div>
 
-                <button type="submit" class="btn">Ingresar</button>
-
-                <div class="register-link">
-                    <p>¿No tiene cuenta? <a href="registroindex.html">Regístrese</a></p>
-                </div>                
-            </form>
+    <!-- Modal para recuperar contraseña -->
+    <div id="forgotPasswordModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Recuperar Contraseña</h2>
+            <p>Por favor ingrese su correo electrónico para recibir un código de verificación.</p>
+            <input type="text" id="forgotEmail" placeholder="Correo electrónico" required />
+            <button id="sendVerificationCodeBtn">Enviar Código</button>
         </div>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
-        <script src="animacionbg.js"></script>
-    </body>
+    </div>
+
+<!-- Modal para restablecer contraseña -->
+    <div id="resetPasswordModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Restablecer Contraseña</h2>
+            <p>Por favor ingrese el código de verificación y su nueva contraseña.</p>
+            <input type="text" id="verificationCode" placeholder="Código de verificación" required />
+            <input type="password" id="newPassword" placeholder="Nueva contraseña" required />
+            <button id="resetPasswordBtn">Cambiar Contraseña</button>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="animacionbg.js"></script>
+    
+</body>
 </html>
