@@ -125,11 +125,33 @@
                     <option value="desparacitacion">Desparasitación</option>
                     <option value="consulta_general">Consulta General</option>
                 </select>
-                <div>
+                <div class="button-group">
                     <button type="submit">Registrar</button>
+                    <button type="button" onclick="viewList()">Lista</button>
                     <button type="button" onclick="closeModal()">Cancelar</button>
                 </div>
             </form>
+        </div>
+    </div>
+    <div id="listModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-header">Lista de Veterinarios</div>
+            <span class="close" onclick="closeModalList()">&times;</span>
+            <table id="doctorsList" class="doctors-table">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Cargo</th>
+                        <th>Especialidad</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Los datos de los doctores se cargarán aquí mediante JavaScript -->
+                </tbody>
+            </table>
+            <div style="margin-top: 20px;">
+                <button type="button" onclick="closeModalList()">Cerrar</button>
+            </div>
         </div>
     </div>
     

@@ -802,3 +802,13 @@ main > article, .hero, .main {
     color: #999;
     font-size: 14px;
 }
+.modal .button-group {
+    display: flex;          /* Alinea los elementos del contenedor en una fila */
+    justify-content: space-around; /* Distribuye el espacio alrededor de los elementos */
+    margin-top: 20px;      /* Espacio adicional en la parte superior para separación visual */
+}
+
+.modal .button-group button {
+    flex: 1;               /* Los botones ocuparán el mismo espacio dentro del contenedor */
+    margin: 0 10px;        /* Añade espacio entre los botones */
+}
