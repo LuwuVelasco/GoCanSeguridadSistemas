@@ -84,8 +84,8 @@ document.addEventListener('DOMContentLoaded', function() {
 function openModal() {
     var modal = document.getElementById('reserveModal');
     modal.style.display = 'block';
-    modal.style.alignItems = 'center'; // Alineación vertical centrada
-    modal.style.justifyContent = 'center'; // Alineación horizontal centrada
+    modal.style.alignItems = 'center';
+    modal.style.justifyContent = 'center';
     modal.style.display = 'flex';
 }
 
@@ -93,3 +93,37 @@ function closeModal() {
     var modal = document.getElementById('reserveModal');
     modal.style.display = 'none';
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    loadDoctors();  // Carga los doctores inmediatamente cuando la página se carga.
+
+    const closeModalButtons = document.querySelectorAll('.close');
+    closeModalButtons.forEach(button => {
+        button.addEventListener('click', closeModal);
+    });
+
+
+    function loadDoctors() {
+        fetch('../php/listadoctores.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.estado === "success") {
+                const tbody = document.querySelector('.main table tbody'); // Asegúrate de que este selector coincida con tu tabla en HTML.
+                tbody.innerHTML = ''; // Limpia la tabla antes de añadir nuevos datos.
+                data.doctores.forEach(doctor => {
+                    const row = tbody.insertRow();
+                    row.insertCell(0).textContent = doctor.nombre;
+                    row.insertCell(1).textContent = doctor.cargo;
+                    row.insertCell(2).textContent = doctor.especialidad;
+                });
+            } else {
+                console.error('Error:', data.mensaje);
+                alert(data.mensaje); // Muestra un mensaje de error si algo va mal.
+            }
+        })
+        .catch(error => {
+            console.error('Error loading the doctors:', error);
+            alert('Error al cargar los datos: ' + error);
+        });
+    }
+});

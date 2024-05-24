@@ -181,8 +181,22 @@ body{
     color: #ffd12c; 
     background: #fff8df;
 }
-
 .main .quick-access .item:nth-child(4) i,
+.main table tbody tr:nth-child(5) td.icon i{
+    color: #50afe6; 
+    background: #a7b1ea;
+}
+.main .quick-access .item:nth-child(5) i,
+.main table tbody tr:nth-child(6) td.icon i{
+    color: #a850e6; 
+    background: #d896df;
+}
+.main .quick-access .item:nth-child(6) i,
+.main table tbody tr:nth-child(7) td.icon i{
+    color: #df50e6; 
+    background: #f3c0ed;
+}
+.main .quick-access .item:nth-child(7) i,
 .main table tbody tr:nth-child(3) td.icon i{
     color: #3bc963; 
     background: #e2f7e8;
@@ -801,4 +815,14 @@ main > article, .hero, .main {
 .button p {
     color: #999;
     font-size: 14px;
+}
+.modal .button-group {
+    display: flex;          /* Alinea los elementos del contenedor en una fila */
+    justify-content: space-around; /* Distribuye el espacio alrededor de los elementos */
+    margin-top: 20px;      /* Espacio adicional en la parte superior para separación visual */
+}
+
+.modal .button-group button {
+    flex: 1;               /* Los botones ocuparán el mismo espacio dentro del contenedor */
+    margin: 0 10px;        /* Añade espacio entre los botones */
 }
