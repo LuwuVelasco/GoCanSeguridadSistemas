@@ -1,4 +1,6 @@
 <?php
+header('Content-Type: application/json');
+
 $host = "localhost";
 $port = "5432";
 $dbname = "gocan";
@@ -13,13 +15,14 @@ try {
 
     // Asumiendo que los datos del producto son enviados como JSON en el cuerpo de la solicitud POST
     $data = json_decode(file_get_contents("php://input"), true);
+
     // Extraer datos del JSON
     $propietario = $data['propietario'];
     $servicio = $data['servicio'];
     $doctor = $data['doctor']; // Asumiendo que el nombre del doctor es enviado
+    $id_usuario = $data['id_usuario'];
     $fecha = $data['fecha'];
     $hora = $data['horario'];
-    $id_usuario = $data['id_usuario'];
 
     // Obtener el id_doctor basado en el nombre del doctor
     $stmt = $conn->prepare("SELECT id_doctores FROM doctores WHERE nombre = :nombre");
@@ -32,25 +35,34 @@ try {
         $id_doctor = $row['id_doctores'];
 
         // Preparar y ejecutar la inserción en la tabla cita
-        $stmt = $conn->prepare("INSERT INTO cita (propietario, horario,fecha,servicio,doctor,id_usuario,id_doctor) VALUES (:propietario, :horario, :fecha, :servicio, :doctor,:id_usuario,:id_doctor)");
+        $stmt = $conn->prepare("INSERT INTO cita (propietario, horario, fecha, servicio, doctor, id_usuario, id_doctor) VALUES (:propietario, :horario, :fecha, :servicio, :doctor, :id_usuario, :id_doctor)");
         $stmt->bindParam(':propietario', $propietario);
-        $stmt->bindParam(':horario', $hora);
-        $stmt->bindParam(':fecha', $fecha);
         $stmt->bindParam(':servicio', $servicio);
         $stmt->bindParam(':doctor', $doctor);
         $stmt->bindParam(':id_usuario', $id_usuario);
         $stmt->bindParam(':id_doctor', $id_doctor);
+        $stmt->bindParam(':fecha', $fecha);
+        $stmt->bindParam(':horario', $hora);
+        
 
         $stmt->execute();
-        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        // Devolver la cantidad de productos en formato JSON
-        echo json_encode($resultado);
-        echo "Cita registrada con éxito.";
+        // Devolver una respuesta JSON con el mensaje de éxito y un ID de cita (si necesitas el ID generado)
+        $id_cita = $conn->lastInsertId();
+        echo json_encode([
+            "id_cita" => $id_cita,
+            "mensaje" => "Cita registrada con éxito."
+        ]);
     } else {
-        echo "Doctor no encontrado.";
+        echo json_encode([
+            "error" => true,
+            "mensaje" => "Doctor no encontrado."
+        ]);
     }
-    } catch (PDOException $e) {
-        die("Error de conexión: " . $e->getMessage());
-    }
+} catch (PDOException $e) {
+    echo json_encode([
+        "error" => true,
+        "mensaje" => "Error de conexión: " . $e->getMessage()
+    ]);
+}
 ?>

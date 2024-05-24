@@ -14,7 +14,7 @@ function registrarcita() {
 
     console.log("propietario:", propietario);
     console.log("hora:", horario);
-    console.log("fehca:", fecha);
+    console.log("fecha:", fecha);
     console.log("servicio:", servicio);
     console.log("doctor",doctor);
     console.log("id_usuario",id_usuario);
@@ -26,11 +26,11 @@ function registrarcita() {
         },
         body: JSON.stringify({
             propietario: propietario,
-            horario: horario,
-            fecha: fecha,
             servicio: servicio,
             doctor: doctor,
-            id_usuario: id_usuario
+            id_usuario: id_usuario,
+            fecha: fecha,
+            horario: horario
         }),
     })
     .then(response => {
