@@ -15,12 +15,10 @@
     <header class="header" data-header>
         <div class="container">
             <a href="#" class="logo">GoCan</a>
-
             <div class="profile" onclick="toggleDropdown()">
                 <img src="../../assets/Images/user-md.png">
                 <div class="account">
                     <h5>Bienvenido</h5>
-                    <!--<p>usuario@gmail.com</p>-->
                 </div>
                 <div class="profile-dropdown" id="profileDropdown">
                     <ul>
@@ -39,10 +37,7 @@
                 </div>
             </section>
             <div class="main">
-                <h3 class="separator">
-                    Opciones
-                </h3>
-
+                <h3 class="separator">Opciones</h3>
                 <div class="quick-access">
                     <div id="bt1" class="button">
                         <i class="fi fi-sr-clipboard-list"></i>
@@ -58,10 +53,7 @@
                     </div>
                 </div>
 
-                <h3 class="separator">
-                    Citas Próximas
-                </h3>
-
+                <h3 class="separator">Citas Próximas</h3>
                 <table>
                     <tbody>
                         <tr class="selected">
@@ -97,12 +89,102 @@
                     </tbody>
                 </table>
 
+                <h3 class="separator">Lista de veterinarios</h3>
+                <table>
+                    <tr>
+                        <td class="icon"><i class=""></i></td>
+                        <th>Nombre</th>
+                        <th>Cargo</th>
+                        <th>Especialidad</th>
+
+                    </tr>
+                    <tbody>
+                        <tr>
+                            <td class="icon"><i class="fi fi-sr-user-md"></i></td>
+                            <td>Dr. Elmer Gonzales</td>
+                            <td>Propietario</td>
+                            <td>Traumatología</td>
+                            <td><i class="ri-delete-bin-6-line" onclick="deleteDoctor('Dr. Elmer Gonzales');"></i></td>
+
+                        </tr>
+                        <tr>
+                            <td class="icon"><i class="fi fi-sr-user-md"></i></td>
+                            <td>Dra. Nadia Ormachea</td>
+                            <td>Veterinaria</td>
+                            <td>Medicina General</td>
+                            <td><i class="ri-delete-bin-6-line" onclick="deleteDoctor('Dr. Elmer Gonzales');"></i></td>
+
+                        </tr>
+                        <tr>
+                            <td class="icon"><i class="fi fi-sr-user-md"></i></td>
+                            <td>Dr. Gabriel Pacheri</td>
+                            <td>Veterinario</td>
+                            <td>Radiografías</td>
+                            <td><i class="ri-delete-bin-6-line" onclick="deleteDoctor('Dr. Elmer Gonzales');"></i></td>
+
+                        </tr>
+                        <tr>
+                            <td class="icon"><i class="fi fi-sr-user-md"></i></td>
+                            <td>Dr. Nicolas Nobody</td>
+                            <td>Veterinario</td>
+                            <td>Odontología</td>
+                            <td><i class="ri-delete-bin-6-line" onclick="deleteDoctor('Dr. Elmer Gonzales');"></i></td>
+
+                        </tr>
+                        <tr>
+                            <td class="icon"><i class="fi fi-sr-user-md"></i></td>
+                            <td>Dra. Mia Pacheco</td>
+                            <td>Veterinaria</td>
+                            <td>Etóloga</td>
+                            <td><i class="ri-delete-bin-6-line" onclick="deleteDoctor('Dr. Elmer Gonzales');"></i></td>
+
+                        </tr>
+                        <tr>
+                            <td class="icon"><i class="fi fi-sr-user-md"></i></td>
+                            <td>Dr. Alan Guzman</td>
+                            <td>Veterinario</td>
+                            <td>Medicina General</td>
+                            <td><i class="ri-delete-bin-6-line" onclick="deleteDoctor('Dr. Elmer Gonzales');"></i></td>
+
+                        </tr>
+                        <tr>
+                            <td class="icon"><i class="fi fi-sr-user-md"></i></td>
+                            <td>Dr. Patricio Argani</td>
+                            <td>Veterinario</td>
+                            <td>Nutricionista</td>
+                            <td><i class="ri-delete-bin-6-line" onclick="deleteDoctor('Dr. Elmer Gonzales');"></i></td>
+
+                        </tr>
+                        <tr>
+                            <td class="icon"><i class="fi fi-sr-user-md"></i></td>
+                            <td>Dra. Laura Gallani</td>
+                            <td>Veterinaria</td>
+                            <td>Dermatología</td>
+                            <td><i class="ri-delete-bin-6-line" onclick="deleteDoctor('Dr. Elmer Gonzales');"></i></td>
+
+                        </tr>
+                        <tr>
+                            <td class="icon"><i class="fi fi-sr-user-md"></i></td>
+                            <td>Dr. Mauricio Santa Cruz</td>
+                            <td>Veterinario</td>
+                            <td>Oftalmólogo</td>
+                            <td><i class="ri-delete-bin-6-line" onclick="deleteDoctor('Dr. Elmer Gonzales');"></i></td>
+
+                        </tr>
+                        <tr>
+                            <td class="icon"><i class="fi fi-sr-user-md"></i></td>
+                            <td>Dr. Karen Barreda</td>
+                            <td>Veterinaria</td>
+                            <td>Medicina General</td>
+                            <td><i class="ri-delete-bin-6-line" onclick="deleteDoctor('Dr. Elmer Gonzales');"></i></td>
+
+                        </tr>
+                    </tbody>
+                </table>
             </div>
 
             <div class="right-section">
-
                 <div class="widgets">
-
                     <div class="bottom">
                     </div>
                 </div>
@@ -114,7 +196,7 @@
         <div class="modal-content">
             <div class="modal-header">Registrar Veterinario</div>
             <span class="close" onclick="closeModal()">&times;</span>
-            <form id="reserveForm" method="post" action="../php/empleados.php">
+            <form id="reserveForm" method="post" action="../php/AñadirDoc.php">
                 <input type="text" id="nombre" name="nombre" placeholder="Nombre del Veterinario" required>
                 <input type="text" id="cargo" name="cargo" placeholder="Cargo del Veterinario" required>
                 <select id="especialidad" name="especialidad" required>
@@ -127,37 +209,12 @@
                 </select>
                 <div class="button-group">
                     <button type="submit">Registrar</button>
-                    <button type="button" onclick="viewList()">Lista</button>
                     <button type="button" onclick="closeModal()">Cancelar</button>
                 </div>
             </form>
         </div>
     </div>
-    <div id="listModal" class="modal" style="display:none;">
-        <div class="modal-content">
-            <div class="modal-header">Lista de Veterinarios</div>
-            <span class="close" onclick="closeModalList()">&times;</span>
-            <table id="doctorsList" class="doctors-table">
-                <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Cargo</th>
-                        <th>Especialidad</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Los datos de los doctores se cargarán aquí mediante JavaScript -->
-                </tbody>
-            </table>
-            <div style="margin-top: 20px;">
-                <button type="button" onclick="closeModalList()">Cerrar</button>
-            </div>
-        </div>
-    </div>
     
-
     <script src="admin.js"></script>
-    <script src="admin.js?v=1.2"></script>
 </body>
-
 </html>

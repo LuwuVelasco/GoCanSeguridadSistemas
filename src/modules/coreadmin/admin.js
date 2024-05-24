@@ -94,44 +94,36 @@ function closeModal() {
     modal.style.display = 'none';
 }
 
-function loadDoctors() {
-    fetch('listadoctores.php')
-    .then(response => response.json())
-    .then(data => {
-        if (data.estado === "success") {
-            const tbody = document.getElementById('doctorsList').getElementsByTagName('tbody')[0];
-            tbody.innerHTML = '';
-            data.doctores.forEach(doctor => {
-                const row = tbody.insertRow();
-                row.insertCell(0).textContent = doctor.nombre;
-                row.insertCell(1).textContent = doctor.cargo;
-                row.insertCell(2).textContent = doctor.especialidad;
-            });
-        } else {
-            console.error('Error:', data.mensaje);
-            alert(data.mensaje); // Asegúrate de mostrar este mensaje también para diagnóstico
-        }
-    })
-    .catch(error => {
-        console.error('Error loading the doctors:', error);
-        alert('Error al cargar los datos: ' + error);
+document.addEventListener('DOMContentLoaded', function() {
+    loadDoctors();  // Carga los doctores inmediatamente cuando la página se carga.
+
+    const closeModalButtons = document.querySelectorAll('.close');
+    closeModalButtons.forEach(button => {
+        button.addEventListener('click', closeModal);
     });
-}
 
-function openListModal() {
-    var modalList = document.getElementById('listModal');
-    modalList.style.display = 'block';
-    modalList.style.alignItems = 'center';
-    modalList.style.justifyContent = 'center';
-    modalList.style.display = 'flex';
-    loadDoctors();  // Carga los datos cuando el modal se abre
-}
 
-function closeModalList() {
-    var modalList = document.getElementById('listModal');
-    modalList.style.display = 'none';
-}
-function viewList() {
-    closeModal();  // Asegura que el modal de registro se cierre sin validar el formulario
-    openListModal();  // Abre el modal de lista
-}
+    function loadDoctors() {
+        fetch('../php/listadoctores.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.estado === "success") {
+                const tbody = document.querySelector('.main table tbody'); // Asegúrate de que este selector coincida con tu tabla en HTML.
+                tbody.innerHTML = ''; // Limpia la tabla antes de añadir nuevos datos.
+                data.doctores.forEach(doctor => {
+                    const row = tbody.insertRow();
+                    row.insertCell(0).textContent = doctor.nombre;
+                    row.insertCell(1).textContent = doctor.cargo;
+                    row.insertCell(2).textContent = doctor.especialidad;
+                });
+            } else {
+                console.error('Error:', data.mensaje);
+                alert(data.mensaje); // Muestra un mensaje de error si algo va mal.
+            }
+        })
+        .catch(error => {
+            console.error('Error loading the doctors:', error);
+            alert('Error al cargar los datos: ' + error);
+        });
+    }
+});

@@ -181,8 +181,22 @@ body{
     color: #ffd12c; 
     background: #fff8df;
 }
-
 .main .quick-access .item:nth-child(4) i,
+.main table tbody tr:nth-child(5) td.icon i{
+    color: #50afe6; 
+    background: #a7b1ea;
+}
+.main .quick-access .item:nth-child(5) i,
+.main table tbody tr:nth-child(6) td.icon i{
+    color: #a850e6; 
+    background: #d896df;
+}
+.main .quick-access .item:nth-child(6) i,
+.main table tbody tr:nth-child(7) td.icon i{
+    color: #df50e6; 
+    background: #f3c0ed;
+}
+.main .quick-access .item:nth-child(7) i,
 .main table tbody tr:nth-child(3) td.icon i{
     color: #3bc963; 
     background: #e2f7e8;
