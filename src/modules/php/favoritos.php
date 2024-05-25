@@ -27,7 +27,7 @@ try {
         $data = json_decode(file_get_contents("php://input"));
         $id_usuario = $data->id_usuario;
 
-        $stmt = $conn->prepare("SELECT nombre, descripcion, precio FROM producto WHERE id_usuario = :id_usuario");
+        $stmt = $conn->prepare("SELECT nombre, descripcion, precio, imagen FROM producto WHERE id_usuario = :id_usuario");
         $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
         $stmt->execute();
 

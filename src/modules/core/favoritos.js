@@ -60,10 +60,19 @@ document.addEventListener('DOMContentLoaded', function() {
           precio.textContent = 'Costo: ' + parseFloat(producto.precio).toFixed(2);
           precio.classList.add('precio');
   
-          productoDiv.appendChild(nombre);
-          productoDiv.appendChild(descripcion);
-          productoDiv.appendChild(precio);
-  
+          var imagen = document.createElement('img');
+          imagen.src = producto.imagen;
+          imagen.classList.add('producto-imagen');
+
+          var infoDiv = document.createElement('div');
+          infoDiv.classList.add('producto-info');
+          infoDiv.appendChild(nombre);
+          infoDiv.appendChild(descripcion);
+          infoDiv.appendChild(precio);
+
+          productoDiv.appendChild(imagen);
+          productoDiv.appendChild(infoDiv);
+
           favoritosBody.appendChild(productoDiv);
         });
       })
