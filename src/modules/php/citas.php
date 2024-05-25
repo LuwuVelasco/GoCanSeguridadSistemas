@@ -49,24 +49,40 @@ try {
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             $id_doctor = $row['id_doctores'];
 
-            // Preparar y ejecutar la inserción en la tabla cita
-            $stmt = $conn->prepare("INSERT INTO cita (propietario, servicio, doctor, id_usuario, id_doctor, horario, fecha) VALUES (:propietario, :servicio, :doctor, :id_usuario, :id_doctor, :horario, :fecha)");
-            $stmt->bindParam(':propietario', $propietario);
-            $stmt->bindParam(':servicio', $servicio);
-            $stmt->bindParam(':doctor', $doctor);
-            $stmt->bindParam(':id_usuario', $id_usuario);
+            // Comprobar si el doctor ya tiene una cita en el mismo horario
+            $stmt = $conn->prepare("SELECT COUNT(*) as count FROM cita WHERE id_doctor = :id_doctor AND fecha = :fecha AND horario = :horario");
             $stmt->bindParam(':id_doctor', $id_doctor);
             $stmt->bindParam(':fecha', $fecha);
             $stmt->bindParam(':horario', $hora);
-
             $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            // Devolver una respuesta JSON con el mensaje de éxito y un ID de cita (si necesitas el ID generado)
-            $id_cita = $conn->lastInsertId();
-            echo json_encode([
-                "id_cita" => $id_cita,
-                "mensaje" => "Cita registrada con éxito."
-            ]);
+            if ($result['count'] > 0) {
+                // El doctor ya tiene una cita en el mismo horario
+                echo json_encode([
+                    "error" => true,
+                    "mensaje" => "El doctor ya tiene una cita en ese horario."
+                ]);
+            } else {
+                // Preparar y ejecutar la inserción en la tabla cita
+                $stmt = $conn->prepare("INSERT INTO cita (propietario, servicio, doctor, id_usuario, id_doctor, horario, fecha) VALUES (:propietario, :servicio, :doctor, :id_usuario, :id_doctor, :horario, :fecha)");
+                $stmt->bindParam(':propietario', $propietario);
+                $stmt->bindParam(':servicio', $servicio);
+                $stmt->bindParam(':doctor', $doctor);
+                $stmt->bindParam(':id_usuario', $id_usuario);
+                $stmt->bindParam(':id_doctor', $id_doctor);
+                $stmt->bindParam(':fecha', $fecha);
+                $stmt->bindParam(':horario', $hora);
+
+                $stmt->execute();
+
+                // Devolver una respuesta JSON con el mensaje de éxito y un ID de cita (si necesitas el ID generado)
+                $id_cita = $conn->lastInsertId();
+                echo json_encode([
+                    "id_cita" => $id_cita,
+                    "mensaje" => "Cita registrada con éxito."
+                ]);
+            }
         } else {
             echo json_encode([
                 "error" => true,

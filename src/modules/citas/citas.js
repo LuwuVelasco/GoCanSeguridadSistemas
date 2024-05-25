@@ -6,9 +6,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     actualizarDoctores(); // Inicializar la lista de doctores cuando la página se carga
-  });
+});
 
-  async function actualizarDoctores() {
+async function actualizarDoctores() {
     const especialidad = document.getElementById('servicio').value;
     const doctorSelect = document.getElementById('doctor');
     doctorSelect.innerHTML = '<option value="">Seleccionar doctor...</option>'; // Reset doctor select
@@ -43,9 +43,9 @@ document.addEventListener('DOMContentLoaded', function() {
       option.textContent = 'Error al cargar doctores';
       doctorSelect.appendChild(option);
     }
-  }
+}
 
-  function registrarcita() {
+function registrarcita() {
     let propietario = document.getElementById('propietario').value;
     let horario = document.getElementById('hora').value;
     let fecha = document.getElementById('fecha').value;
@@ -75,15 +75,20 @@ document.addEventListener('DOMContentLoaded', function() {
       }),
     })
     .then(response => {
-      if (response.ok) {
-        return response.json();
-      } else {
-        throw new Error('Error al registrar la cita');
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
       }
+      return response.json();
     })
     .then(data => {
+      if (data.error) {
+        throw new Error(data.mensaje);
+      }
       console.log(data);
       alert('Cita registrada correctamente. ID de cita: ' + data.id_cita);
     })
-    .catch(error => console.error('Error:', error));
-  }
+    .catch(error => {
+      console.error('Error:', error);
+      alert('Error: ' + error.message);
+    });
+}

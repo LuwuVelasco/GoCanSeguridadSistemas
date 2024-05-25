@@ -1320,7 +1320,7 @@ body {
 
 .modal-content {
   width: 100%;
-  max-width: 500px; /* Ajusta este valor si necesitas más espacio */
+  max-width: 585px; /* Ajusta este valor si necesitas más espacio */
   padding: 20px;
   background: white;
   border-radius: 8px;
