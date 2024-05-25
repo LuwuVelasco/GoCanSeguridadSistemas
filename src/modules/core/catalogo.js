@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const categoria = productCard.querySelector('.categoria').textContent.trim();
         const imagen = productCard.querySelector('.imagen').textContent.trim();
         const id_usuario = localStorage.getItem('id_usuario'); // Asumiendo que tienes el ID del usuario almacenado en localStorage
-        console.log("imagen:", imagen);
         const productData = {
           nombre: nombre,
           descripcion: descripcion,
