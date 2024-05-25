@@ -23,16 +23,31 @@ try {
         // Devolver la cantidad de productos en formato JSON
         echo json_encode($resultado);
     } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        // Obtener productos favoritos del usuario
-        $data = json_decode(file_get_contents("php://input"));
-        $id_usuario = $data->id_usuario;
+        // Obtener productos favoritos o eliminar un producto
+        $data = json_decode(file_get_contents("php://input"), true);
 
-        $stmt = $conn->prepare("SELECT nombre, descripcion, precio, imagen FROM producto WHERE id_usuario = :id_usuario");
-        $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
-        $stmt->execute();
+        if (isset($data['id_usuario'])) {
+            // Obtener productos favoritos del usuario
+            $id_usuario = $data['id_usuario'];
 
-        $favoritos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        echo json_encode($favoritos);
+            $stmt = $conn->prepare("SELECT id_producto, nombre, descripcion, precio, imagen FROM producto WHERE id_usuario = :id_usuario");
+            $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+            $stmt->execute();
+
+            $favoritos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            echo json_encode($favoritos);
+        } elseif (isset($data['id_producto'])) {
+            // Eliminar un producto
+            $id = $data['id_producto'];
+
+            $stmt = $conn->prepare("DELETE FROM producto WHERE id_producto = :id_producto");
+            $stmt->bindParam(':id_producto', $id, PDO::PARAM_INT);
+            $stmt->execute();
+
+            echo json_encode(['success' => true]);
+        } else {
+            echo json_encode(['error' => 'Datos inválidos']);
+        }
     } else {
         echo json_encode(['error' => 'Método no soportado']);
     }

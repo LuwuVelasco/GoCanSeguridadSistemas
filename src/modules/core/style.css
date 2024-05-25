@@ -1386,6 +1386,12 @@ body {
 .producto .precio {
   font-weight: bold;
 }
+.delete-icons {
+  margin-right: 20px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #d9534f; /* Color rojo */
+}
 
 /* Estilos adicionales para el modal para asegurar que ocupa toda la pantalla */
 .modal {
@@ -1487,6 +1493,7 @@ button[type="submit"]:hover {
   min-width: 150px; /* Ajusta este valor según sea necesario */
 }
 .delete-icon {
+  font-size: 24px;
   cursor: pointer;
   color: rgb(255, 2, 2);
 }
