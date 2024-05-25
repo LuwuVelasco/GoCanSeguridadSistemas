@@ -5,9 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.2.0/remixicon.min.css">
-    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.3.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.3.0/uicons-solid-rounded/css/uicons-solid-rounded.css">
     <link rel="stylesheet" href="styleDoc.css">
     <link rel="stylesheet" href="../core/style.css">
+    <link rel="stylesheet" href="modalStyle.css">
     <title>GoCan / Doctor</title>
 </head>
 
@@ -20,7 +21,6 @@
                 <img src="../../assets/Images/user-md.png">
                 <div class="account">
                     <h5>Bienvenido</h5>
-                    <!--<p>usuario@gmail.com</p>-->
                 </div>
                 <div class="profile-dropdown" id="profileDropdown">
                     <ul>
@@ -39,12 +39,14 @@
                 </div>
             </section>
             <div class="main">
-                <h3 class="separator">
-                    Opciones
-                </h3>
+                <h3 class="separator">Opciones</h3>
 
                 <div class="quick-access">
-                    <div id="bt1" class="button">
+                    <div id="bt0" class="button" onclick="openPetModal()">
+                        <i class="fi fi-sr-paw-heart"></i>
+                        <h5>Registro mascotas</h5>
+                    </div>
+                    <div id="bt1" class="button" onclick="openReportModal()">
                         <i class="fi fi-sr-clipboard-list"></i>
                         <h5>Registro reportes</h5>
                     </div>
@@ -64,45 +66,68 @@
                         <!-- Las filas de citas se agregarán aquí dinámicamente -->
                     </tbody>
                 </table>
-
             </div>
 
             <div class="right-section">
-
                 <div class="widgets">
-
-                    <div class="bottom">
-                    </div>
+                    <div class="bottom"></div>
                 </div>
             </div>
         </article>
     </main>
 
-    <div id="reserveModal" class="modal" style="display:none;">
+    <div id="reportModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">Registrar Veterinario</div>
-            <span class="close" onclick="closeModal()">&times;</span>
-            <form id="reserveForm" method="post" action="../php/empleados.php">
-                <input type="text" id="nombre" name="nombre" placeholder="Nombre del Veterinario" required>
-                <input type="text" id="cargo" name="cargo" placeholder="Cargo del Veterinario" required>
-                <select id="especialidad" name="especialidad" required>
-                    <option value="">Seleccionar especialidad...</option>
-                    <option value="vacunas">Vacunas</option>
-                    <option value="traumatologia">Traumatología</option>
-                    <option value="odontologia">Odontología</option>
-                    <option value="desparacitacion">Desparasitación</option>
-                    <option value="consulta_general">Consulta General</option>
-                </select>
-                <div>
-                    <button type="submit">Registrar</button>
-                    <button type="button" onclick="closeModal()">Cancelar</button>
-                </div>
-            </form>
+            <span class="close" onclick="closeReportModal()">&times;</span>
+            <h2>Registrar Reporte</h2>
+            <form id="reportForm">
+                <label for="propietario">Propietario:</label>
+                <input type="text" id="propietario" name="propietario" required>
+            
+                <label for="descripcion">Descripción:</label>
+                <textarea id="descripcion" name="descripcion" required></textarea>
+            
+                <label for="fecha">Fecha:</label>
+                <input type="date" id="fecha" name="fecha" required>
+            
+                <label for="nombre_mascota">Nombre de la Mascota:</label>
+                <input type="text" id="nombre_mascota" name="nombre_mascota" required>
+            
+                <button type="submit">Registrar</button>
+                <button type="submit" onclick="closeReportModal()">Cancelar</button>
+            </form>            
         </div>
     </div>
-    
+
+    <!-- Modal para registro de mascotas -->
+    <div id="petModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closePetModal()">&times;</span>
+            <h2>Registrar Mascota</h2>
+            <form id="petForm">
+                <label for="nombre_mascota">Nombre de la Mascota:</label>
+                <input type="text" id="nombre_mascota" name="nombre_mascota" required>
+            
+                <label for="edad">Edad:</label>
+                <input type="number" id="edad" name="edad" required>
+            
+                <label for="raza">Raza:</label>
+                <input type="text" id="raza" name="raza" required>
+            
+                <label for="tipo">Tipo:</label>
+                <input type="text" id="tipo" name="tipo" required>
+            
+                <label for="id_usuario">ID Usuario:</label>
+                <input type="text" id="id_usuario" name="id_usuario" required>
+            
+                <button type="submit">Registrar</button>
+                <button type="submit" onclick="closePetModal()">Cancelar</button>
+            </form>            
+        </div>
+    </div>
 
     <script src="doctores.js"></script>
+    <script src="modalScript.js"></script>
 </body>
 
 </html>

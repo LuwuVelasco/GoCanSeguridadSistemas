@@ -26,8 +26,8 @@ if ($row = pg_fetch_assoc($result)) {
     }
 
     echo json_encode([
-        "estado" => "success", 
-        "id_usuario" => $row['id_usuario'], 
+        "estado" => "success",
+        "id_usuario" => $row['id_usuario'],
         "cargo" => $row['cargo'],
         "id_doctores" => $row['id_doctores']
     ]);
@@ -37,4 +37,3 @@ if ($row = pg_fetch_assoc($result)) {
 }
 
 pg_close($conexion);
-?>
