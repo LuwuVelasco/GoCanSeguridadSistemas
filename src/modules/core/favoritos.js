@@ -4,16 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Inicializar el contador al cargar la página
   if (idUsuario) {
-    fetch(
-      `http://localhost/GoCan/src/modules/php/favoritos.php?id_usuario=${idUsuario}`
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        document.querySelector(".btn-badge").textContent = data.cantidad;
-      })
-      .catch((error) =>
-        console.error("Error al cargar la cantidad de productos:", error)
-      );
+    actualizarContador(idUsuario);
   }
 
   document.getElementById("filterBtn").addEventListener("click", function () {
@@ -21,31 +12,27 @@ document.addEventListener("DOMContentLoaded", function () {
     filterOptions.classList.toggle("active");
   });
 
-  document
-    .getElementById("precioCheckbox")
-    .addEventListener("change", function () {
-      var select = document.getElementById("precioSelect");
-      if (this.checked) {
-        select.classList.add('active');
-      } else {
-        select.classList.remove('active');
-        select.value = ""; // Resetear selección
-      }
-      fetchFavoritos();
-    });
+  document.getElementById("precioCheckbox").addEventListener("change", function () {
+    var select = document.getElementById("precioSelect");
+    if (this.checked) {
+      select.classList.add('active');
+    } else {
+      select.classList.remove('active');
+      select.value = ""; // Resetear selección
+    }
+    fetchFavoritos();
+  });
 
-  document
-    .getElementById("nombreCheckbox")
-    .addEventListener("change", function () {
-      var select = document.getElementById("nombreSelect");
-      if (this.checked) {
-        select.classList.add('active');
-      } else {
-        select.classList.remove('active');
-        select.value = ""; // Resetear selección
-      }
-      fetchFavoritos();
-    });
+  document.getElementById("nombreCheckbox").addEventListener("change", function () {
+    var select = document.getElementById("nombreSelect");
+    if (this.checked) {
+      select.classList.add('active');
+    } else {
+      select.classList.remove('active');
+      select.value = ""; // Resetear selección
+    }
+    fetchFavoritos();
+  });
 
   document.getElementById('precioSelect').addEventListener('change', fetchFavoritos);
   document.getElementById('nombreSelect').addEventListener('change', fetchFavoritos);
@@ -141,11 +128,21 @@ document.addEventListener("DOMContentLoaded", function () {
       .then((data) => {
         if (data.success) {
           productoDiv.remove(); // Eliminar el producto del display
+          actualizarContador(idUsuario); // Actualizar el contador
         } else {
           console.error("Error eliminando el producto:", data.error);
         }
       })
       .catch((error) => console.error("Error:", error));
+  }
+
+  function actualizarContador(idUsuario) {
+    fetch(`http://localhost/GoCan/src/modules/php/favoritos.php?id_usuario=${idUsuario}`)
+      .then(response => response.json())
+      .then(data => {
+        document.querySelector(".btn-badge").textContent = data.cantidad;
+      })
+      .catch(error => console.error("Error al actualizar la cantidad de productos:", error));
   }
 
   // Obtener elementos
@@ -211,11 +208,8 @@ document.addEventListener("DOMContentLoaded", function () {
       if (nombre && nombre.textContent.toLowerCase().includes(filter)) {
         filteredProducts.push({
           nombre: nombre.textContent,
-          descripcion:
-            productos[i].getElementsByClassName("descripcion")[0].textContent,
-          precio: productos[i]
-            .getElementsByClassName("precio")[0]
-            .textContent.split(": ")[1],
+          descripcion: productos[i].getElementsByClassName("descripcion")[0].textContent,
+          precio: productos[i].getElementsByClassName("precio")[0].textContent.split(": ")[1],
           imagen: productos[i].getElementsByClassName("producto-imagen")[0].src,
         });
       }
