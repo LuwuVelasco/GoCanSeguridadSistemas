@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const doctorSelect = document.getElementById('doctor');
     doctorSelect.innerHTML = '<option value="">Seleccionar doctor...</option>'; // Reset doctor select
 
-    let url = 'http://localhost/GoCan/src/modules/php/sacardoc.php';
+    let url = 'http://localhost/GoCan/src/modules/php/citas.php';
     if (especialidad !== "Sin especificar" && especialidad !== "") {
         const especialidadQuery = especialidad === "Consulta General" ? "Medicina General" : especialidad;
         url += `?especialidad=${especialidadQuery}`;
