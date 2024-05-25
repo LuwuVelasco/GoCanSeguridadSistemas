@@ -35,7 +35,7 @@ try {
         $id_doctor = $row['id_doctores'];
 
         // Preparar y ejecutar la inserción en la tabla cita
-        $stmt = $conn->prepare("INSERT INTO cita (propietario, horario, fecha, servicio, doctor, id_usuario, id_doctor) VALUES (:propietario, :horario, :fecha, :servicio, :doctor, :id_usuario, :id_doctor)");
+        $stmt = $conn->prepare("INSERT INTO cita (propietario, servicio, doctor, id_usuario, id_doctor,horario, fecha) VALUES (:propietario, :servicio, :doctor, :id_usuario, :id_doctor,:horario, :fecha)");
         $stmt->bindParam(':propietario', $propietario);
         $stmt->bindParam(':servicio', $servicio);
         $stmt->bindParam(':doctor', $doctor);

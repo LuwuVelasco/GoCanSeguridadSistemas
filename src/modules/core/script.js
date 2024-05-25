@@ -90,7 +90,6 @@ function fetchReservations() {
   });
 }
 
-
 const navToggler = document.querySelector("[data-nav-toggler]");
 const navbar = document.querySelector("[data-navbar]");
 const navbarLinks = document.querySelectorAll("[data-nav-link]");

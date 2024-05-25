@@ -147,11 +147,11 @@
             <option value="Consulta General">Consulta General</option>
             <option value="Sin especificar">No especificado</option>
         </select>
-        <input type="text" id="doctor" name="doctor" placeholder="Doctor" required>
+        <select id="doctor" name="doctor" required>
+          <option value="">Seleccionar doctor...</option>
+        </select>
         <input type="date" id="fecha" name="fecha" placeholder="Fecha" required>
         <input type="time" id="hora" name="hora" placeholder="Hora" required>
-        <input type="hidden" id="id_usuario" name="id_usuario" value="ID_DEL_USUARIO">
-        <input type="hidden" id="id_doctor" name="id_doctor" value="ID_DEL_DOCTOR">
         <button id="reservar" type="submit">Reservar</button>
     </form>
   </div>
