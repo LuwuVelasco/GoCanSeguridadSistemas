@@ -1,31 +1,5 @@
 'use strict';
 
-
-
-document.addEventListener('DOMContentLoaded', function() {
-  // Obtener elementos
-  var fav = document.getElementById('modal');
-  var openfavBtn = document.getElementById('openFavBtn');
-  var closeModalBtn = document.querySelector('.close-btn');
-
-  // Abrir el modal al hacer clic en el botón
-  openfavBtn.addEventListener('click', function() {
-    fav.style.display = 'block';
-  });
-
-  // Cerrar el modal al hacer clic en el botón de cerrar
-  closeModalBtn.addEventListener('click', function() {
-    fav.style.display = 'none';
-  });
-
-  // Cerrar el modal al hacer clic fuera del contenido del modal
-  window.addEventListener('click', function(event) {
-    if (event.target === fav) {
-      fav.style.display = 'none';
-    }
-  });
-});
-
 /**
  * add event on element
  */

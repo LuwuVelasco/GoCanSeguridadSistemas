@@ -1338,6 +1338,27 @@ body {
   text-decoration: none;
   cursor: pointer;
 }
+.modal-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.producto {
+  border-bottom: 1px solid #ddd;
+  padding: 10px 0;
+}
+
+.producto h3 {
+  margin: 0;
+}
+
+.producto p {
+  margin: 5px 0;
+}
+
+.producto .precio {
+  font-weight: bold;
+}
 
 /* Estilos adicionales para el modal para asegurar que ocupa toda la pantalla */
 .modal {

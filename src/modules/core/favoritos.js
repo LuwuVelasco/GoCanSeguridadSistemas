@@ -12,3 +12,61 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(error => console.error('Error al cargar la cantidad de productos:', error));
     }
 });
+document.addEventListener('DOMContentLoaded', function() {
+    // Obtener elementos
+    var fav = document.getElementById('modal');
+    var openfavBtn = document.getElementById('openFavBtn');
+    var closeModalBtn = document.querySelector('.close-btn');
+  
+    // Abrir el modal al hacer clic en el botón
+    openfavBtn.addEventListener('click', function() {
+      fetchFavoritos();
+      fav.style.display = 'block';
+    });
+  
+    // Cerrar el modal al hacer clic en el botón de cerrar
+    closeModalBtn.addEventListener('click', function() {
+      fav.style.display = 'none';
+    });
+  
+    // Cerrar el modal al hacer clic fuera del contenido del modal
+    window.addEventListener('click', function(event) {
+      if (event.target === fav) {
+        fav.style.display = 'none';
+      }
+    });
+    function fetchFavoritos() {
+      fetch('http://localhost/GoCan/src/modules/php/favoritos.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ id_usuario: localStorage.getItem('id_usuario') })
+      })
+      .then(response => response.json())
+      .then(data => {
+        favoritosBody.innerHTML = ''; // Limpiar el contenido anterior
+        data.forEach(function(producto) {
+          var productoDiv = document.createElement('div');
+          productoDiv.classList.add('producto');
+  
+          var nombre = document.createElement('h3');
+          nombre.textContent = producto.nombre;
+  
+          var descripcion = document.createElement('p');
+          descripcion.textContent = producto.descripcion;
+  
+          var precio = document.createElement('p');
+          precio.textContent = 'Costo: ' + parseFloat(producto.precio).toFixed(2);
+          precio.classList.add('precio');
+  
+          productoDiv.appendChild(nombre);
+          productoDiv.appendChild(descripcion);
+          productoDiv.appendChild(precio);
+  
+          favoritosBody.appendChild(productoDiv);
+        });
+      })
+      .catch(error => console.error('Error fetching favoritos:', error));
+    }
+  });
