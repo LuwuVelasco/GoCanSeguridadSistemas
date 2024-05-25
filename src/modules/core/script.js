@@ -67,59 +67,81 @@ document.querySelector('#viewReservationsModal .close').addEventListener('click'
   this.closest('.modal').style.display = 'none';
 });
 
-// Función para cargar las reservas desde la BDD (simulación)
 function fetchReservations() {
-  let id_usuario = localStorage.getItem('id_usuario');
-  fetch('http://localhost/GoCan/src/modules/php/reservas.php', {
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ id_usuario: id_usuario })
-  })
-  .then(response => response.json())
-  .then(data => {
-      var reservasList = document.getElementById('reservationsList');
-      reservasList.innerHTML = '';
+let id_usuario = localStorage.getItem('id_usuario');
+fetch('http://localhost/GoCan/src/modules/php/reservas.php', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ id_usuario: id_usuario })
+})
+.then(response => response.json())
+.then(data => {
+    var reservasList = document.getElementById('reservationsList');
+    reservasList.innerHTML = '';
 
-      data.forEach(function(reserva) {
-          var row = document.createElement('tr');
+    data.forEach(function(reserva) {
+        var row = document.createElement('tr');
 
-          var cellPropietario = document.createElement('td');
-          cellPropietario.textContent = reserva.propietario;
-          row.appendChild(cellPropietario);
+        var cellPropietario = document.createElement('td');
+        cellPropietario.textContent = reserva.propietario;
+        row.appendChild(cellPropietario);
 
-          var cellServicio = document.createElement('td');
-          cellServicio.textContent = reserva.servicio;
-          row.appendChild(cellServicio);
+        var cellServicio = document.createElement('td');
+        cellServicio.textContent = reserva.servicio;
+        row.appendChild(cellServicio);
 
-          var cellFecha = document.createElement('td');
-          cellFecha.textContent = reserva.fecha;
-          row.appendChild(cellFecha);
+        var cellFecha = document.createElement('td');
+        cellFecha.textContent = reserva.fecha;
+        row.appendChild(cellFecha);
 
-          var cellHora = document.createElement('td');
-          cellHora.textContent = reserva.horario;
-          row.appendChild(cellHora);
+        var cellHora = document.createElement('td');
+        cellHora.textContent = reserva.horario;
+        row.appendChild(cellHora);
 
-          var cellEliminar = document.createElement('td');
-          var deleteIcon = document.createElement('span');
-          deleteIcon.innerHTML = '&#128465;'; // Icono de basurero
-          deleteIcon.classList.add('delete-icon');
-          deleteIcon.addEventListener('click', function() {
-              eliminarReserva(reserva.id_cita); // Esta función se implementará después
-          });
-          cellEliminar.appendChild(deleteIcon);
-          row.appendChild(cellEliminar);
+        var cellEliminar = document.createElement('td');
+        var deleteIcon = document.createElement('span');
+        deleteIcon.innerHTML = '&#128465;'; // Icono de basurero
+        deleteIcon.classList.add('delete-icon');
+        deleteIcon.addEventListener('click', function() {
+            eliminarReserva(reserva.id_cita, row); // Pasamos la fila actual para eliminarla después
+        });
+        cellEliminar.appendChild(deleteIcon);
+        row.appendChild(cellEliminar);
 
-          reservasList.appendChild(row);
-      });
-  })
-  .catch(error => console.error('Error fetching reservations:', error));
+        reservasList.appendChild(row);
+    });
+})
+.catch(error => console.error('Error fetching reservations:', error));
 }
 
-function eliminarReserva(idCita) {
-  console.log('Eliminar reserva con ID:', idCita);
-  // Implementar la lógica para eliminar la reserva de la base de datos
+function eliminarReserva(idCita, row) {
+fetch('http://localhost/GoCan/src/modules/php/reservas.php', {
+    method: 'DELETE',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ id_cita: idCita })
+})
+  .then(response => {
+      if (!response.ok) {
+          throw new Error('Network response was not ok');
+      }
+      return response.json();
+  })
+  .then(data => {
+      if (data.error) {
+          throw new Error(data.mensaje);
+      }
+      console.log(data);
+      alert('Reserva eliminada correctamente');
+      row.remove(); // Eliminar la fila de la tabla
+  })
+  .catch(error => {
+      console.error('Error:', error);
+      alert('Error: ' + error.message);
+  });
 }
 
 const navToggler = document.querySelector("[data-nav-toggler]");
