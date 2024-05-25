@@ -181,7 +181,18 @@
 <!--Ventana de favoritos-->
 <div id="modal" class="favoritos">
   <div class="favoritos-content">
-    <div class="modal-header">Productos Favoritos</div>
+    <div class="modal-header">
+      Productos Favoritos
+      <button class="action-btn" aria-label="Search" id="toggleSearchBtn">
+        <ion-icon name="search-outline" aria-hidden="true"></ion-icon>
+      </button>
+    </div>
+    <div class="search-container" style="display: none;">
+      <input type="text" id="searchInput" class="search-input" placeholder="Buscar...">
+      <button class="action-btn" aria-label="Search" id="searchBtn">
+        <ion-icon name="search-outline" aria-hidden="true"></ion-icon>
+      </button>
+    </div>
     <span class="close-btn">&times;</span>
     <div class="modal-body" id="favoritosBody"></div>
   </div>
@@ -404,7 +415,7 @@
                         <a
                           href="#"
                           class="card-title nombre"
-                          >AlimentoDog Chow Adulto: Medianos</a
+                          >Alimento Dog Chow Adulto: Medianos</a
                         >
                         <p class="invisible descripcion">Alimento balanceado para perros adultos de tamaño mediano, formulado para apoyar la salud general, incluyendo digestión, huesos y pelaje.
                         </p>

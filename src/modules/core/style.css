@@ -1321,8 +1321,8 @@ body {
   margin: 10% auto; /* Centrar verticalmente */
   padding: 20px;
   border-radius: 8px;
-  width: 80%; /* Ancho del modal */
-  max-width: 500px;
+  width: 100%; /* Ancho del modal */
+  max-width: 800px;
   position: relative; /* Necesario para posicionar la X dentro */
 }
 
@@ -1344,6 +1344,18 @@ body {
 .modal-body {
   display: flex;
   flex-direction: column;
+}
+.search-container {
+  display: flex;
+  align-items: center;
+  margin-top: 1px;
+}
+.search-input {
+  padding: 5px;
+  font-size: 15px;
+  margin-top: 1px;
+  width: calc(50% - 10px);
+  display: block;
 }
 
 .producto {
