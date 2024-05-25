@@ -186,12 +186,31 @@
       <button class="action-btn" aria-label="Search" id="toggleSearchBtn">
         <ion-icon name="search-outline" aria-hidden="true"></ion-icon>
       </button>
+      <button class="action-btn" aria-label="Filter" id="filterBtn">
+        <ion-icon name="filter-outline" aria-hidden="true"></ion-icon>
+      </button>
     </div>
     <div class="search-container" style="display: none;">
       <input type="text" id="searchInput" class="search-input" placeholder="Buscar...">
       <button class="action-btn" aria-label="Search" id="searchBtn">
         <ion-icon name="search-outline" aria-hidden="true"></ion-icon>
       </button>
+    </div>
+    <div class="filter-options" id="filterOptions">
+      <label>
+        <input type="checkbox" value="precio" id="precioCheckbox"> Costo
+        <select class="filter-select" id="precioSelect">
+          <option value="asc">De menor a mayor</option>
+          <option value="desc">De mayor a menor</option>
+        </select>
+      </label>
+      <label>
+        <input type="checkbox" value="nombre" id="nombreCheckbox"> Nombre
+        <select class="filter-select" id="nombreSelect">
+          <option value="asc">A-Z</option>
+          <option value="desc">Z-A</option>
+        </select>
+      </label>
     </div>
     <span class="close-btn">&times;</span>
     <div class="modal-body" id="favoritosBody"></div>
@@ -749,7 +768,7 @@
                         <a
                           href="#"
                           class="card-title nombre"
-                          >Alimneto Doguito purina carne</a
+                          >Alimento Doguito purina carne</a
                         >
                         <p class="invisible descripcion">Una nutritiva y deliciosa opción para perros adultos, formulada con carne de alta calidad para una alimentación balanceada y sabrosa.
                         </p>
