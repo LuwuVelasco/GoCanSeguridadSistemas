@@ -1405,7 +1405,15 @@ button[type="submit"]:hover {
 }
 .delete-icon {
   cursor: pointer;
-  color: red;
+  color: rgb(255, 2, 2);
+}
+td {
+  position: relative;
+}
+input {
+  box-sizing: border-box;
+  font-size: 1em;
+  width: 100%;
 }
 /* Estilo básico para el combo box */
 select {

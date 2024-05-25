@@ -68,52 +68,73 @@ document.querySelector('#viewReservationsModal .close').addEventListener('click'
 });
 
 function fetchReservations() {
-let id_usuario = localStorage.getItem('id_usuario');
-fetch('http://localhost/GoCan/src/modules/php/reservas.php', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ id_usuario: id_usuario })
-})
-.then(response => response.json())
-.then(data => {
-    var reservasList = document.getElementById('reservationsList');
-    reservasList.innerHTML = '';
+  let id_usuario = localStorage.getItem('id_usuario');
+  fetch('http://localhost/GoCan/src/modules/php/reservas.php', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ id_usuario: id_usuario })
+  })
+  .then(response => response.json())
+  .then(data => {
+      var reservasList = document.getElementById('reservationsList');
+      reservasList.innerHTML = '';
 
-    data.forEach(function(reserva) {
-        var row = document.createElement('tr');
+      data.forEach(function(reserva) {
+          var row = document.createElement('tr');
 
-        var cellPropietario = document.createElement('td');
-        cellPropietario.textContent = reserva.propietario;
-        row.appendChild(cellPropietario);
+          var cellPropietario = createEditableCell(reserva.propietario);
+          row.appendChild(cellPropietario);
 
-        var cellServicio = document.createElement('td');
-        cellServicio.textContent = reserva.servicio;
-        row.appendChild(cellServicio);
+          var cellServicio = createEditableCell(reserva.servicio);
+          row.appendChild(cellServicio);
 
-        var cellFecha = document.createElement('td');
-        cellFecha.textContent = reserva.fecha;
-        row.appendChild(cellFecha);
+          var cellFecha = createEditableCell(reserva.fecha);
+          row.appendChild(cellFecha);
 
-        var cellHora = document.createElement('td');
-        cellHora.textContent = reserva.horario;
-        row.appendChild(cellHora);
+          var cellHora = createEditableCell(reserva.horario);
+          row.appendChild(cellHora);
 
-        var cellEliminar = document.createElement('td');
-        var deleteIcon = document.createElement('span');
-        deleteIcon.innerHTML = '&#128465;'; // Icono de basurero
-        deleteIcon.classList.add('delete-icon');
-        deleteIcon.addEventListener('click', function() {
-            eliminarReserva(reserva.id_cita, row); // Pasamos la fila actual para eliminarla después
-        });
-        cellEliminar.appendChild(deleteIcon);
-        row.appendChild(cellEliminar);
+          var cellEliminar = document.createElement('td');
+          var deleteIcon = document.createElement('span');
+          deleteIcon.innerHTML = '&#128465;'; // Icono de basurero
+          deleteIcon.classList.add('delete-icon');
+          deleteIcon.addEventListener('click', function() {
+              eliminarReserva(reserva.id_cita, row); // Pasamos la fila actual para eliminarla después
+          });
+          cellEliminar.appendChild(deleteIcon);
+          row.appendChild(cellEliminar);
 
-        reservasList.appendChild(row);
-    });
-})
-.catch(error => console.error('Error fetching reservations:', error));
+          reservasList.appendChild(row);
+      });
+  })
+  .catch(error => console.error('Error fetching reservations:', error));
+}
+function createEditableCell(value) {
+  var cell = document.createElement('td');
+  cell.textContent = value;
+  cell.addEventListener('dblclick', function() {
+      var input = document.createElement('input');
+      input.type = 'text';
+      input.value = cell.textContent;
+      input.style.width = '100%';
+
+      input.addEventListener('blur', function() {
+          cell.textContent = input.value;
+      });
+
+      input.addEventListener('keypress', function(event) {
+          if (event.key === 'Enter') {
+              input.blur();
+          }
+      });
+
+      cell.innerHTML = '';
+      cell.appendChild(input);
+      input.focus();
+  });
+  return cell;
 }
 
 function eliminarReserva(idCita, row) {
