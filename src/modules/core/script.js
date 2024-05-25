@@ -83,11 +83,43 @@ function fetchReservations() {
       reservasList.innerHTML = '';
 
       data.forEach(function(reserva) {
-          var div = document.createElement('div');
-          div.textContent = `Propietario: ${reserva.propietario}, Servicio: ${reserva.servicio}, Fecha: ${reserva.fecha}, Hora: ${reserva.horario}`;
-          reservasList.appendChild(div);
+          var row = document.createElement('tr');
+
+          var cellPropietario = document.createElement('td');
+          cellPropietario.textContent = reserva.propietario;
+          row.appendChild(cellPropietario);
+
+          var cellServicio = document.createElement('td');
+          cellServicio.textContent = reserva.servicio;
+          row.appendChild(cellServicio);
+
+          var cellFecha = document.createElement('td');
+          cellFecha.textContent = reserva.fecha;
+          row.appendChild(cellFecha);
+
+          var cellHora = document.createElement('td');
+          cellHora.textContent = reserva.horario;
+          row.appendChild(cellHora);
+
+          var cellEliminar = document.createElement('td');
+          var deleteIcon = document.createElement('span');
+          deleteIcon.innerHTML = '&#128465;'; // Icono de basurero
+          deleteIcon.classList.add('delete-icon');
+          deleteIcon.addEventListener('click', function() {
+              eliminarReserva(reserva.id_cita); // Esta función se implementará después
+          });
+          cellEliminar.appendChild(deleteIcon);
+          row.appendChild(cellEliminar);
+
+          reservasList.appendChild(row);
       });
-  });
+  })
+  .catch(error => console.error('Error fetching reservations:', error));
+}
+
+function eliminarReserva(idCita) {
+  console.log('Eliminar reserva con ID:', idCita);
+  // Implementar la lógica para eliminar la reserva de la base de datos
 }
 
 const navToggler = document.querySelector("[data-nav-toggler]");

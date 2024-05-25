@@ -1319,7 +1319,7 @@ body {
 }
 
 .modal-content {
-  width: 95%;
+  width: 100%;
   max-width: 500px; /* Ajusta este valor si necesitas más espacio */
   padding: 20px;
   background: white;
@@ -1376,8 +1376,37 @@ html .modal .modal-content button[type="submit"] {
 button[type="submit"]:hover {
   background-color: var(--bittersweet);
 }
+#reservationsContainer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
+#reservationsTable {
+  width: 80%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 15px;
+  text-align: center;
+}
 
+#reservationsTable th, #reservationsTable td {
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+}
+
+#reservationsTable th {
+  background-color: #f2f2f2;
+}
+
+#reservationsTable th:nth-child(3), #reservationsTable td:nth-child(3) {
+  min-width: 150px; /* Ajusta este valor según sea necesario */
+}
+.delete-icon {
+  cursor: pointer;
+  color: red;
+}
 /* Estilo básico para el combo box */
 select {
   width: 100%; /* Toma todo el ancho disponible */

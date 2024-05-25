@@ -163,9 +163,20 @@
   <div class="modal-content">
     <div class="modal-header">Reservas Registradas</div>
     <span class="close">&times;</span>
-    <div id="reservationsList">
-      <!-- Aquí se cargará dinámicamente la lista de reservas desde la BDD -->
-    </div>
+    <table id="reservationsTable">
+      <thead>
+        <tr>
+          <th>Propietario</th>
+          <th>Servicio</th>
+          <th>Fecha</th>
+          <th>Hora</th>
+          <th>Eliminar</th>
+        </tr>
+      </thead>
+      <tbody id="reservationsList">
+        <!-- Las filas de reservas se insertarán aquí -->
+      </tbody>
+    </table>
   </div>
 </div>
 
