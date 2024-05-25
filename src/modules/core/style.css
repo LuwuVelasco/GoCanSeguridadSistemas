@@ -1348,14 +1348,15 @@ body {
 .search-container {
   display: flex;
   align-items: center;
-  margin-top: 1px;
+  margin-top: 5px;
 }
 .search-input {
   padding: 5px;
   font-size: 15px;
-  margin-top: 1px;
+  margin-top: 5px;
   width: calc(50% - 10px);
   display: block;
+  margin-right: 20px;
 }
 
 .producto {
