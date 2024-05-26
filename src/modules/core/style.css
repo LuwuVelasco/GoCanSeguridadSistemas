@@ -1570,19 +1570,19 @@ select:focus {
   position: absolute;
   top: 50%; /* Centra los botones verticalmente */
   transform: translateY(-50%); /* Ajuste fino de la posición vertical */
-  background-color: #fff; /* Color de fondo */
+  background: none; /* Color de fondo */
   border: none; /* Sin borde */
   cursor: pointer; /* Cursor tipo pointer para indicar interactividad */
   z-index: 1; /* Asegura que los botones estén sobre otros elementos */
-  padding: 10px; /* Espaciado interno para un mejor aspecto */
+  padding: 5px; /* Espaciado interno para un mejor aspecto */
 }
 
 .prev {
-  left: 10px; /* Posición del botón izquierdo */
+  left: 0; /* Posición del botón izquierdo */
 }
 
 .next {
-  right: 10px; /* Posición del botón derecho */
+  right: 0; /* Posición del botón derecho */
 }
 .invisible {
   position: absolute;

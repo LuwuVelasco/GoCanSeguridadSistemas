@@ -1,256 +1,240 @@
 'use strict';
 
-/**
- * add event on element
- */
-
-const addEventOnElem = function (elem, type, callback) {
-  if (elem.length > 1) {
-    for (let i = 0; i < elem.length; i++) {
-      elem[i].addEventListener(type, callback);
-    }
+const addEventOnElem = (elems, type, callback) => {
+  if (Array.isArray(elems) || elems.length > 1) {
+    elems.forEach(elem => elem.addEventListener(type, callback));
   } else {
-    elem.addEventListener(type, callback);
+    elems.addEventListener(type, callback);
   }
-}
+};
 
-/**
- * navbar toggle
- */
-document.getElementById('navReserveLink').addEventListener('click', function(event) {
-  event.preventDefault();  // Esto evita que la página se desplace hacia arriba cuando hagas clic en el enlace
-  document.getElementById('reserveModal').style.display = 'flex';
-});
+const toggleModal = (modalId, displayStyle = 'flex') => {
+  const modal = document.getElementById(modalId);
+  modal.style.display = displayStyle;
+  if (displayStyle === 'flex') {
+    modal.style.alignItems = 'center';
+    modal.style.justifyContent = 'center';
+  }
+};
 
-document.getElementById('openReserveModal').addEventListener('click', function() {
-  const modal = document.getElementById('reserveModal');
-  modal.style.display = 'flex'; // Asegurarse de que se usa flex para mantenerlo centrado.
-  modal.style.alignItems = 'center'; // Alineación vertical centrada
-  modal.style.justifyContent = 'center'; // Alineación horizontal centrada
-});
+const initEvents = () => {
+  document.getElementById('navReserveLink').addEventListener('click', event => {
+    event.preventDefault();
+    toggleModal('reserveModal');
+  });
 
-document.querySelector('.modal .close').addEventListener('click', function() {
-  this.closest('.modal').style.display = 'none';
-});
+  document.getElementById('openReserveModal').addEventListener('click', () => {
+    toggleModal('reserveModal');
+  });
 
-document.getElementById('reserveForm').addEventListener('submit', function(event) {
-  event.preventDefault();
-  
-  // Recolectar datos del formulario
-  const formData = new FormData(this);
+  document.querySelector('.modal .close').addEventListener('click', function() {
+    this.closest('.modal').style.display = 'none';
+  });
 
-  // Enviar los datos al servidor usando fetch
+  document.getElementById('reserveForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    submitReservationForm(this);
+  });
+
+  document.querySelector('[data-nav-link="reservas"]').addEventListener('click', event => {
+    event.preventDefault();
+    fetchReservations();
+    toggleModal('viewReservationsModal');
+  });
+
+  document.querySelector('#viewReservationsModal .close').addEventListener('click', function() {
+    this.closest('.modal').style.display = 'none';
+  });
+};
+
+const submitReservationForm = form => {
+  const formData = new FormData(form);
   fetch('../php/citas.php', {
-      method: 'POST',
-      body: formData
+    method: 'POST',
+    body: formData
   })
   .then(response => response.text())
   .then(data => {
-      console.log('Respuesta del servidor:', data);
-      this.closest('.modal').style.display = 'none';
-      alert('Cita reservada con éxito!');
-      // Aquí puedes actualizar tu lista de reservaciones o lo que necesites
+    console.log('Respuesta del servidor:', data);
+    form.closest('.modal').style.display = 'none';
+    alert('Cita reservada con éxito!');
   })
   .catch(error => console.error('Error:', error));
-});
+};
 
-
-// Evento para abrir la ventana modal de Reservas
-document.querySelector('[data-nav-link="reservas"]').addEventListener('click', function(event) {
-  event.preventDefault();
-  fetchReservations(); // Función para cargar las reservas desde la BDD
-  document.getElementById('viewReservationsModal').style.display = 'flex';
-});
-
-// Cerrar la ventana modal de Reservas
-document.querySelector('#viewReservationsModal .close').addEventListener('click', function() {
-  this.closest('.modal').style.display = 'none';
-});
-
-function fetchReservations() {
-  let id_usuario = localStorage.getItem('id_usuario');
+const fetchReservations = () => {
+  const idUsuario = localStorage.getItem('id_usuario');
   fetch('http://localhost/GoCan/src/modules/php/reservas.php', {
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ id_usuario: id_usuario })
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ id_usuario: idUsuario })
   })
   .then(response => response.json())
   .then(data => {
-      var reservasList = document.getElementById('reservationsList');
-      reservasList.innerHTML = '';
+    const reservasList = document.getElementById('reservationsList');
+    reservasList.innerHTML = '';
+    data.forEach(reserva => {
+      const row = document.createElement('tr');
+      row.appendChild(createEditableCell(reserva.propietario));
+      row.appendChild(createEditableCell(reserva.servicio));
+      row.appendChild(createEditableCell(reserva.fecha));
+      row.appendChild(createEditableCell(reserva.horario));
 
-      data.forEach(function(reserva) {
-          var row = document.createElement('tr');
-
-          var cellPropietario = createEditableCell(reserva.propietario);
-          row.appendChild(cellPropietario);
-
-          var cellServicio = createEditableCell(reserva.servicio);
-          row.appendChild(cellServicio);
-
-          var cellFecha = createEditableCell(reserva.fecha);
-          row.appendChild(cellFecha);
-
-          var cellHora = createEditableCell(reserva.horario);
-          row.appendChild(cellHora);
-
-          var cellEliminar = document.createElement('td');
-          var deleteIcon = document.createElement('span');
-          deleteIcon.innerHTML = '&#128465;'; // Icono de basurero
-          deleteIcon.classList.add('delete-icon');
-          deleteIcon.addEventListener('click', function() {
-              eliminarReserva(reserva.id_cita, row); // Pasamos la fila actual para eliminarla después
-          });
-          cellEliminar.appendChild(deleteIcon);
-          row.appendChild(cellEliminar);
-
-          reservasList.appendChild(row);
+      const cellEliminar = document.createElement('td');
+      const deleteIcon = document.createElement('span');
+      deleteIcon.innerHTML = '&#128465;'; // Icono de basurero
+      deleteIcon.classList.add('delete-icon');
+      deleteIcon.addEventListener('click', () => {
+        eliminarReserva(reserva.id_cita, row);
       });
+      cellEliminar.appendChild(deleteIcon);
+      row.appendChild(cellEliminar);
+
+      reservasList.appendChild(row);
+    });
   })
   .catch(error => console.error('Error fetching reservations:', error));
-}
-function createEditableCell(value) {
-  var cell = document.createElement('td');
+};
+
+const createEditableCell = value => {
+  const cell = document.createElement('td');
   cell.textContent = value;
-  cell.addEventListener('dblclick', function() {
-      var input = document.createElement('input');
-      input.type = 'text';
-      input.value = cell.textContent;
-      input.style.width = '100%';
+  cell.addEventListener('dblclick', () => {
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.value = cell.textContent;
+    input.style.width = '100%';
 
-      input.addEventListener('blur', function() {
-          cell.textContent = input.value;
-      });
+    input.addEventListener('blur', () => {
+      cell.textContent = input.value;
+    });
 
-      input.addEventListener('keypress', function(event) {
-          if (event.key === 'Enter') {
-              input.blur();
-          }
-      });
+    input.addEventListener('keypress', event => {
+      if (event.key === 'Enter') {
+        input.blur();
+      }
+    });
 
-      cell.innerHTML = '';
-      cell.appendChild(input);
-      input.focus();
+    cell.innerHTML = '';
+    cell.appendChild(input);
+    input.focus();
   });
   return cell;
-}
+};
 
-function eliminarReserva(idCita, row) {
-fetch('http://localhost/GoCan/src/modules/php/reservas.php', {
+const eliminarReserva = (idCita, row) => {
+  fetch('http://localhost/GoCan/src/modules/php/reservas.php', {
     method: 'DELETE',
     headers: {
-        'Content-Type': 'application/json'
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify({ id_cita: idCita })
-})
+  })
   .then(response => {
-      if (!response.ok) {
-          throw new Error('Network response was not ok');
-      }
-      return response.json();
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json();
   })
   .then(data => {
-      if (data.error) {
-          throw new Error(data.mensaje);
-      }
-      console.log(data);
-      alert('Reserva eliminada correctamente');
-      row.remove(); // Eliminar la fila de la tabla
+    if (data.error) {
+      throw new Error(data.mensaje);
+    }
+    console.log(data);
+    alert('Reserva eliminada correctamente');
+    row.remove();
   })
   .catch(error => {
-      console.error('Error:', error);
-      alert('Error: ' + error.message);
+    console.error('Error:', error);
+    alert('Error: ' + error.message);
   });
-}
+};
 
-const navToggler = document.querySelector("[data-nav-toggler]");
-const navbar = document.querySelector("[data-navbar]");
-const navbarLinks = document.querySelectorAll("[data-nav-link]");
+const setupNavbar = () => {
+  const navToggler = document.querySelector("[data-nav-toggler]");
+  const navbar = document.querySelector("[data-navbar]");
+  const navbarLinks = document.querySelectorAll("[data-nav-link]");
 
-const toggleNavbar = function () {
-  navbar.classList.toggle("active");
-  navToggler.classList.toggle("active");
-}
+  const toggleNavbar = () => {
+    navbar.classList.toggle("active");
+    navToggler.classList.toggle("active");
+  };
 
-addEventOnElem(navToggler, "click", toggleNavbar);
+  const closeNavbar = () => {
+    navbar.classList.remove("active");
+    navToggler.classList.remove("active");
+  };
 
+  addEventOnElem(navToggler, "click", toggleNavbar);
+  addEventOnElem(navbarLinks, "click", closeNavbar);
+};
 
-const closeNavbar = function () {
-  navbar.classList.remove("active");
-  navToggler.classList.remove("active");
-}
+const setupScrollEffects = () => {
+  const header = document.querySelector("[data-header]");
+  const backTopBtn = document.querySelector("[data-back-top-btn]");
 
-addEventOnElem(navbarLinks, "click", closeNavbar);
+  const activeElemOnScroll = () => {
+    if (window.scrollY > 100) {
+      header.classList.add("active");
+      backTopBtn.classList.add("active");
+    } else {
+      header.classList.remove("active");
+      backTopBtn.classList.remove("active");
+    }
+  };
 
-/**
- * active header when window scroll down to 100px
- */
+  addEventOnElem(window, "scroll", activeElemOnScroll);
+};
 
-const header = document.querySelector("[data-header]");
-const backTopBtn = document.querySelector("[data-back-top-btn]");
-
-const activeElemOnScroll = function () {
-  if (window.scrollY > 100) {
-    header.classList.add("active");
-    backTopBtn.classList.add("active");
-  } else {
-    header.classList.remove("active");
-    backTopBtn.classList.remove("active");
-  }
-}
-
-addEventOnElem(window, "scroll", activeElemOnScroll);
-
-// Función básica para mover el carrusel
 let currentSlide = 0;
-function moveCarousel(step) {
+
+const moveCarousel = step => {
   const slideContainer = document.querySelector('.carousel-slide');
   const slides = document.querySelectorAll('.product-card');
   const slideWidth = document.querySelector('.product-card').clientWidth;
   const totalWidth = slideContainer.scrollWidth;
   const visibleWidth = slideContainer.offsetWidth;
-  const maxSlide = Math.floor((totalWidth - visibleWidth) / (slideWidth + 15)); // 15 es el margen entre tarjetas
+  const maxSlide = Math.floor((totalWidth - visibleWidth) / (slideWidth )); // 15 es el margen entre tarjetas
 
   currentSlide += step;
+  currentSlide = Math.max(0, Math.min(currentSlide, maxSlide)); // Limitar currentSlide entre 0 y maxSlide
 
-  if (currentSlide < 0) {
-    currentSlide = 0; // Evitar ir más allá del primer elemento
-  } else if (currentSlide > maxSlide) {
-    currentSlide = maxSlide; // Evitar ir más allá del último elemento visible
-  }
-
-  // Calcular el nuevo desplazamiento
-  const newTransform = -currentSlide * (slideWidth + 15); // 15 es el margen derecho de .product-card
+  const newTransform = -currentSlide * (slideWidth + 25); // 15 es el margen derecho de .product-card
   slideContainer.style.transform = `translateX(${newTransform}px)`;
-}
+};
 
-document.querySelectorAll('.product-card').forEach(card => {
-  card.querySelectorAll('.rating .star').forEach(star => {
+document.querySelector('.carousel-button.prev').addEventListener('click', () => moveCarousel(-1));
+document.querySelector('.carousel-button.next').addEventListener('click', () => moveCarousel(1));
+
+const setupCarousel = () => {
+  document.querySelectorAll('.product-card').forEach(card => {
+    card.querySelectorAll('.rating .star').forEach(star => {
       star.addEventListener('click', function() {
-          let currentRating = this.getAttribute('data-value');
-          let stars = this.parentElement.querySelectorAll('.star');
-          
-          stars.forEach(innerStar => {
-              let ratingValue = innerStar.getAttribute('data-value');
-              if (ratingValue <= currentRating) {
-                  innerStar.classList.add('active');
-              } else {
-                  innerStar.classList.remove('active');
-              }
-          });
+        const currentRating = this.getAttribute('data-value');
+        const stars = this.parentElement.querySelectorAll('.star');
+        stars.forEach(innerStar => {
+          const ratingValue = innerStar.getAttribute('data-value');
+          innerStar.classList.toggle('active', ratingValue <= currentRating);
+        });
       });
+    });
   });
-});
-document.addEventListener('DOMContentLoaded', function() {
-  // Selecciona cada tarjeta de producto dentro del carrusel
-  const productCards = document.querySelectorAll('.product-card');
+};
 
+document.addEventListener('DOMContentLoaded', () => {
+  initEvents();
+  setupNavbar();
+  setupScrollEffects();
+  setupCarousel();
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+  const productCards = document.querySelectorAll('.product-card');
   productCards.forEach(card => {
     const stars = card.querySelectorAll('.star');
     const reviewCount = card.querySelector('.review-count');
-
     stars.forEach(star => {
       star.addEventListener('click', function() {
         const ratingValue = parseInt(star.getAttribute('data-value'), 10);
