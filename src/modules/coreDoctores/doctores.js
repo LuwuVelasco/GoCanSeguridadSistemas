@@ -69,4 +69,10 @@ document.addEventListener("DOMContentLoaded", function() {
         citas.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
         mostrarCitas(citas);
     }
+
+    window.filtrarCitas = function() {
+        const searchText = document.getElementById('searchInput').value.toLowerCase();
+        const filteredCitas = citas.filter(cita => cita.propietario.toLowerCase().includes(searchText));
+        mostrarCitas(filteredCitas);
+    }
 });
