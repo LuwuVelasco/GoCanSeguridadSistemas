@@ -47,7 +47,11 @@ document.addEventListener("DOMContentLoaded", function() {
             checkbox.type = "checkbox";
             checkbox.addEventListener("change", () => {
                 if (checkbox.checked) {
-                    eliminarCita(cita.id_cita, tr);
+                    if (confirm("¿La cita ya ha sido completada?")) {
+                        tr.style.display = "none"; // Ocultar la fila de la tabla
+                    } else {
+                        checkbox.checked = false;
+                    }
                 }
             });
             tdCheckbox.appendChild(checkbox);
@@ -64,20 +68,5 @@ document.addEventListener("DOMContentLoaded", function() {
     window.sortCitas = function() {
         citas.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
         mostrarCitas(citas);
-    }
-
-    function eliminarCita(id_cita, row) {
-        fetch(`http://localhost/GoCan/src/modules/php/citafinalizada.php?id_cita=${id_cita}`, {
-            method: 'POST'
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.estado === "success") {
-                row.remove();
-            } else {
-                console.error("Error:", data.mensaje);
-            }
-        })
-        .catch(error => console.error("Error:", error));
     }
 });
