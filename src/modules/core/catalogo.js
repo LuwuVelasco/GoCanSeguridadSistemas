@@ -1,14 +1,21 @@
 document.addEventListener('DOMContentLoaded', function() {
   document.querySelectorAll('.card-action-btn.favorito').forEach(button => {
       button.addEventListener('click', function() {
-          const productCard = this.closest('.product-card');
-          const productData = {
-              nombre: productCard.querySelector('.nombre').textContent.trim(),
-              descripcion: productCard.querySelector('.descripcion').textContent.trim(),
-              precio: parseFloat(productCard.querySelector('.precio').getAttribute('value')),
-              categoria: productCard.querySelector('.categoria').textContent.trim(),
-              id_usuario: localStorage.getItem('id_usuario')
-          };
+        const productCard = this.closest('.product-card');
+        const nombre = productCard.querySelector('.nombre').textContent.trim();
+        const descripcion = productCard.querySelector('.descripcion').textContent.trim();
+        const precio = productCard.querySelector('.precio').getAttribute('value');
+        const categoria = productCard.querySelector('.categoria').textContent.trim();
+        const imagen = productCard.querySelector('.imagen').textContent.trim();
+        const id_usuario = localStorage.getItem('id_usuario'); // Asumiendo que tienes el ID del usuario almacenado en localStorage
+        const productData = {
+          nombre: nombre,
+          descripcion: descripcion,
+          precio: precio,
+          categoria: categoria,
+          id_usuario: id_usuario,
+          imagen: imagen
+        };
 
           fetch('http://localhost/GoCan/src/modules/php/catalogo.php', {
               method: 'POST',

@@ -97,9 +97,8 @@
             <ion-icon name="person-outline" aria-hidden="true"></ion-icon>
         </button>
 
-        <button class="action-btn" aria-label="cart">
+        <button class="action-btn" aria-label="cart" id="openFavBtn">
           <ion-icon name="heart-outline" aria-hidden="true"></ion-icon>
-
           <span class="btn-badge">0</span>
         </button>
 
@@ -147,11 +146,11 @@
             <option value="Consulta General">Consulta General</option>
             <option value="Sin especificar">No especificado</option>
         </select>
-        <input type="text" id="doctor" name="doctor" placeholder="Doctor" required>
+        <select id="doctor" name="doctor" required>
+          <option value="">Seleccionar doctor...</option>
+        </select>
         <input type="date" id="fecha" name="fecha" placeholder="Fecha" required>
         <input type="time" id="hora" name="hora" placeholder="Hora" required>
-        <input type="hidden" id="id_usuario" name="id_usuario" value="ID_DEL_USUARIO">
-        <input type="hidden" id="id_doctor" name="id_doctor" value="ID_DEL_DOCTOR">
         <button id="reservar" type="submit">Reservar</button>
     </form>
   </div>
@@ -163,12 +162,60 @@
   <div class="modal-content">
     <div class="modal-header">Reservas Registradas</div>
     <span class="close">&times;</span>
-    <div id="reservationsList">
-      <!-- Aquí se cargará dinámicamente la lista de reservas desde la BDD -->
-    </div>
+    <table id="reservationsTable">
+      <thead>
+        <tr>
+          <th>Propietario</th>
+          <th>Servicio</th>
+          <th>Fecha</th>
+          <th>Hora</th>
+          <th>Eliminar</th>
+        </tr>
+      </thead>
+      <tbody id="reservationsList">
+        <!-- Las filas de reservas se insertarán aquí -->
+      </tbody>
+    </table>
   </div>
 </div>
-
+<!--Ventana de favoritos-->
+<div id="modal" class="favoritos">
+  <div class="favoritos-content">
+    <div class="modal-header">
+      Productos Favoritos
+      <button class="action-btn" aria-label="Search" id="toggleSearchBtn">
+        <ion-icon name="search-outline" aria-hidden="true"></ion-icon>
+      </button>
+      <button class="action-btn" aria-label="Filter" id="filterBtn">
+        <ion-icon name="filter-outline" aria-hidden="true"></ion-icon>
+      </button>
+    </div>
+    <div class="search-container" style="display: none;">
+      <input type="text" id="searchInput" class="search-input" placeholder="Buscar...">
+      <button class="action-btn" aria-label="Search" id="searchBtn">
+        <ion-icon name="search-outline" aria-hidden="true"></ion-icon>
+      </button>
+    </div>
+    <div class="filter-options" id="filterOptions">
+      <label>
+        <input type="checkbox" value="precio" id="precioCheckbox"> Costo
+        <select class="filter-select" id="precioSelect">
+          <option value="asc">De menor a mayor</option>
+          <option value="desc">De mayor a menor</option>
+        </select>
+      </label>
+      <label>
+        <input type="checkbox" value="nombre" id="nombreCheckbox"> Nombre
+        <select class="filter-select" id="nombreSelect">
+          <option value="asc">A-Z</option>
+          <option value="desc">Z-A</option>
+        </select>
+      </label>
+    </div>
+    <span class="close-btn">&times;</span>
+    <div class="modal-body" id="favoritosBody"></div>
+  </div>
+</div>
 
 
       <!-- 
@@ -385,9 +432,8 @@
 
                       <h3 class="h3">
                         <a
-                          href="#"
                           class="card-title nombre"
-                          >AlimentoDog Chow Adulto: Medianos</a
+                          >Alimento Dog Chow Adulto: Medianos</a
                         >
                         <p class="invisible descripcion">Alimento balanceado para perros adultos de tamaño mediano, formulado para apoyar la salud general, incluyendo digestión, huesos y pelaje.
                         </p>
@@ -397,6 +443,7 @@
                         >88 bs</data
                       >
                       <p class="invisible categoria">Comida</p>
+                      <p class="invisible imagen">http://localhost/GoCan/src/assets/Images/Catalogo/C1A.png</p>
                     </div>
                   </div>
                 </li>
@@ -451,7 +498,6 @@
 
                       <h3 class="h3">
                         <a
-                          href="#"
                           class="card-title nombre"
                           >Alimento Dog Chow Adulto: Pequeños</a
                         >
@@ -463,6 +509,7 @@
                         >86 bs</data
                       >
                       <p class="invisible categoria">Comida</p>
+                      <p class="invisible imagen">http://localhost/GoCan/src/assets/Images/Catalogo/C2A.jpg</p>
                     </div>
                   </div>
                 </li>
@@ -517,7 +564,6 @@
 
                       <h3 class="h3">
                         <a
-                          href="#"
                           class="card-title nombre"
                           >Sobre de Comida Dog Chow Cena Carne: Adultos</a
                         >
@@ -529,6 +575,7 @@
                         >7 bs</data
                       >
                       <p class="invisible categoria">Comida</p>
+                      <p class="invisible imagen">http://localhost/GoCan/src/assets/Images/Catalogo/C3A.png</p>
                     </div>
                   </div>
                 </li>
@@ -583,7 +630,6 @@
 
                       <h3 class="h3">
                         <a
-                          href="#"
                           class="card-title nombre"
                           >Alimento Dog Chow Pollo Molido Todas las Etapas</a
                         >
@@ -594,6 +640,7 @@
                         >55 bs</data
                       >
                       <p class="invisible categoria">Comida</p>
+                      <p class="invisible imagen">http://localhost/GoCan/src/assets/Images/Catalogo/C4A.jpg</p>
                     </div>
                   </div>
                 </li>
@@ -648,7 +695,6 @@
 
                       <h3 class="h3">
                         <a
-                          href="#"
                           class="card-title nombre"
                           >Comida para Perros DOGUI Adulto</a
                         >
@@ -660,6 +706,7 @@
                         >55.5 bs</data
                       >
                       <p class="invisible categoria">Comida</p>
+                      <p class="invisible imagen">http://localhost/GoCan/src/assets/Images/Catalogo/C5A.jpg</p>
                     </div>
                   </div>
                 </li>
@@ -714,9 +761,8 @@
 
                       <h3 class="h3">
                         <a
-                          href="#"
                           class="card-title nombre"
-                          >Alimneto Doguito purina carne</a
+                          >Alimento Doguito purina carne</a
                         >
                         <p class="invisible descripcion">Una nutritiva y deliciosa opción para perros adultos, formulada con carne de alta calidad para una alimentación balanceada y sabrosa.
                         </p>
@@ -726,6 +772,7 @@
                         >11 bs</data
                       >
                       <p class="invisible categoria">Comida</p>
+                      <p class="invisible imagen">http://localhost/GoCan/src/assets/Images/Catalogo/C6A.png</p>
                     </div>
                   </div>
                 </li>
@@ -780,7 +827,6 @@
 
                       <h3 class="h3">
                         <a
-                          href="#"
                           class="card-title nombre"
                           >Alimento Royal Canin Medio Adulto</a
                         >
@@ -792,6 +838,7 @@
                         >90 bs</data
                       >
                       <p class="invisible categoria">Comida</p>
+                      <p class="invisible imagen">http://localhost/GoCan/src/assets/Images/Catalogo/C7A.png</p>
                     </div>
                   </div>
                 </li>
@@ -846,7 +893,6 @@
 
                       <h3 class="h3">
                         <a
-                          href="#"
                           class="card-title nombre"
                           >Alimento Royal Canin Mini Junior</a
                         >
@@ -858,6 +904,7 @@
                         >72 bs</data
                       >
                       <p class="invisible categoria">Comida</p>
+                      <p class="invisible imagen">http://localhost/GoCan/src/assets/Images/Catalogo/C8A.png</p>
                     </div>
                   </div>
                 </li>
@@ -912,7 +959,6 @@
 
                       <h3 class="h3">
                         <a
-                          href="#"
                           class="card-title nombre"
                           >Whiskas Sabor carne para adultos</a
                         >
@@ -924,6 +970,7 @@
                         >50 bs</data
                       >
                       <p class="invisible categoria">Comida</p>
+                      <p class="invisible imagen">http://localhost/GoCan/src/assets/Images/Catalogo/C9A.png</p>
                     </div>
                   </div>
                 </li>
@@ -978,7 +1025,6 @@
 
                       <h3 class="h3">
                         <a
-                          href="#"
                           class="card-title nombre"
                           >Whiskas Sabor pollo para adultos</a
                         >
@@ -990,6 +1036,7 @@
                         >42 bs</data
                       >
                       <p class="invisible categoria">Comida</p>
+                      <p class="invisible imagen">http://localhost/GoCan/src/assets/Images/Catalogo/C10A.png</p>
                     </div>
                   </div>
                 </li>
@@ -1044,7 +1091,6 @@
 
                       <h3 class="h3">
                         <a
-                          href="#"
                           class="card-title nombre"
                           >Felix Purina Fantastic Comida Húmeda para Gato
                           Adulto Pack Surtido Carnes</a
@@ -1057,6 +1103,7 @@
                         >66 bs</data
                       >
                       <p class="invisible categoria">Comida</p>
+                      <p class="invisible imagen">http://localhost/GoCan/src/assets/Images/Catalogo/C11A.jpg</p>
                     </div>
                   </div>
                 </li>
@@ -1111,7 +1158,6 @@
 
                       <h3 class="h3">
                         <a
-                          href="#"
                           class="card-title nombre"
                           >Gato Castrado Podium Cat</a
                         >
@@ -1123,6 +1169,7 @@
                         >28 bs</data
                       >
                       <p class="invisible categoria">Comida</p>
+                      <p class="invisible imagen">http://localhost/GoCan/src/assets/Images/Catalogo/C12A.png</p>
                     </div>
                   </div>
                 </li>

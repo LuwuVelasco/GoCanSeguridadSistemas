@@ -1,4 +1,6 @@
 <?php
+header('Content-Type: application/json');
+
 $host = "localhost";
 $port = "5432";
 $dbname = "gocan";
@@ -10,22 +12,46 @@ try {
     $conn = new PDO($dsn);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Asumir que el id_usuario es enviado como parámetro de la URL
-    $id_usuario = $_GET['id_usuario'];
+    if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id_usuario'])) {
+        // Obtener la cantidad de productos asociados al id_usuario
+        $id_usuario = $_GET['id_usuario'];
+        $stmt = $conn->prepare("SELECT COUNT(*) AS cantidad FROM producto WHERE id_usuario = :id_usuario");
+        $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+        $stmt->execute();
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // Preparar la sentencia SQL para contar los productos asociados al id_usuario
-    $stmt = $conn->prepare("SELECT COUNT(*) AS cantidad FROM producto WHERE id_usuario = :id_usuario");
+        // Devolver la cantidad de productos en formato JSON
+        echo json_encode($resultado);
+    } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        // Obtener productos favoritos o eliminar un producto
+        $data = json_decode(file_get_contents("php://input"), true);
 
-    // Vincular el parámetro id_usuario
-    $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+        if (isset($data['id_usuario'])) {
+            // Obtener productos favoritos del usuario
+            $id_usuario = $data['id_usuario'];
 
-    // Ejecutar la sentencia y obtener el resultado
-    $stmt->execute();
-    $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+            $stmt = $conn->prepare("SELECT id_producto, nombre, descripcion, precio, imagen FROM producto WHERE id_usuario = :id_usuario");
+            $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+            $stmt->execute();
 
-    // Devolver la cantidad de productos en formato JSON
-    echo json_encode($resultado);
+            $favoritos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            echo json_encode($favoritos);
+        } elseif (isset($data['id_producto'])) {
+            // Eliminar un producto
+            $id = $data['id_producto'];
+
+            $stmt = $conn->prepare("DELETE FROM producto WHERE id_producto = :id_producto");
+            $stmt->bindParam(':id_producto', $id, PDO::PARAM_INT);
+            $stmt->execute();
+
+            echo json_encode(['success' => true]);
+        } else {
+            echo json_encode(['error' => 'Datos inválidos']);
+        }
+    } else {
+        echo json_encode(['error' => 'Método no soportado']);
+    }
 } catch (PDOException $e) {
-    die("Error de conexión: " . $e->getMessage());
+    echo json_encode(['error' => $e->getMessage()]);
 }
 ?>
