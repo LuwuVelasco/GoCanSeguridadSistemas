@@ -95,15 +95,24 @@ document.addEventListener("DOMContentLoaded", function() {
     reportForm.addEventListener('submit', function(event) {
         event.preventDefault();
 
-        const formData = new FormData(reportForm);
-        const data = new URLSearchParams();
-        for (const pair of formData) {
-            data.append(pair[0], pair[1]);
-        }
+        const propietario = document.getElementById('propietario').value;
+        const sintomas = document.getElementById('sintomas').value;
+        const diagnostico = document.getElementById('diagnostico').value;
+        const receta = document.getElementById('receta').value;
+        const fecha = document.getElementById('fecha').value;
+        const nombre_mascota = document.getElementById('nombre_mascota').value;
+
+        const formData = new URLSearchParams();
+        formData.append('propietario', propietario);
+        formData.append('sintomas', sintomas);
+        formData.append('diagnostico', diagnostico);
+        formData.append('receta', receta);
+        formData.append('fecha', fecha);
+        formData.append('nombre_mascota', nombre_mascota);
 
         fetch('http://localhost/GoCan/src/modules/php/registrar_reporte.php', {
             method: 'POST',
-            body: data
+            body: formData
         })
         .then(response => response.text()) // Cambiar a text() temporalmente para depuración
         .then(text => {
@@ -136,47 +145,45 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById('petModal').style.display = 'none';
     }
     
-    document.addEventListener("DOMContentLoaded", function() {
-        const petForm = document.getElementById('petForm');
-        const idUsuario = localStorage.getItem('id_usuario'); // Asegúrate de que el ID del usuario esté almacenado en localStorage
-        if (idUsuario) {
-            document.getElementById('id_usuario').value = idUsuario;
+    const petForm = document.getElementById('petForm');
+    const idUsuario = localStorage.getItem('id_usuario'); // Asegúrate de que el ID del usuario esté almacenado en localStorage
+    if (idUsuario) {
+        document.getElementById('id_usuario').value = idUsuario;
+    }
+
+    petForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const formData = new FormData(petForm);
+        const data = new URLSearchParams();
+        for (const pair of formData) {
+            data.append(pair[0], pair[1]);
         }
-    
-        petForm.addEventListener('submit', function(event) {
-            event.preventDefault();
-    
-            const formData = new FormData(petForm);
-            const data = new URLSearchParams();
-            for (const pair of formData) {
-                data.append(pair[0], pair[1]);
-            }
-    
-            fetch('http://localhost/GoCan/src/modules/php/registrar_mascota.php', {
-                method: 'POST',
-                body: data
-            })
-            .then(response => response.text()) // Cambiar a text() temporalmente para depuración
-            .then(text => {
-                try {
-                    const data = JSON.parse(text);
-                    if (data.estado === 'success') {
-                        alert('Mascota registrada exitosamente');
-                        closePetModal();
-                        petForm.reset();
-                    } else {
-                        alert('Error al registrar la mascota: ' + data.mensaje);
-                    }
-                } catch (e) {
-                    console.error('Error al analizar JSON:', e);
-                    console.error('Respuesta recibida:', text);
-                    alert('Error al procesar la solicitud. Verifique la consola para más detalles.');
+
+        fetch('http://localhost/GoCan/src/modules/php/registrar_mascota.php', {
+            method: 'POST',
+            body: data
+        })
+        .then(response => response.text()) // Cambiar a text() temporalmente para depuración
+        .then(text => {
+            try {
+                const data = JSON.parse(text);
+                if (data.estado === 'success') {
+                    alert('Mascota registrada exitosamente');
+                    closePetModal();
+                    petForm.reset();
+                } else {
+                    alert('Error al registrar la mascota: ' + data.mensaje);
                 }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error al procesar la solicitud');
-            });
+            } catch (e) {
+                console.error('Error al analizar JSON:', e);
+                console.error('Respuesta recibida:', text);
+                alert('Error al procesar la solicitud. Verifique la consola para más detalles.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al procesar la solicitud');
         });
-    });     
+    });
 });

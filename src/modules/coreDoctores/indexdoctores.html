@@ -52,7 +52,7 @@
                     </div>
                     <div id="bt2" class="button">
                         <i class="fi fi-sr-time-past"></i>
-                        <h5>Historial citas</h5>
+                        <h5>Historial reportes</h5>
                     </div>
                 </div>
 
@@ -62,8 +62,6 @@
                     <input type="text" id="searchInput" oninput="filtrarCitas()" placeholder="Buscar por propietario...">
                 </div>
                 
-                
-
                 <table>
                     <tbody>
                         <!-- Las filas de citas se agregarán aquí dinámicamente -->
@@ -87,9 +85,15 @@
                 <label for="propietario">Propietario:</label>
                 <input type="text" id="propietario" name="propietario" required>
             
-                <label for="descripcion">Descripción:</label>
-                <textarea id="descripcion" name="descripcion" required></textarea>
-            
+                <label for="sintomas">Síntomas:</label>
+                <textarea id="sintomas" name="sintomas" required style="resize: vertical;"></textarea>
+                
+                <label for="diagnostico">Diagnóstico:</label>
+                <textarea id="diagnostico" name="diagnostico" required style="resize: vertical;"></textarea>
+                
+                <label for="receta">Receta:</label>
+                <textarea id="receta" name="receta" required style="resize: vertical;"></textarea>
+                
                 <label for="fecha">Fecha:</label>
                 <input type="date" id="fecha" name="fecha" required>
             
@@ -97,7 +101,7 @@
                 <input type="text" id="nombre_mascota" name="nombre_mascota" required>
             
                 <button type="submit">Registrar</button>
-                <button type="submit" onclick="closeReportModal()">Cancelar</button>
+                <button type="button" onclick="closeReportModal()">Cancelar</button>
             </form>            
         </div>
     </div>
@@ -124,7 +128,7 @@
                 <input type="text" id="id_usuario" name="id_usuario" required>
             
                 <button type="submit">Registrar</button>
-                <button type="submit" onclick="closePetModal()">Cancelar</button>
+                <button type="button" onclick="closePetModal()">Cancelar</button>
             </form>            
         </div>
     </div>
