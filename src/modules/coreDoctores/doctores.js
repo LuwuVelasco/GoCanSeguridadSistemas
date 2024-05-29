@@ -84,10 +84,21 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById('reportModal').style.display = 'none';
     }
 
+    window.openHistoryModal = function() {
+        document.getElementById('historyModal').style.display = 'block';
+        fetchReportHistory();
+    }
+
+    window.closeHistoryModal = function() {
+        document.getElementById('historyModal').style.display = 'none';
+    }
+
     window.onclick = function(event) {
-        const modal = document.getElementById('reportModal');
-        if (event.target == modal) {
-            modal.style.display = 'none';
+        if (event.target == document.getElementById('reportModal')) {
+            document.getElementById('reportModal').style.display = 'none';
+        }
+        if (event.target == document.getElementById('historyModal')) {
+            document.getElementById('historyModal').style.display = 'none';
         }
     }
 
@@ -136,6 +147,69 @@ document.addEventListener("DOMContentLoaded", function() {
             alert('Error al procesar la solicitud');
         });
     });
+
+    function fetchReportHistory() {
+        fetch('http://localhost/GoCan/src/modules/php/obtener_reporte.php', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.estado === "success") {
+                mostrarReportes(data.reportes);
+            } else {
+                console.error("Error:", data.mensaje);
+            }
+        })
+        .catch(error => console.error("Error:", error));
+    }
+
+    function mostrarReportes(reportes) {
+        const reportHistory = document.getElementById('reportHistory');
+        reportHistory.innerHTML = '';
+
+        reportes.forEach(reporte => {
+            const div = document.createElement("div");
+            div.classList.add("reporte");
+
+            const resumen = document.createElement("div");
+            resumen.classList.add("reporte-resumen");
+            resumen.textContent = `Propietario: ${reporte.propietario}, Mascota: ${reporte.nombre_mascota}`;
+            resumen.addEventListener("click", function() {
+                const detalle = this.nextElementSibling;
+                if (detalle.style.display === "none" || detalle.style.display === "") {
+                    detalle.style.display = "block";
+                } else {
+                    detalle.style.display = "none";
+                }
+            });
+
+            const detalle = document.createElement("div");
+            detalle.classList.add("reporte-detalle");
+
+            const sintomas = document.createElement("p");
+            sintomas.textContent = `Síntomas: ${reporte.sintomas}`;
+
+            const diagnostico = document.createElement("p");
+            diagnostico.textContent = `Diagnóstico: ${reporte.diagnostico}`;
+
+            const receta = document.createElement("p");
+            receta.textContent = `Receta: ${reporte.receta}`;
+
+            const fecha = document.createElement("p");
+            fecha.textContent = `Fecha: ${reporte.fecha}`;
+
+            detalle.appendChild(sintomas);
+            detalle.appendChild(diagnostico);
+            detalle.appendChild(receta);
+            detalle.appendChild(fecha);
+
+            div.appendChild(resumen);
+            div.appendChild(detalle);
+
+            reportHistory.appendChild(div);
+        });
+    }
 
     window.openPetModal = function() {
         document.getElementById('petModal').style.display = 'block';

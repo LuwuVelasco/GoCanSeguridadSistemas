@@ -10,6 +10,29 @@
     <link rel="stylesheet" href="../core/style.css">
     <link rel="stylesheet" href="modalStyle.css">
     <title>GoCan / Doctor</title>
+    <style>
+        textarea {
+            resize: vertical;
+        }
+        .reporte {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            padding: 10px;
+            transition: box-shadow 0.3s;
+        }
+        .reporte:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .reporte-resumen {
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .reporte-detalle {
+            display: none;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 
 <body>
@@ -50,7 +73,7 @@
                         <i class="fi fi-sr-clipboard-list"></i>
                         <h5>Registro reportes</h5>
                     </div>
-                    <div id="bt2" class="button">
+                    <div id="bt2" class="button" onclick="openHistoryModal()">
                         <i class="fi fi-sr-time-past"></i>
                         <h5>Historial reportes</h5>
                     </div>
@@ -133,8 +156,18 @@
         </div>
     </div>
 
+    <!-- Modal para historial de reportes -->
+    <div id="historyModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeHistoryModal()">&times;</span>
+            <h2>Historial de Reportes</h2>
+            <div id="reportHistory">
+                <!-- Los reportes se agregarán aquí dinámicamente -->
+            </div>
+        </div>
+    </div>
+
     <script src="doctores.js"></script>
-    <script src="modalScript.js"></script>
 </body>
 
 </html>
