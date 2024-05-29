@@ -58,42 +58,17 @@
                     </div>
                 </div>
 
-                <h3 class="separator">
-                    Citas Próximas
-                </h3>
+                <div class="separator">
+                    <h3>Citas Próximas</h3>
+                    <button id="sortButton" onclick="sortCitas()">Ordenar por Fecha</button>
+                    <input type="text" id="searchInput" oninput="filtrarCitas()" placeholder="Buscar por propietario...">
+                </div>
+                
+                
 
                 <table>
                     <tbody>
-                        <tr class="selected">
-                            <td class="icon"><i class="fi fi-sr-paw"></i></td>
-                            <td class="name">Cita con Jesús </td>
-                            <td class="extension">10-05-2024, 10:45 AM</td>
-                            <td class="more"><i class="ri-more-fill"></i></td>
-                        </tr>
-                        <tr class="selected">
-                            <td class="icon"><i class="fi fi-sr-paw"></i></td>
-                            <td class="name">Cita con Carlos </td>
-                            <td class="extension">10-05-2024, 11:30 AM</td>
-                            <td class="more"><i class="ri-more-fill"></i></td>
-                        </tr>
-                        <tr class="selected">
-                            <td class="icon"><i class="fi fi-sr-paw"></i></td>
-                            <td class="name">Cita con Luciana </td>
-                            <td class="extension">10-05-2024, 13:15 PM</td>
-                            <td class="more"><i class="ri-more-fill"></i></td>
-                        </tr>
-                        <tr class="selected">
-                            <td class="icon"><i class="fi fi-sr-paw"></i></td>
-                            <td class="name">Cita con Damaris </td>
-                            <td class="extension">10-05-2024, 15:45 PM</td>
-                            <td class="more"><i class="ri-more-fill"></i></td>
-                        </tr>
-                        <tr class="selected">
-                            <td class="icon"><i class="fi fi-sr-paw"></i></td>
-                            <td class="name">Cita con Jared </td>
-                            <td class="extension">10-05-2024, 17:00 PM</td>
-                            <td class="more"><i class="ri-more-fill"></i></td>
-                        </tr>
+                        <!-- Las filas de citas se agregarán aquí dinámicamente -->
                     </tbody>
                 </table>
 
@@ -132,10 +107,8 @@
             </form>
         </div>
     </div>
-    
 
     <script src="admin.js"></script>
-    <script src="admin.js?v=1.2"></script>
 </body>
 
 </html>
