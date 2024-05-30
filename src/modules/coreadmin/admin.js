@@ -48,14 +48,7 @@ tableRows.forEach(tableTr => {
     });
 });
 
-menuBtn.addEventListener('click', () => {
-    if (!isMenuOpen) {
-        leftSection.style.left = '0';
-    } else {
-        leftSection.style.left = '-160px';
-    }
-    isMenuOpen = !isMenuOpen;
-});
+
 
 function toggleDropdown() {
     var dropdown = document.getElementById('profileDropdown');
@@ -93,37 +86,35 @@ function closeModal() {
     var modal = document.getElementById('reserveModal');
     modal.style.display = 'none';
 }
-
 document.addEventListener('DOMContentLoaded', function() {
-    loadDoctors();  // Carga los doctores inmediatamente cuando la página se carga.
-
-    const closeModalButtons = document.querySelectorAll('.close');
-    closeModalButtons.forEach(button => {
-        button.addEventListener('click', closeModal);
-    });
-
-
-    function loadDoctors() {
-        fetch('../php/listadoctores.php')
-        .then(response => response.json())
-        .then(data => {
-            if (data.estado === "success") {
-                const tbody = document.querySelector('.main table tbody'); // Asegúrate de que este selector coincida con tu tabla en HTML.
-                tbody.innerHTML = ''; // Limpia la tabla antes de añadir nuevos datos.
-                data.doctores.forEach(doctor => {
-                    const row = tbody.insertRow();
-                    row.insertCell(0).textContent = doctor.nombre;
-                    row.insertCell(1).textContent = doctor.cargo;
-                    row.insertCell(2).textContent = doctor.especialidad;
-                });
-            } else {
-                console.error('Error:', data.mensaje);
-                alert(data.mensaje); // Muestra un mensaje de error si algo va mal.
-            }
-        })
-        .catch(error => {
-            console.error('Error loading the doctors:', error);
-            alert('Error al cargar los datos: ' + error);
-        });
+    const tableBody = document.querySelector('#actividades-table tbody');
+    if (!tableBody) {
+        console.error('No se encontró el cuerpo de la tabla en el documento.');
+        return;
     }
+
+    fetch('http://localhost/GoCan/src/modules/php/get_actividades.php')
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        tableBody.innerHTML = ''; // Limpia la tabla antes de añadir nuevos datos
+        data.forEach(actividad => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${actividad.id_actividad}</td>
+                <td>${actividad.id_usuario}</td>
+                <td>${actividad.hora_ingreso}</td>
+                <td>${actividad.nombre_usuario || 'Sin nombre'}</td>
+            `;
+            tableBody.appendChild(row);
+        });
+    })
+    .catch(error => {
+        console.error('Error al cargar los datos:', error);
+        alert('Error al cargar las actividades. Verifica la consola para más detalles.');
+    });
 });
