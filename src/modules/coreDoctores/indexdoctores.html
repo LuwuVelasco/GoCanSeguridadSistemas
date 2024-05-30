@@ -132,12 +132,9 @@
                 </select>
 
                 <label for="raza">Raza:</label>
-                <select id="tipo" name="tipo" required>
-                    <!--Vacío hasta que se seleccione un tipo de animal y aparezcan las razas correspondientes-->
-                </select>
-            
-                <label for="id_usuario">Nombre Propietario:</label>
-                <input type="text" id="id_usuario" name="id_usuario" required>
+                <input type="text" id="raza" name="raza" required>            
+                <label for="nombre_propietario">Nombre Propietario:</label>
+                <input type="text" id="nombre_propietario" name="nombre_propietario" required>
             
                 <button type="submit">Registrar</button>
                 <button type="submit" onclick="closePetModal()">Cancelar</button>
@@ -146,7 +143,6 @@
     </div>
 
     <script src="doctores.js"></script>
-    <script src="modalScript.js"></script>
 </body>
 
 </html>
