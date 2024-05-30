@@ -841,3 +841,10 @@ main > article, .hero, .main {
     display: none;
     margin-top: 10px;
 }
+.search-input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}

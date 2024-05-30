@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", function() {
     let citas = [];
+    let reportes = [];
     const id_doctor = localStorage.getItem('id_doctores');
 
     fetchCitas(id_doctor);
@@ -156,7 +157,8 @@ document.addEventListener("DOMContentLoaded", function() {
         .then(response => response.json())
         .then(data => {
             if (data.estado === "success") {
-                mostrarReportes(data.reportes);
+                reportes = data.reportes;
+                mostrarReportes(reportes);
             } else {
                 console.error("Error:", data.mensaje);
             }
@@ -210,6 +212,15 @@ document.addEventListener("DOMContentLoaded", function() {
             reportHistory.appendChild(div);
         });
     }
+
+    document.getElementById('historySearchInput').addEventListener('input', function() {
+        const searchText = this.value.toLowerCase();
+        const filteredReportes = reportes.filter(reporte => 
+            reporte.propietario.toLowerCase().includes(searchText) || 
+            reporte.nombre_mascota.toLowerCase().includes(searchText)
+        );
+        mostrarReportes(filteredReportes);
+    });
 
     window.openPetModal = function() {
         document.getElementById('petModal').style.display = 'block';
