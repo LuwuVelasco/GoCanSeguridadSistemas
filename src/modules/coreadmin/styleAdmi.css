@@ -826,3 +826,25 @@ main > article, .hero, .main {
     flex: 1;               /* Los botones ocuparán el mismo espacio dentro del contenedor */
     margin: 0 10px;        /* Añade espacio entre los botones */
 }
+
+.separator {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.separator h3,
+.separator button,
+.separator input {
+    margin-left: auto;
+}
+
+
+#searchInput {
+    padding: 5px;
+    margin-right: 10px; /* Espacio entre el input y el botón */
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+
