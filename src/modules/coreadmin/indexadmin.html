@@ -100,98 +100,8 @@
 
 
                     </tr>
-                    <tbody>
-                        <tr>
-                            <td class="icon"><i class="fi fi-sr-user-md"></i></td>
-                            <td>Dr. Elmer Gonzales</td>
-                            <td>Propietario</td>
-                            <td>Traumatología</td>
-                            <td>Activo</td>
-
-                            <td><i class="ri-delete-bin-6-line" onclick="deleteDoctor('Dr. Elmer Gonzales');"></i></td>
-
-                        </tr>
-                        <tr>
-                            <td class="icon"><i class="fi fi-sr-user-md"></i></td>
-                            <td>Dra. Nadia Ormachea</td>
-                            <td>Veterinaria</td>
-                            <td>Medicina General</td>
-                            <td>Activo</td>
-                            <td><i class="ri-delete-bin-6-line" onclick="deleteDoctor('Dr. Elmer Gonzales');"></i></td>
-
-                        </tr>
-                        <tr>
-                            <td class="icon"><i class="fi fi-sr-user-md"></i></td>
-                            <td>Dr. Gabriel Pacheri</td>
-                            <td>Veterinario</td>
-                            <td>Radiografías</td>
-                            <td>Activo</td>
-                            <td><i class="ri-delete-bin-6-line" onclick="deleteDoctor('Dr. Elmer Gonzales');"></i></td>
-
-                        </tr>
-                        <tr>
-                            <td class="icon"><i class="fi fi-sr-user-md"></i></td>
-                            <td>Dr. Nicolas Nobody</td>
-                            <td>Veterinario</td>
-                            <td>Odontología</td>
-                            <td>Activo</td>
-                            <td><i class="ri-delete-bin-6-line" onclick="deleteDoctor('Dr. Elmer Gonzales');"></i></td>
-
-                        </tr>
-                        <tr>
-                            <td class="icon"><i class="fi fi-sr-user-md"></i></td>
-                            <td>Dra. Mia Pacheco</td>
-                            <td>Veterinaria</td>
-                            <td>Etóloga</td>
-                            <td>Activo</td>
-                            <td><i class="ri-delete-bin-6-line" onclick="deleteDoctor('Dr. Elmer Gonzales');"></i></td>
-
-                        </tr>
-                        <tr>
-                            <td class="icon"><i class="fi fi-sr-user-md"></i></td>
-                            <td>Dr. Alan Guzman</td>
-                            <td>Veterinario</td>
-                            <td>Medicina General</td>
-                            <td>Activo</td>
-                            <td><i class="ri-delete-bin-6-line" onclick="deleteDoctor('Dr. Elmer Gonzales');"></i></td>
-
-                        </tr>
-                        <tr>
-                            <td class="icon"><i class="fi fi-sr-user-md"></i></td>
-                            <td>Dr. Patricio Argani</td>
-                            <td>Veterinario</td>
-                            <td>Nutricionista</td>
-                            <td>Activo</td>
-                            <td><i class="ri-delete-bin-6-line" onclick="deleteDoctor('Dr. Elmer Gonzales');"></i></td>
-
-                        </tr>
-                        <tr>
-                            <td class="icon"><i class="fi fi-sr-user-md"></i></td>
-                            <td>Dra. Laura Gallani</td>
-                            <td>Veterinaria</td>
-                            <td>Dermatología</td>
-                            <td>Activo</td>
-                            <td><i class="ri-delete-bin-6-line" onclick="deleteDoctor('Dr. Elmer Gonzales');"></i></td>
-
-                        </tr>
-                        <tr>
-                            <td class="icon"><i class="fi fi-sr-user-md"></i></td>
-                            <td>Dr. Mauricio Santa Cruz</td>
-                            <td>Veterinario</td>
-                            <td>Oftalmólogo</td>
-                            <td>Activo</td>
-                            <td><i class="ri-delete-bin-6-line" onclick="deleteDoctor('Dr. Elmer Gonzales');"></i></td>
-
-                        </tr>
-                        <tr>
-                            <td class="icon"><i class="fi fi-sr-user-md"></i></td>
-                            <td>Dr. Karen Barreda</td>
-                            <td>Veterinaria</td>
-                            <td>Medicina General</td>
-                            <td>Activo</td>
-                            <td><i class="ri-delete-bin-6-line" onclick="deleteDoctor('Dr. Elmer Gonzales');"></i></td>
-
-                        </tr>
+                    <tbody id="lista-veterinarios"> <!-- Añadido un ID aquí -->
+                       
                     </tbody>
                 </table>
                 <h3 class="separator">Registro de Actividades en la Página</h3>
@@ -220,11 +130,12 @@
         </article>
     </main>
 
+<!-- Sección del modal para registrar veterinarios -->
     <div id="reserveModal" class="modal" style="display:none;">
         <div class="modal-content">
             <div class="modal-header">Registrar Veterinario</div>
             <span class="close" onclick="closeModal()">&times;</span>
-            <form id="reserveForm" method="post" action="../php/AñadirDoc.php">
+            <form id="registroV">
                 <input type="text" id="nombre" name="nombre" placeholder="Nombre del Veterinario" required>
                 <input type="text" id="cargo" name="cargo" placeholder="Cargo del Veterinario" required>
                 <select id="especialidad" name="especialidad" required>
@@ -235,6 +146,12 @@
                     <option value="desparacitacion">Desparasitación</option>
                     <option value="consulta_general">Consulta General</option>
                 </select>
+                <select id="estado" name="estado" required>
+                    <option value="">Seleccionar el estado del doctor/a:</option>
+                    <option value="activo">Activo</option>
+                    <option value="con_permiso">Con Permiso</option>
+                    <option value="inactivo">Inactivo</option>
+                </select>
                 <div class="button-group">
                     <button type="submit">Registrar</button>
                     <button type="button" onclick="closeModal()">Cancelar</button>
@@ -242,6 +159,7 @@
             </form>
         </div>
     </div>
+
     
     <script src="admin.js"></script>
 </body>

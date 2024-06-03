@@ -1,120 +1,113 @@
-const sidebarItems = document.querySelectorAll('.sidebar .item');
-const tableRows = document.querySelectorAll('.main table tbody tr');
-
-const menuBtn = document.getElementById('menu-btn');
-const leftSection = document.querySelector('.left-section');
-
-let isMenuOpen = false;
-
-document.getElementById('reserveForm').addEventListener('submit', function(event) {
-    event.preventDefault();  // Previene el envío normal del formulario.
-
-    const formData = new FormData(this);  // Recolecta los datos del formulario.
-
-    // Realiza la petición al servidor
-    fetch(this.action, {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.text())  // Convierte la respuesta a texto.
-    .then(text => {
-        alert(text);  // Muestra la respuesta como una alerta del navegador.
-        closeModal();  // Cierra el modal después de mostrar la alerta.
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert("Ha ocurrido un error al intentar registrar.");  // Muestra un mensaje de error si la petición falla.
-    });
-});
-
-
-
-
-sidebarItems.forEach(sideItem => {
-    sideItem.addEventListener('click', () => {
-        sidebarItems.forEach(item => {
-            item.classList.remove('active');
-        });
-        sideItem.classList.add('active');
-    });
-});
-
-tableRows.forEach(tableTr => {
-    tableTr.addEventListener('click', () => {
-        tableRows.forEach(item => {
-            item.classList.remove('selected');
-        });
-        tableTr.classList.add('selected');
-    });
-});
-
-
-
-function toggleDropdown() {
-    var dropdown = document.getElementById('profileDropdown');
-    // Alternar la visibilidad del menú desplegable
-    dropdown.style.display = (dropdown.style.display === 'block') ? 'none' : 'block';
-}
-
-// Aseguramos que el manejador de eventos se ejecute después de que la página haya cargado completamente
 document.addEventListener('DOMContentLoaded', function() {
-    var dropdowns = document.querySelectorAll('.profile-dropdown');
+    const sidebarItems = document.querySelectorAll('.sidebar .item');
+    const tableRows = document.querySelectorAll('.main table tbody tr');
+    const modal = document.getElementById('reserveModal');
+    const closeModalButton = modal.querySelector('.close');
+    const form = document.getElementById('registroV');
 
-    // Función para cerrar el menú si se hace clic fuera de él
-    window.onclick = function(event) {
-        // Verificar si el clic fue fuera de cualquier área del perfil y del menú desplegable
-        if (!event.target.closest('.profile') && !event.target.closest('.profile-dropdown')) {
-            // Iterar sobre cada menú desplegable para ocultarlo si está abierto
-            dropdowns.forEach(function(dropdown) {
-                if (dropdown.style.display === 'block') {
-                    dropdown.style.display = 'none';
-                }
-            });
-        }
-    };
-});
-
-function openModal() {
-    var modal = document.getElementById('reserveModal');
-    modal.style.display = 'block';
-    modal.style.alignItems = 'center';
-    modal.style.justifyContent = 'center';
-    modal.style.display = 'flex';
-}
-
-function closeModal() {
-    var modal = document.getElementById('reserveModal');
-    modal.style.display = 'none';
-}
-document.addEventListener('DOMContentLoaded', function() {
-    const tableBody = document.querySelector('#actividades-table tbody');
-    if (!tableBody) {
-        console.error('No se encontró el cuerpo de la tabla en el documento.');
-        return;
+    // Función para abrir el modal
+    function openModal() {
+        modal.style.display = 'flex';
+        modal.style.alignItems = 'center';
+        modal.style.justifyContent = 'center';
     }
 
-    fetch('http://localhost/GoCan/src/modules/php/get_actividades.php')
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        tableBody.innerHTML = ''; // Limpia la tabla antes de añadir nuevos datos
-        data.forEach(actividad => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${actividad.id_actividad}</td>
-                <td>${actividad.id_usuario}</td>
-                <td>${actividad.hora_ingreso}</td>
-                <td>${actividad.nombre_usuario || 'Sin nombre'}</td>
-            `;
-            tableBody.appendChild(row);
+    // Función para cerrar el modal
+    function closeModal() {
+        modal.style.display = 'none';
+    }
+
+    // Evento para abrir el modal al hacer clic en el botón de registro de veterinarios
+    document.getElementById('bt3').addEventListener('click', openModal);
+
+    // Evento para cerrar el modal al hacer clic en la 'X'
+    closeModalButton.addEventListener('click', closeModal);
+
+    // Manejador del evento submit para el formulario
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        const formData = new FormData(this);
+
+        fetch('http://localhost/GoCan/src/modules/php/registrar_veterinario.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.json();
+        })
+        .then(data => {
+            if (data.estado === 'success') {
+                alert(data.mensaje);
+                closeModal();
+                location.reload();
+            } else {
+                throw new Error(data.mensaje);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("Ha ocurrido un error al intentar registrar: " + error.message);
         });
-    })
-    .catch(error => {
-        console.error('Error al cargar los datos:', error);
-        alert('Error al cargar las actividades. Verifica la consola para más detalles.');
     });
+
+    // Función para cerrar el modal si se hace clic fuera de él
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            closeModal();
+        }
+    };
+
+    // Función para alternar la visibilidad del dropdown del perfil
+    function toggleDropdown() {
+        var dropdown = document.getElementById('profileDropdown');
+        dropdown.style.display = (dropdown.style.display === 'block') ? 'none' : 'block';
+    }
+
+    // Evento para el dropdown del perfil
+    document.querySelector('.profile').addEventListener('click', toggleDropdown);
+
+    // Eventos de clic para elementos de la barra lateral
+    sidebarItems.forEach(item => {
+        item.addEventListener('click', () => {
+            sidebarItems.forEach(innerItem => innerItem.classList.remove('active'));
+            item.classList.add('active');
+        });
+    });
+
+    // Eventos de selección para filas de la tabla
+    tableRows.forEach(row => {
+        row.addEventListener('click', () => {
+            tableRows.forEach(innerRow => innerRow.classList.remove('selected'));
+            row.classList.add('selected');
+        });
+    });
+
+    // Carga dinámica de datos para actividades y doctores
+    function loadData(url, tbodySelector) {
+        fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            const tbody = document.querySelector(tbodySelector);
+            tbody.innerHTML = ''; // Limpia la tabla antes de añadir nuevos datos
+            data.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.id_actividad || item.id}</td>
+                    <td>${item.nombre}</td>
+                    <td>${item.hora_ingreso || item.cargo}</td>
+                    <td>${item.nombre_usuario || item.especialidad}</td>
+                    <td>${item.estado || ''}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        })
+        .catch(error => {
+            console.error('Error al cargar los datos:', error);
+            alert('Error al cargar los datos. Verifica la consola para más detalles.');
+        });
+    }
+
+    loadData('http://localhost/GoCan/src/modules/php/get_actividades.php', '#actividades-table tbody');
+    loadData('http://localhost/GoCan/src/modules/php/listadoctores.php', '#lista-veterinarios');
 });
