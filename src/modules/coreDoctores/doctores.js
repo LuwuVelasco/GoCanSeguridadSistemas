@@ -193,11 +193,11 @@ document.addEventListener("DOMContentLoaded", function() {
     function mostrarReportes(reportes) {
         const reportHistory = document.getElementById('reportHistory');
         reportHistory.innerHTML = '';
-
+    
         reportes.forEach(reporte => {
             const div = document.createElement("div");
             div.classList.add("reporte");
-
+    
             const resumen = document.createElement("div");
             resumen.classList.add("reporte-resumen");
             resumen.textContent = `Propietario: ${reporte.propietario}, Mascota: ${reporte.nombre_mascota}`;
@@ -209,31 +209,65 @@ document.addEventListener("DOMContentLoaded", function() {
                     detalle.style.display = "none";
                 }
             });
-
+    
             const detalle = document.createElement("div");
             detalle.classList.add("reporte-detalle");
-
+    
             const sintomas = document.createElement("p");
             sintomas.textContent = `Síntomas: ${reporte.sintomas}`;
-
+    
             const diagnostico = document.createElement("p");
             diagnostico.textContent = `Diagnóstico: ${reporte.diagnostico}`;
-
+    
             const receta = document.createElement("p");
             receta.textContent = `Receta: ${reporte.receta}`;
-
+    
             const fecha = document.createElement("p");
             fecha.textContent = `Fecha: ${reporte.fecha}`;
-
+    
+            const deleteButton = document.createElement("button");
+            deleteButton.textContent = "Eliminar";
+            deleteButton.addEventListener("click", function() {
+                if (confirm("¿Estás seguro de que deseas eliminar este reporte?")) {
+                    eliminarReporte(reporte.propietario, reporte.nombre_mascota, div);
+                }
+            });
+    
             detalle.appendChild(sintomas);
             detalle.appendChild(diagnostico);
             detalle.appendChild(receta);
             detalle.appendChild(fecha);
-
+            detalle.appendChild(deleteButton);
+    
             div.appendChild(resumen);
             div.appendChild(detalle);
-
+    
             reportHistory.appendChild(div);
+        });
+    }
+    
+    
+    function eliminarReporte(propietario, nombreMascota, reporteDiv) {
+        console.log(`Eliminando reporte de ${propietario} para la mascota ${nombreMascota}`);
+    
+        fetch('http://localhost/GoCan/src/modules/php/eliminar_reporte.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `propietario=${encodeURIComponent(propietario)}&nombre_mascota=${encodeURIComponent(nombreMascota)}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.estado === "success") {
+                alert("Reporte eliminado exitosamente");
+                reporteDiv.remove();
+            } else {
+                console.error("Error:", data.mensaje);
+                alert("Error al eliminar el reporte: " + data.mensaje);
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("Error al procesar la solicitud");
         });
     }
 

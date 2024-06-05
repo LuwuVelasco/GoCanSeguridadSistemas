@@ -85,6 +85,11 @@
             <a href="#" class="navbar-link" data-nav-link="reservas">Reservas</a>
           </li>
 
+          <li class="navbar-item">
+            <a href="http://localhost/GoCan/src/modules/satisfaccion/satisfaccion.html" class="navbar-link" data-nav-link="calificacion">Calificacion</a>
+          </li>
+          
+
         </ul>
 
         <a href="../login/sesionindex.html" class="navbar-action-btn">Iniciar Sesión</a>
@@ -137,14 +142,8 @@
       <span class="close">&times;</span>
       <form id="reserveForm">
         <input type="text" id="propietario" name="propietario" placeholder="Nombre del Propietario" required>
-        <select id="servicio" name="servicio" required>
+        <select id="especialidad" name="especialidad" required>
             <option value="">Seleccionar servicio...</option>
-            <option value="Vacunas">Vacunas</option>
-            <option value="Traumatologia">Traumatología</option>
-            <option value="Odontologia">Odontología</option>
-            <option value="Desparacitacion">Desparasitación</option>
-            <option value="Consulta General">Consulta General</option>
-            <option value="Sin especificar">No especificado</option>
         </select>
         <select id="doctor" name="doctor" required>
           <option value="">Seleccionar doctor...</option>
