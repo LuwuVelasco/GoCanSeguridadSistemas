@@ -96,7 +96,8 @@
                             <th>Nombre</th>
                             <th>Cargo</th>
                             <th>Especialidad</th>
-                            <th>Estado</th>
+                            <th onclick="toggleEstado()">Estado </th>
+
                         </tr>
                     </thead>
                     <tbody id="lista-veterinarios">
@@ -130,6 +131,7 @@
     </main>
 
 <!-- Sección del modal para registrar veterinarios -->
+    <!-- Sección del modal para registrar veterinarios -->
     <div id="reserveModal" class="modal" style="display:none;">
         <div class="modal-content">
             <div class="modal-header">Registrar Veterinario</div>
@@ -137,20 +139,28 @@
             <form id="registroV">
                 <input type="text" id="nombre" name="nombre" placeholder="Nombre del Veterinario" required>
                 <input type="text" id="cargo" name="cargo" placeholder="Cargo del Veterinario" required>
-                <select id="especialidad" name="especialidad" required>
-                    <option value="">Seleccionar especialidad...</option>
-                    <option value="vacunas">Vacunas</option>
-                    <option value="traumatologia">Traumatología</option>
-                    <option value="odontologia">Odontología</option>
-                    <option value="desparacitacion">Desparasitación</option>
-                    <option value="consulta_general">Consulta General</option>
-                </select>
                 <select id="estado" name="estado" required>
                     <option value="">Seleccionar el estado del doctor/a:</option>
                     <option value="activo">Activo</option>
                     <option value="con_permiso">Con Permiso</option>
                     <option value="inactivo">Inactivo</option>
                 </select>
+                <!-- Contenedor específico para especialidades -->
+                <div class="especialidad-container">
+                    <label for="especialidad">Especialidad:</label>
+                    <select id="especialidad" name="especialidad" required>
+                        <option value="1">Traumatología</option>
+                        <option value="2">Medicina General</option>
+                        <option value="3">Radiografías</option>
+                        <option value="4">Odontologia</option>
+                        <option value="5">Etóloga</option>
+                        <option value="6">Nutricionista</option>
+                        <option value="7">Dermatología</option>
+                        <option value="8">Oftalmólogo</option>
+
+                    </select>
+                                  
+                </div>
                 <div class="button-group">
                     <button type="submit">Registrar</button>
                     <button type="button" onclick="closeModal()">Cancelar</button>
@@ -158,8 +168,10 @@
             </form>
         </div>
     </div>
+    
+
 
     
-    <script src="admin.js"></script>
+    <script src="admin.js" defer></script>
 </body>
 </html>

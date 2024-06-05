@@ -6,15 +6,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('registroV');
 
     // Función para abrir el modal
-    function openModal() {
-        modal.style.display = 'flex';
-        modal.style.alignItems = 'center';
-        modal.style.justifyContent = 'center';
+    window.openModal = function() {
+        document.getElementById('reserveModal').style.display = 'block';
     }
 
-    // Función para cerrar el modal
-    function closeModal() {
-        modal.style.display = 'none';
+    window.closeModal = function() {
+        document.getElementById('reserveModal').style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        const modal = document.getElementById('reserveModal');
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
     }
 
     // Evento para abrir el modal al hacer clic en el botón de registro de veterinarios
@@ -23,32 +27,27 @@ document.addEventListener('DOMContentLoaded', function() {
     // Evento para cerrar el modal al hacer clic en la 'X'
     closeModalButton.addEventListener('click', closeModal);
 
-    // Manejador del evento submit para el formulario
-    form.addEventListener('submit', function(event) {
+    const registroV = document.getElementById('registroV');
+    registroV.addEventListener('submit', function(event) {
         event.preventDefault();
-        const formData = new FormData(this);
-
+        const formData = new FormData(registroV);
+        console.log(Array.from(formData.entries())); // Esto mostrará todos los valores del formulario
+        const data = new URLSearchParams(formData);
+        
         fetch('http://localhost/GoCan/src/modules/php/registrar_veterinario.php', {
             method: 'POST',
-            body: formData
+            body: data
         })
-        .then(response => {
-            if (!response.ok) throw new Error('Network response was not ok');
-            return response.json();
-        })
-        .then(data => {
-            if (data.estado === 'success') {
-                alert(data.mensaje);
-                closeModal();
-                location.reload();
-            } else {
-                throw new Error(data.mensaje);
-            }
+        .then(response => response.text())  // Cambiado a .text() para ver la respuesta cruda
+        .then(text => {
+            console.log("Respuesta cruda del servidor:", text);  // Muestra la respuesta completa en la consola
+            const data = JSON.parse(text); // Intenta parsear el texto como JSON
+            console.log(data);
         })
         .catch(error => {
             console.error('Error:', error);
-            alert("Ha ocurrido un error al intentar registrar: " + error.message);
         });
+        
     });
 
     // Función para cerrar el modal si se hace clic fuera de él
@@ -82,23 +81,71 @@ document.addEventListener('DOMContentLoaded', function() {
             row.classList.add('selected');
         });
     });
-
+    function toggleEstado(element) {
+        const estados = ["Activo", "Inactivo", "Con Permiso"];
+        const clases = ["estado-activo", "estado-inactivo", "estado-permiso"];
+        let id = element.getAttribute('data-id');  // Suponiendo que cada span tiene un data-id
+        let estadoActual = estados.indexOf(element.textContent);
+        estadoActual = (estadoActual + 1) % estados.length; // Cambia al siguiente estado
+    
+        element.textContent = estados[estadoActual];
+        element.className = "estado " + clases[estadoActual];
+    
+        // Enviar el nuevo estado al servidor
+        fetch('http://localhost/GoCan/src/modules/php/actualizar_estado.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `estado=${encodeURIComponent(estados[estadoActual])}&id=${encodeURIComponent(id)}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log('Estado actualizado con éxito');
+            } else {
+                console.error('Error al actualizar el estado:', data.message);
+            }
+        })
+        .catch(error => console.error('Error en la red:', error));
+    }
+    
+    
+    
+    function getClassForEstado(estado) {
+        switch (estado.toLowerCase()) {
+            case 'activo':
+                return 'estado-activo';
+            case 'inactivo':
+                return 'estado-inactivo';
+            case 'con permiso':
+                return 'estado-permiso';
+            default:
+                return '';
+        }
+    }
+    
     // Carga dinámica de datos para actividades y doctores
     function loadData(url, tbodySelector) {
         fetch(url)
         .then(response => response.json())
         .then(data => {
             const tbody = document.querySelector(tbodySelector);
-            tbody.innerHTML = ''; // Limpia la tabla antes de añadir nuevos datos
+            tbody.innerHTML = '';
             data.forEach(item => {
                 const row = document.createElement('tr');
+                const estadoSpan = document.createElement('span');
+                estadoSpan.className = `estado ${getClassForEstado(item.estado)}`;
+                estadoSpan.textContent = item.estado;
+                estadoSpan.onclick = function() { toggleEstado(this); }; // Asignar evento aquí
+    
                 row.innerHTML = `
                     <td>${item.nombre}</td>
                     <td>${item.cargo}</td>
                     <td>${item.especialidad || 'No asignada'}</td>
-                    <td>${item.estado}</td>
-
+                    
                 `;
+                row.appendChild(estadoSpan);
                 tbody.appendChild(row);
             });
         })
@@ -107,6 +154,8 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Error al cargar los datos. Verifica la consola para más detalles.');
         });
     }
+    
+    
     function loadActivities(url, tbodySelector) {
         fetch(url)
         .then(response => response.json())
@@ -127,8 +176,23 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Error al cargar los datos. Verifica la consola para más detalles.');
         });
     }
-    
+   // Función para cargar especialidades en el select
+   /*function loadEspecialidades() {
+    const selectEspecialidad = document.getElementById('especialidad');
+    fetch('http://localhost/GoCan/src/modules/php/get_especialidades.php')
+    .then(response => response.json())
+    .then(especialidades => {
+        especialidades.forEach(especialidad => {
+            const option = document.createElement('option');
+            option.value = especialidad.id_especialidad;
+            option.textContent = especialidad.nombre_especialidad;
+            selectEspecialidad.appendChild(option);
+        });
+    })
+    .catch(error => console.error('Error al cargar especialidades:', error));
+}*/
 
+    //loadEspecialidades('http://localhost/GoCan/src/modules/php/get_especialidades.php,#especialidad-container')
     loadActivities('http://localhost/GoCan/src/modules/php/get_actividades.php', '#actividades-table tbody');
     loadData('http://localhost/GoCan/src/modules/php/listadoctores.php', '#lista-veterinarios');
 });
