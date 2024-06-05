@@ -14,7 +14,7 @@ try {
     $data = json_decode(file_get_contents("php://input"), true);
 
     // Preparar la sentencia SQL
-    $stmt = $conn->prepare("INSERT INTO producto (nombre, descripcion, precio, categoria, id_usuario) VALUES (:nombre, :descripcion, :precio, :categoria, :id_usuario)");
+    $stmt = $conn->prepare("INSERT INTO producto (nombre, descripcion, precio, categoria, id_usuario,imagen) VALUES (:nombre, :descripcion, :precio, :categoria, :id_usuario,:imagen)");
 
     // Vincular parámetros
     $stmt->bindParam(':nombre', $data['nombre']);
@@ -22,6 +22,7 @@ try {
     $stmt->bindParam(':precio', $data['precio']);
     $stmt->bindParam(':categoria', $data['categoria']);
     $stmt->bindParam(':id_usuario', $data['id_usuario']);
+    $stmt->bindParam(':imagen', $data['imagen']);
     // Ejecutar la sentencia
     $stmt->execute();
 

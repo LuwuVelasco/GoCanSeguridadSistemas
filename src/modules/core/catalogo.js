@@ -1,14 +1,21 @@
 document.addEventListener('DOMContentLoaded', function() {
   document.querySelectorAll('.card-action-btn.favorito').forEach(button => {
       button.addEventListener('click', function() {
-          const productCard = this.closest('.product-card');
-          const productData = {
-              nombre: productCard.querySelector('.nombre').textContent.trim(),
-              descripcion: productCard.querySelector('.descripcion').textContent.trim(),
-              precio: parseFloat(productCard.querySelector('.precio').getAttribute('value')),
-              categoria: productCard.querySelector('.categoria').textContent.trim(),
-              id_usuario: localStorage.getItem('id_usuario')
-          };
+        const productCard = this.closest('.product-card');
+        const nombre = productCard.querySelector('.nombre').textContent.trim();
+        const descripcion = productCard.querySelector('.descripcion').textContent.trim();
+        const precio = productCard.querySelector('.precio').getAttribute('value');
+        const categoria = productCard.querySelector('.categoria').textContent.trim();
+        const imagen = productCard.querySelector('.imagen').textContent.trim();
+        const id_usuario = localStorage.getItem('id_usuario'); // Asumiendo que tienes el ID del usuario almacenado en localStorage
+        const productData = {
+          nombre: nombre,
+          descripcion: descripcion,
+          precio: precio,
+          categoria: categoria,
+          id_usuario: id_usuario,
+          imagen: imagen
+        };
 
           fetch('http://localhost/GoCan/src/modules/php/catalogo.php', {
               method: 'POST',
@@ -27,4 +34,27 @@ document.addEventListener('DOMContentLoaded', function() {
           .catch(error => console.error('Error:', error));
       });
   });
+
+  // Evento para desplegar el modal de aviso de inicio de sesión para guardar a favoritos
+
+  document.querySelectorAll('.card-action-btn.favorito').forEach(button => {
+    button.addEventListener('click', function() {
+      // Mostrar la ventana modal
+      document.getElementById('loginModal').style.display = 'flex';
+    });
+  });
+
+  // Cerrar la ventana modal
+  document.querySelector('.close-button').addEventListener('click', function() {
+      document.getElementById('loginModal').style.display = 'none';
+  });
+
+  // También puedes cerrar el modal si se hace clic fuera del contenido
+  window.onclick = function(event) {
+    let modal = document.getElementById('loginModal');
+    if (event.target === modal) {
+      modal.style.display = "none";
+    }
+  }
+
 });

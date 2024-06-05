@@ -3,7 +3,7 @@ session_start(); // Iniciar la sesión
 header('Content-Type: application/json');
 
 // Conectar a la base de datos
-$conexion = pg_connect("dbname=gocan user=postgres password=Jesus.2004");
+$conexion = pg_connect("dbname=gocan user=postgres password=admin");
 if (!$conexion) {
     echo json_encode(["estado" => "error", "mensaje" => "No se pudo conectar a la base de datos"]);
     exit;
@@ -26,8 +26,8 @@ if ($row = pg_fetch_assoc($result)) {
     }
 
     echo json_encode([
-        "estado" => "success", 
-        "id_usuario" => $row['id_usuario'], 
+        "estado" => "success",
+        "id_usuario" => $row['id_usuario'],
         "cargo" => $row['cargo'],
         "id_doctores" => $row['id_doctores']
     ]);
@@ -37,4 +37,3 @@ if ($row = pg_fetch_assoc($result)) {
 }
 
 pg_close($conexion);
-?>
