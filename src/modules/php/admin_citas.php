@@ -8,7 +8,7 @@ if (!$conexion) {
     exit;
 }
 
-$query = "SELECT propietario, horario, fecha FROM cita WHERE id_doctor = 1";
+$query = "SELECT id_cita, propietario, horario, fecha FROM cita WHERE id_doctor = 1";
 $result = pg_query($conexion, $query);
 
 if (!$result) {
