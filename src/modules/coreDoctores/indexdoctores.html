@@ -65,8 +65,7 @@
     <main>
         <article>
             <section id="home" aria-label="home" style="background-image: url('../../assets/Images/banner_InicioAd.png')">
-                <div class="container">
-                </div>
+                <div class="container"></div>
             </section>
             <div class="main">
                 <h3 class="separator">Opciones</h3>
@@ -76,11 +75,15 @@
                         <i class="fi fi-sr-paw-heart"></i>
                         <h5>Registro mascotas</h5>
                     </div>
-                    <div id="bt1" class="button" onclick="openReportModal()">
+                    <div id="bt1" class="button" onclick="openEditModal()">
+                        <i class="fi fi-sr-pets"></i>
+                        <h5>Información Mascotas</h5>
+                    </div>
+                    <div id="bt2" class="button" onclick="openReportModal()">
                         <i class="fi fi-sr-clipboard-list"></i>
                         <h5>Registro reportes</h5>
                     </div>
-                    <div id="bt2" class="button" onclick="openHistoryModal()">
+                    <div id="bt3" class="button">
                         <i class="fi fi-sr-time-past"></i>
                         <h5>Historial reportes</h5>
                     </div>
@@ -127,10 +130,10 @@
                 
                 <label for="fecha">Fecha:</label>
                 <input type="date" id="fecha" name="fecha" required>
-            
+
                 <label for="nombre_mascota">Nombre de la Mascota:</label>
                 <input type="text" id="nombre_mascota" name="nombre_mascota" required>
-            
+
                 <button type="submit">Registrar</button>
                 <button type="button" onclick="closeReportModal()">Cancelar</button>
             </form>            
@@ -145,22 +148,105 @@
             <form id="petForm">
                 <label for="nombre_mascota">Nombre de la Mascota:</label>
                 <input type="text" id="nombre_mascota" name="nombre_mascota" required>
-            
+
                 <label for="edad">Edad:</label>
-                <input type="number" id="edad" name="edad" required>
-            
+                <div id="edad-div" style="display: flex; flex-direction: column; width: 100%;">
+                    <div style="display: flex;">
+                        <input type="number" id="edad" name="edad" required style="margin-right: 10px; flex: 1; width: 100%;">
+                        <select id="period" name="period" required style="flex: 1;">
+                            <option value="">Seleccionar periodo...</option>
+                            <option value="dia">Día/días</option>
+                            <option value="mes">Mes/meses</option>
+                            <option value="ano">Año/años</option>
+                        </select>
+                    </div>
+                </div>
+
+                <label for="tipo">Tipo:</label>
+                <select id="tipo" name="tipo" required>
+                    <option value="">Seleccionar tipo de animal...</option>
+                    <option value="Perro">Perro</option>
+                    <option value="Gato">Gato</option>
+                    <option value="Pájaro">Pájaro</option>
+                    <option value="Conejo">Conejo</option>
+                    <option value="Pez">Pez</option>
+                </select>
+
                 <label for="raza">Raza:</label>
                 <input type="text" id="raza" name="raza" required>
-            
-                <label for="tipo">Tipo:</label>
-                <input type="text" id="tipo" name="tipo" required>
-            
-                <label for="id_usuario">ID Usuario:</label>
-                <input type="text" id="id_usuario" name="id_usuario" required>
-            
+                <label for="nombre_propietario">Nombre Propietario:</label>
+                <input type="text" id="nombre_propietario" name="nombre_propietario" required>
+
                 <button type="submit">Registrar</button>
-                <button type="button" onclick="closePetModal()">Cancelar</button>
-            </form>            
+                <button type="submit" onclick="closePetModal()">Cancelar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para editar mascotas -->
+    <div id="tablaModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeEditModal()">&times;</span>
+            <h2>Editar Mascotas</h2>
+            <table id="petTable">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th class="edad">Edad</th>
+                        <th>Tipo</th>
+                        <th>Raza</th>
+                        <th>Propietario</th>
+                        <th>Editar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Las filas de la tabla se agregarán dinámicamente aquí -->
+                </tbody>
+            </table>
+            <button type="submit" onclick="closeEditModal()">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- Modal para editar mascota -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeEditModal()">&times;</span>
+            <h2>Editar Mascota</h2>
+            <form id="editForm">
+                <label for="nombre_mascota">Nombre de la Mascota:</label>
+                <input type="text" id="edit_nombre_mascota" name="nombre_mascota" required>
+
+                <label for="edad">Edad:</label>
+                <div id="edit_edad-div" style="display: flex; flex-direction: column; width: 100%;">
+                    <div style="display: flex;">
+                        <input type="number" id="edit_edad" name="edad" required style="margin-right: 10px; flex: 1; width: 100%;">
+                        <select id="edit_period" name="period" required style="flex: 1;">
+                            <option value="">Seleccionar periodo...</option>
+                            <option value="dia">Día/días</option>
+                            <option value="mes">Mes/meses</option>
+                            <option value="ano">Año/años</option>
+                        </select>
+                    </div>
+                </div>
+
+                <label for="tipo">Tipo:</label>
+                <select id="edit_tipo" name="tipo" required>
+                    <option value="">Seleccionar tipo de animal...</option>
+                    <option value="Perro">Perro</option>
+                    <option value="Gato">Gato</option>
+                    <option value="Pájaro">Pájaro</option>
+                    <option value="Conejo">Conejo</option>
+                    <option value="Pez">Pez</option>
+                </select>
+
+                <label for="raza">Raza:</label>
+                <input type="text" id="edit_raza" name="raza" required>
+                <label for="nombre_propietario">Nombre Propietario:</label>
+                <input type="text" id="edit_nombre_propietario" name="nombre_propietario" required>
+
+                <button type="submit">Editar</button>
+                <button type="submit" onclick="closeEditModal()">Cancelar</button>
+            </form>
         </div>
     </div>
 
