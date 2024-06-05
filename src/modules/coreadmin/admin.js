@@ -330,4 +330,71 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     };
+
+    
+    const vetForm = document.getElementById('vetForm');
+    
+    if (vetForm) {
+        vetForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(vetForm);
+            const data = new URLSearchParams();
+            for (const pair of formData) {
+                data.append(pair[0], pair[1]);
+            }
+
+            fetch('http://localhost/GoCan/src/modules/php/registrar_veterinario.php', {
+                method: 'POST',
+                body: data
+            })
+            .then(response => response.text()) // Cambia a .text() para depuración
+            .then(text => {
+                console.log('Respuesta del servidor:', text); // Imprime la respuesta para depuración
+                try {
+                    const data = JSON.parse(text); // Intenta convertir el texto en JSON
+                    if (data.estado === 'success') {
+                        alert('Veterinario registrado exitosamente');
+                        closeVetModal();
+                        vetForm.reset();
+                    } else {
+                        alert('Error al registrar el veterinario: ' + data.mensaje);
+                    }
+                } catch (e) {
+                    console.error('Error al analizar JSON:', e);
+                    alert('Error al procesar la solicitud. Verifique la consola para más detalles.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al procesar la solicitud');
+            });
+        });
+    }
+
+    window.openVetModal = function() {
+        const vetModal = document.getElementById('vetModal');
+        if (vetModal) {
+            vetModal.style.display = 'block';
+        } else {
+            console.error("El elemento 'vetModal' no existe en el DOM.");
+        }
+    }
+
+    window.closeVetModal = function() {
+        const vetModal = document.getElementById('vetModal');
+        if (vetModal) {
+            vetModal.style.display = 'none';
+        } else {
+            console.error("El elemento 'vetModal' no existe en el DOM.");
+        }
+    }
+
+    window.onclick = function(event) {
+        const vetModal = document.getElementById('vetModal');
+        if (event.target == vetModal) {
+            vetModal.style.display = 'none';
+        }
+    }
+
 });

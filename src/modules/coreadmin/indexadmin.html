@@ -75,15 +75,15 @@
                         <i class="fi fi-sr-paw-heart"></i>
                         <h5>Registro mascotas</h5>
                     </div>
-                    <div id="bt1" class="button" onclick="openReportModal()">
-                        <i class="fi fi-sr-clipboard-list"></i>
-                        <h5>Registro reportes</h5>
+                    <div id="bt3" class="button" onclick="openDoctorModal()">
+                        <i class="fi fi-sr-stethoscope"></i>
+                        <h5>Registro doctores</h5>
                     </div>
                     <div id="bt2" class="button" onclick="openHistoryModal()">
                         <i class="fi fi-sr-time-past"></i>
                         <h5>Historial reportes</h5>
                     </div>
-                    <div id="bt3" class="button" onclick="openModal()">
+                    <div id="bt1" class="button" onclick="openVetModal()">
                         <i class="fi fi-sr-stethoscope"></i>
                         <h5>Registro veterinarios</h5>
                     </div>
@@ -272,29 +272,28 @@
             </div>
         </div>
     </div>
-    
-    <div id="reserveModal" class="modal" style="display:none;">
+
+    <!-- Modal de registro de doctores -->
+    <div id="vetModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">Registrar Veterinario</div>
-            <span class="close" onclick="closeModal()">&times;</span>
-            <form id="reserveForm" method="post" action="../php/AñadirDoc.php">
-                <input type="text" id="nombre" name="nombre" placeholder="Nombre del Veterinario" required>
-                <input type="text" id="cargo" name="cargo" placeholder="Cargo del Veterinario" required>
-                <select id="especialidad" name="especialidad" required>
-                    <option value="">Seleccionar especialidad...</option>
-                    <option value="vacunas">Vacunas</option>
-                    <option value="traumatologia">Traumatología</option>
-                    <option value="odontologia">Odontología</option>
-                    <option value="desparacitacion">Desparasitación</option>
-                    <option value="consulta_general">Consulta General</option>
-                </select>
-                <div class="button-group">
-                    <button type="submit">Registrar</button>
-                    <button type="button" onclick="closeModal()">Cancelar</button>
-                </div>
+            <span class="close" onclick="closeVetModal()">&times;</span>
+            <h2>Registrar Veterinario</h2>
+            <form id="vetForm">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" name="nombre" required>
+                
+                <label for="cargo">Cargo:</label>
+                <input type="text" id="cargo" name="cargo" required>
+                
+                <label for="id_especialidad">Especialidad:</label>
+                <input type="number" id="id_especialidad" name="id_especialidad" required>
+
+                <button type="submit">Registrar</button>
+                <button type="button" onclick="closeVetModal()">Cancelar</button>
             </form>
         </div>
     </div>
+
     <script src="admin.js"></script>
 </body>
 </html>
