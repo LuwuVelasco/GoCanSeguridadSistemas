@@ -2,7 +2,8 @@ document.addEventListener("DOMContentLoaded", function() {
     let citas = [];
 
     fetchCitas();
-
+    loadActivities('http://localhost/GoCan/src/modules/php/get_actividades.php', '#actividades-table tbody');
+    loadData('http://localhost/GoCan/src/modules/php/listadoctores.php', '#lista-veterinarios');
     function fetchCitas() {
         fetch('http://localhost/GoCan/src/modules/php/admin_citas.php', {
             method: 'POST',
@@ -65,7 +66,66 @@ document.addEventListener("DOMContentLoaded", function() {
             tbody.appendChild(tr);
         });
     }
+    // Carga dinámica de datos para actividades y doctores
+        function loadData(url, tbodySelector) {
+            fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                const tbody = document.querySelector(tbodySelector);
+                tbody.innerHTML = '';
+                data.forEach(item => {
+                    const row = document.createElement('tr');
+                    const estadoSpan = document.createElement('span'); // Definición del estadoSpan
+                    estadoSpan.className = `estado ${getClassForEstado(item.estado)}`;
+                    estadoSpan.textContent = item.estado;
 
+                    row.innerHTML = `
+                        <td>${item.nombre}</td>
+                        <td>${item.cargo}</td>
+                        <td>${item.especialidad || 'No asignada'}</td>
+                    `;
+                    row.appendChild(estadoSpan); // Ahora estadoSpan está definido y puede ser añadido correctamente
+                    tbody.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.error('Error al cargar los datos:', error);
+                alert('Error al cargar los datos. Verifica la consola para más detalles.');
+            });
+        }
+        function getClassForEstado(estado) {
+            switch (estado.toLowerCase()) {
+                case 'activo':
+                    return 'estado-activo';
+                case 'inactivo':
+                    return 'estado-inactivo';
+                case 'con permiso':
+                    return 'estado-permiso';
+                default:
+                    return 'estado-desconocido'; // Asegúrate de manejar estados desconocidos
+            }
+        }
+
+        function loadActivities(url, tbodySelector) {
+            fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                const tbody = document.querySelector(tbodySelector);
+                tbody.innerHTML = ''; // Limpia la tabla antes de añadir nuevos datos
+                data.forEach(item => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${item.hora_ingreso}</td>
+                        <td>${item.nombre_usuario}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.error('Error al cargar los datos:', error);
+                alert('Error al cargar los datos. Verifica la consola para más detalles.');
+            });
+        }
     function eliminarCitaAdmin(citaId, fila) {
         fetch('http://localhost/GoCan/src/modules/php/eliminar_citaAdmin.php', {
             method: 'POST',
@@ -295,7 +355,7 @@ document.addEventListener("DOMContentLoaded", function() {
             alert('Error al procesar la solicitud');
         });
     });
-
+    
     
 });
 

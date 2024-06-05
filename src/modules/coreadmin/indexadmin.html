@@ -105,94 +105,31 @@
 
                 <h3 class="separator">Lista de veterinarios</h3>
                 <table>
-                    <tr>
-                        <td class="icon"><i class=""></i></td>
-                        <th>Nombre</th>
-                        <th>Cargo</th>
-                        <th>Especialidad</th>
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Cargo</th>
+                            <th>Especialidad</th>
+                            <th onclick="toggleEstado()">Estado </th>
 
-                    </tr>
+                        </tr>
+                    </thead>
+                    <tbody id="lista-veterinarios">
+                        <!-- Las filas se añadirán aquí mediante JavaScript -->
+                    </tbody>
+                </table>
+                
+                <h3 class="separator">Registro de Actividades en la Página</h3>
+                <table id="actividades-table">
+                    <thead>
+                        <tr>
+                          
+                            <th>Hora de Ingreso</th>
+                            <th>Nombre del Usuario</th>
+                        </tr>
+                    </thead>
                     <tbody>
-                        <tr>
-                            <td class="icon"><i class="fi fi-sr-user-md"></i></td>
-                            <td>Dr. Elmer Gonzales</td>
-                            <td>Propietario</td>
-                            <td>Traumatología</td>
-                            <td><i class="ri-delete-bin-6-line" onclick="deleteDoctor('Dr. Elmer Gonzales');"></i></td>
-
-                        </tr>
-                        <tr>
-                            <td class="icon"><i class="fi fi-sr-user-md"></i></td>
-                            <td>Dra. Nadia Ormachea</td>
-                            <td>Veterinaria</td>
-                            <td>Medicina General</td>
-                            <td><i class="ri-delete-bin-6-line" onclick="deleteDoctor('Dr. Elmer Gonzales');"></i></td>
-
-                        </tr>
-                        <tr>
-                            <td class="icon"><i class="fi fi-sr-user-md"></i></td>
-                            <td>Dr. Gabriel Pacheri</td>
-                            <td>Veterinario</td>
-                            <td>Radiografías</td>
-                            <td><i class="ri-delete-bin-6-line" onclick="deleteDoctor('Dr. Elmer Gonzales');"></i></td>
-
-                        </tr>
-                        <tr>
-                            <td class="icon"><i class="fi fi-sr-user-md"></i></td>
-                            <td>Dr. Nicolas Nobody</td>
-                            <td>Veterinario</td>
-                            <td>Odontología</td>
-                            <td><i class="ri-delete-bin-6-line" onclick="deleteDoctor('Dr. Elmer Gonzales');"></i></td>
-
-                        </tr>
-                        <tr>
-                            <td class="icon"><i class="fi fi-sr-user-md"></i></td>
-                            <td>Dra. Mia Pacheco</td>
-                            <td>Veterinaria</td>
-                            <td>Etóloga</td>
-                            <td><i class="ri-delete-bin-6-line" onclick="deleteDoctor('Dr. Elmer Gonzales');"></i></td>
-
-                        </tr>
-                        <tr>
-                            <td class="icon"><i class="fi fi-sr-user-md"></i></td>
-                            <td>Dr. Alan Guzman</td>
-                            <td>Veterinario</td>
-                            <td>Medicina General</td>
-                            <td><i class="ri-delete-bin-6-line" onclick="deleteDoctor('Dr. Elmer Gonzales');"></i></td>
-
-                        </tr>
-                        <tr>
-                            <td class="icon"><i class="fi fi-sr-user-md"></i></td>
-                            <td>Dr. Patricio Argani</td>
-                            <td>Veterinario</td>
-                            <td>Nutricionista</td>
-                            <td><i class="ri-delete-bin-6-line" onclick="deleteDoctor('Dr. Elmer Gonzales');"></i></td>
-
-                        </tr>
-                        <tr>
-                            <td class="icon"><i class="fi fi-sr-user-md"></i></td>
-                            <td>Dra. Laura Gallani</td>
-                            <td>Veterinaria</td>
-                            <td>Dermatología</td>
-                            <td><i class="ri-delete-bin-6-line" onclick="deleteDoctor('Dr. Elmer Gonzales');"></i></td>
-
-                        </tr>
-                        <tr>
-                            <td class="icon"><i class="fi fi-sr-user-md"></i></td>
-                            <td>Dr. Mauricio Santa Cruz</td>
-                            <td>Veterinario</td>
-                            <td>Oftalmólogo</td>
-                            <td><i class="ri-delete-bin-6-line" onclick="deleteDoctor('Dr. Elmer Gonzales');"></i></td>
-
-                        </tr>
-                        <tr>
-                            <td class="icon"><i class="fi fi-sr-user-md"></i></td>
-                            <td>Dr. Karen Barreda</td>
-                            <td>Veterinaria</td>
-                            <td>Medicina General</td>
-                            <td><i class="ri-delete-bin-6-line" onclick="deleteDoctor('Dr. Elmer Gonzales');"></i></td>
-
-                        </tr>
+                        <!-- Las filas se añadirán aquí mediante JavaScript -->
                     </tbody>
                 </table>
             </div>
