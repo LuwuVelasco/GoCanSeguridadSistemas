@@ -355,6 +355,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function abrirFormularioEdicion(reporte) {
         // Abre el modal y carga los datos del reporte seleccionado
+        document.getElementById('id_reporte').value = reporte.id_reporte;
         const modal = document.getElementById('reportModal');
         modal.style.display = 'block';
         document.getElementById('id_reporte').value = reporte.id_reporte; // Añade el ID del reporte al campo oculto
