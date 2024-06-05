@@ -6,7 +6,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const submitBtn = document.getElementById('submitRating');
     let selectedRating = 0;
 
-    // Asegúrate de que el botón de apertura del modal esté presente antes de asignar el evento
     if (openModalBtn) {
         openModalBtn.addEventListener('click', function(event) {
             event.preventDefault();
@@ -55,8 +54,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
     submitBtn.addEventListener('click', function() {
         if (selectedRating > 0) {
-            alert(`Gracias por tu calificación de ${selectedRating} estrellas`);
-            modal.style.display = "none";
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', 'http://localhost/GoCan/src/modules/php/guardar_calificacion.php', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    const response = JSON.parse(xhr.responseText);
+                    if (response.estado === "success") {
+                        alert(`Gracias por tu calificación de ${selectedRating} estrellas`);
+                    } else {
+                        alert(`Error: ${response.mensaje}`);
+                    }
+                    modal.style.display = "none";
+                }
+            };
+            xhr.send(`estrellas=${selectedRating}`);
         } else {
             alert('Por favor selecciona una calificación');
         }
