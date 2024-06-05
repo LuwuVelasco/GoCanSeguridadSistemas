@@ -1,10 +1,9 @@
 document.addEventListener("DOMContentLoaded", function() {
     let citas = [];
-    const id_doctor = localStorage.getItem('id_doctores');
 
-    fetchCitas(id_doctor);
+    fetchCitas();
 
-    function fetchCitas(id_doctor) {
+    function fetchCitas() {
         fetch('http://localhost/GoCan/src/modules/php/admin_citas.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
@@ -44,10 +43,13 @@ document.addEventListener("DOMContentLoaded", function() {
             const tdCheckbox = document.createElement("td");
             const checkbox = document.createElement("input");
             checkbox.type = "checkbox";
+            checkbox.setAttribute("data-id", cita.id_cita); // Asignar ID de la cita al checkbox
             checkbox.addEventListener("change", () => {
+                const citaId = checkbox.getAttribute("data-id");
+                console.log(`ID de la cita: ${citaId}`); // Mostrar el ID por consola
                 if (checkbox.checked) {
                     if (confirm("¿La cita ya ha sido completada?")) {
-                        tr.style.display = "none"; // Ocultar la fila de la tabla
+                        eliminarCitaAdmin(citaId, tr); // Eliminar la cita de la base de datos y ocultar la fila
                     } else {
                         checkbox.checked = false;
                     }
@@ -61,6 +63,27 @@ document.addEventListener("DOMContentLoaded", function() {
             tr.appendChild(tdCheckbox);
 
             tbody.appendChild(tr);
+        });
+    }
+
+    function eliminarCitaAdmin(citaId, fila) {
+        fetch('http://localhost/GoCan/src/modules/php/eliminar_citaAdmin.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `id_cita=${encodeURIComponent(citaId)}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.estado === "success") {
+                fila.style.display = "none"; // Ocultar la fila de la tabla
+            } else {
+                console.error("Error:", data.mensaje);
+                alert("Error al eliminar la cita: " + data.mensaje);
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("Error al procesar la solicitud");
         });
     }
 
