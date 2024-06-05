@@ -10,7 +10,12 @@ document.addEventListener("DOMContentLoaded", function() {
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: `id_doctor=${encodeURIComponent(id_doctor)}`
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.estado === "success") {
                 citas = data.citas;
@@ -19,7 +24,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 console.error("Error:", data.mensaje);
             }
         })
-        .catch(error => console.error("Error:", error));
+        .catch(error => {
+            console.error("Error:", error);
+        });
     }
 
     function mostrarCitas(citas) {
@@ -70,7 +77,12 @@ document.addEventListener("DOMContentLoaded", function() {
         fetch(`http://localhost/GoCan/src/modules/php/citafinalizada.php?id_cita=${id_cita}`, {
             method: 'POST'
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.estado === "success") {
                 row.remove();
@@ -78,7 +90,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 console.error("Error:", data.mensaje);
             }
         })
-        .catch(error => console.error("Error:", error));
+        .catch(error => {
+            console.error("Error:", error);
+        });
     }
 
     window.openReportModal = function() {
@@ -90,10 +104,12 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     window.onclick = function(event) {
-        const modal = document.getElementById('reportModal');
-        if (event.target == modal) {
-            modal.style.display = 'none';
-        }
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach(modal => {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        });
     }
 
     const reportForm = document.getElementById('reportForm');
@@ -110,7 +126,12 @@ document.addEventListener("DOMContentLoaded", function() {
             method: 'POST',
             body: data
         })
-        .then(response => response.text()) // Cambiar a text() temporalmente para depuración
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.text(); // Cambiar a text() temporalmente para depuración
+        })
         .then(text => {
             try {
                 const data = JSON.parse(text);
@@ -156,7 +177,12 @@ document.addEventListener("DOMContentLoaded", function() {
             method: 'POST',
             body: data
         })
-        .then(response => response.text())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.text();
+        })
         .then(text => {
             try {
                 const data = JSON.parse(text);
@@ -179,21 +205,18 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     });
 
-    window.openPetModal = function() {
-        document.getElementById('petModal').style.display = 'block';
-    }
-    
-    window.closePetModal = function() {
-        document.getElementById('petModal').style.display = 'none';
-    }
-
-    window.closeEditModal = function() {
-        document.getElementById('editModal').style.display = 'none';
+    window.closeTablaModal = function() {
+        document.getElementById('tablaModal').style.display = 'none';
     }
 
     window.openEditModal = function() {
         fetch('http://localhost/GoCan/src/modules/php/obtener_mascotas.php')
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data.estado === "success") {
                     llenarTablaMascotas(data.mascotas);
@@ -202,7 +225,9 @@ document.addEventListener("DOMContentLoaded", function() {
                     console.error("Error:", data.mensaje);
                 }
             })
-            .catch(error => console.error("Error:", error));
+            .catch(error => {
+                console.error("Error:", error);
+            });
     };
 
     function llenarTablaMascotas(mascotas) {
@@ -239,7 +264,7 @@ document.addEventListener("DOMContentLoaded", function() {
             const btnEditar = document.createElement("button");
             btnEditar.innerHTML = '<i class="fi fi-sr-pen-square"></i>';
             btnEditar.onclick = function() {
-                // Lógica para editar la mascota
+                openEditForm(mascota.id_mascota);
             };
             tdEditar.appendChild(btnEditar);
     
@@ -254,13 +279,74 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    window.onclick = function(event) {
-        const modals = document.querySelectorAll('.modal');
-        modals.forEach(modal => {
-            if (event.target == modal) {
-                modal.style.display = 'none';
+    function openEditForm(id_mascota) {
+        fetch(`http://localhost/GoCan/src/modules/php/obtener_mascota.php?id_mascota=${id_mascota}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.estado === "success") {
+                    const mascota = data.mascota;
+                    document.getElementById('edit_nombre_mascota').value = mascota.nombre_mascota;
+                    document.getElementById('edit_edad').value = mascota.edad;
+                    document.getElementById('edit_period').value = mascota.period;
+                    document.getElementById('edit_tipo').value = mascota.tipo;
+                    document.getElementById('edit_raza').value = mascota.raza;
+                    document.getElementById('edit_nombre_propietario').value = mascota.nombre_propietario;
+    
+                    document.getElementById('editModal').style.display = 'block';
+                    document.getElementById('tablaModal').style.display = 'none';
+                } else {
+                    console.error("Error:", data.mensaje);
+                    alert("Error: " + data.mensaje);
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Error al procesar la solicitud.");
+            });
+    }          
+
+    const editForm = document.getElementById('editForm');
+    editForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const formData = new FormData(editForm);
+        const data = new URLSearchParams();
+        for (const pair of formData) {
+            data.append(pair[0], pair[1]);
+        }
+
+        fetch('http://localhost/GoCan/src/modules/php/editar_mascota.php', {
+            method: 'POST',
+            body: data
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
             }
+            return response.json();
+        })
+        .then(data => {
+            if (data.estado === 'success') {
+                alert('Mascota actualizada exitosamente');
+                closeEditModal();
+                openEditModal();
+            } else {
+                alert('Error al actualizar la mascota: ' + data.mensaje);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al procesar la solicitud');
         });
+    });
+
+    window.closeEditModal = function() {
+        document.getElementById('editModal').style.display = 'none';
+        document.getElementById('tablaModal').style.display = 'block'; // Volver a mostrar la tabla de mascotas después de cerrar el modal de edición
     }
-        
 });
