@@ -826,25 +826,44 @@ main > article, .hero, .main {
     flex: 1;               /* Los botones ocuparán el mismo espacio dentro del contenedor */
     margin: 0 10px;        /* Añade espacio entre los botones */
 }
-
-.separator {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
+table {
+    width: 100%; /* Ajusta al ancho del contenedor */
+    border-collapse: collapse; /* Elimina el espacio entre bordes de celdas */
+    margin-bottom: 20px; /* Espacio después de la tabla */
 }
 
-.separator h3,
-.separator button,
-.separator input {
-    margin-left: auto;
+th, td {
+    text-align: left; /* Alineación del texto */
+    padding: 8px; /* Espacio alrededor del texto en las celdas */
+    border-bottom: 1px solid #ccc; /* Línea divisoria entre filas */
 }
 
-
-#searchInput {
-    padding: 5px;
-    margin-right: 10px; /* Espacio entre el input y el botón */
-    border-radius: 5px;
-    border: 1px solid #ccc;
+th {
+    background-color: #f9f9f9; /* Color de fondo de los encabezados */
+    font-weight: bold; /* Texto en negrita para los encabezados */
 }
 
+tr:hover {
+    background-color: #f4f4f4; /* Color de fondo al pasar el mouse sobre una fila */
+}
+.estado-activo {
+    color: green;
+}
 
+.estado-inactivo {
+    color: red;
+}
+
+.estado-permiso {
+    color: rgb(219, 185, 50);
+}
+.delete-button {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: red; /* Color rojo para indicar acción de eliminar */
+}
+
+.delete-button:hover {
+    opacity: 0.8;
+}
