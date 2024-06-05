@@ -12,6 +12,11 @@ include 'conexion.php'; // Asegúrate de que este archivo contiene los detalles 
 
 $id = $_POST['id'];
 
+if (!is_numeric($id)) {
+    echo json_encode(["estado" => "error", "mensaje" => "ID no válido"]);
+    exit;
+}
+
 try {
     $query = $pdo->prepare("DELETE FROM doctores WHERE id_doctores = :id");
     $query->bindParam(':id', $id, PDO::PARAM_INT);

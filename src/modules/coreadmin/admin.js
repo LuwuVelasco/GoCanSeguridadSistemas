@@ -73,13 +73,21 @@ document.addEventListener("DOMContentLoaded", function() {
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: new URLSearchParams({ id: id_doctores })
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.estado === "success") {
-                    alert('Doctor eliminado correctamente');
-                    loadData('http://localhost/GoCan/src/modules/php/listadoctores.php', '#lista-veterinarios'); // Recargar la lista
-                } else {
-                    alert('Error al eliminar el doctor: ' + data.mensaje);
+            .then(response => response.text()) // Cambiado a text() para debug
+            .then(text => {
+                console.log('Respuesta del servidor:', text); // Agrega esta línea para ver la respuesta del servidor
+                try {
+                    const data = JSON.parse(text);
+                    if (data.estado === "success") {
+                        alert('Doctor eliminado correctamente');
+                        loadData('http://localhost/GoCan/src/modules/php/listadoctores.php', '#lista-veterinarios'); // Recargar la lista
+                    } else {
+                        alert('Error al eliminar el doctor: ' + data.mensaje);
+                    }
+                } catch (e) {
+                    console.error('Error al analizar JSON:', e);
+                    console.error('Respuesta recibida:', text);
+                    alert('Error al procesar la solicitud. Verifique la consola para más detalles.');
                 }
             })
             .catch(error => {
@@ -88,6 +96,9 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         }
     }
+    
+    window.eliminarDoctor = eliminarDoctor; // Exponer al ámbito global
+    
     
     window.eliminarDoctor = eliminarDoctor; // Exponer al ámbito global
     
@@ -108,7 +119,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     <td>${item.cargo}</td>
                     <td>${item.especialidad || 'No asignada'}</td>
                     <td class="estado ${getClassForEstado(item.estado)}">${item.estado}</td>
-                    <td><button class="delete-button" onclick="eliminarDoctor(${item.id})"><i class="ri-delete-bin-6-line"></i></button></td>
+                    <td><button class="delete-button" onclick="eliminarDoctor(${item.id_doctores})"><i class="ri-delete-bin-6-line"></i></button></td>
                 `;
                 tbody.appendChild(row);
             });
@@ -118,6 +129,7 @@ document.addEventListener("DOMContentLoaded", function() {
             alert('Error al cargar los datos. Verifica la consola para más detalles.');
         });
     }
+    
     
         function getClassForEstado(estado) {
             switch (estado.toLowerCase()) {
