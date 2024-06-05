@@ -857,3 +857,13 @@ tr:hover {
 .estado-permiso {
     color: rgb(219, 185, 50);
 }
+.delete-button {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: red; /* Color rojo para indicar acción de eliminar */
+}
+
+.delete-button:hover {
+    opacity: 0.8;
+}

@@ -66,33 +66,59 @@ document.addEventListener("DOMContentLoaded", function() {
             tbody.appendChild(tr);
         });
     }
-    // Carga dinámica de datos para actividades y doctores
-        function loadData(url, tbodySelector) {
-            fetch(url)
+    function eliminarDoctor(id_doctores) {
+        if (confirm('¿Estás seguro de que deseas eliminar este doctor?')) {
+            fetch('http://localhost/GoCan/src/modules/php/eliminarDoctor.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({ id: id_doctores })
+            })
             .then(response => response.json())
             .then(data => {
-                const tbody = document.querySelector(tbodySelector);
-                tbody.innerHTML = '';
-                data.forEach(item => {
-                    const row = document.createElement('tr');
-                    const estadoSpan = document.createElement('span'); // Definición del estadoSpan
-                    estadoSpan.className = `estado ${getClassForEstado(item.estado)}`;
-                    estadoSpan.textContent = item.estado;
-
-                    row.innerHTML = `
-                        <td>${item.nombre}</td>
-                        <td>${item.cargo}</td>
-                        <td>${item.especialidad || 'No asignada'}</td>
-                    `;
-                    row.appendChild(estadoSpan); // Ahora estadoSpan está definido y puede ser añadido correctamente
-                    tbody.appendChild(row);
-                });
+                if (data.estado === "success") {
+                    alert('Doctor eliminado correctamente');
+                    loadData('http://localhost/GoCan/src/modules/php/listadoctores.php', '#lista-veterinarios'); // Recargar la lista
+                } else {
+                    alert('Error al eliminar el doctor: ' + data.mensaje);
+                }
             })
             .catch(error => {
-                console.error('Error al cargar los datos:', error);
-                alert('Error al cargar los datos. Verifica la consola para más detalles.');
+                console.error('Error:', error);
+                alert('Error al procesar la solicitud');
             });
         }
+    }
+    
+    window.eliminarDoctor = eliminarDoctor; // Exponer al ámbito global
+    
+
+    window.eliminarDoctor = eliminarDoctor; // Exponer al ámbito global
+    // Carga dinámica de datos para actividades y doctores
+    function loadData(url, tbodySelector) {
+        fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            const tbody = document.querySelector(tbodySelector);
+            tbody.innerHTML = '';
+            data.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.id_doctores}</td>
+                    <td>${item.nombre}</td>
+                    <td>${item.cargo}</td>
+                    <td>${item.especialidad || 'No asignada'}</td>
+                    <td class="estado ${getClassForEstado(item.estado)}">${item.estado}</td>
+                    <td><button class="delete-button" onclick="eliminarDoctor(${item.id})"><i class="ri-delete-bin-6-line"></i></button></td>
+                `;
+                tbody.appendChild(row);
+            });
+        })
+        .catch(error => {
+            console.error('Error al cargar los datos:', error);
+            alert('Error al cargar los datos. Verifica la consola para más detalles.');
+        });
+    }
+    
         function getClassForEstado(estado) {
             switch (estado.toLowerCase()) {
                 case 'activo':
@@ -126,6 +152,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 alert('Error al cargar los datos. Verifica la consola para más detalles.');
             });
         }
+ 
+                
     function eliminarCitaAdmin(citaId, fila) {
         fetch('http://localhost/GoCan/src/modules/php/eliminar_citaAdmin.php', {
             method: 'POST',
@@ -296,7 +324,47 @@ document.addEventListener("DOMContentLoaded", function() {
             reportHistory.appendChild(div);
         });
     }
-
+    document.getElementById('registroV').addEventListener('submit', function(event) {
+        event.preventDefault();  // Evita el envío normal del formulario
+    
+        const formData = new FormData(this);  // Recoge los datos del formulario
+        const searchParams = new URLSearchParams();
+    
+        for (const pair of formData) {
+            searchParams.append(pair[0], pair[1]);
+        }
+    
+        // Envía los datos del formulario al servidor usando fetch
+        fetch('http://localhost/GoCan/src/modules/php/registrar_veterinario.php', {
+            method: 'POST',
+            body: searchParams,
+        })
+        .then(response => response.text()) // Cambiar a text() temporalmente para depuración
+        .then(text => {
+            console.log('Respuesta del servidor:', text); // Agrega esta línea para ver la respuesta del servidor
+            try {
+                const data = JSON.parse(text);
+                if (data.estado === "success") {
+                    alert('Veterinario registrado correctamente');
+                    closeModal(); // Cierra el modal si el registro es exitoso
+                    loadData('http://localhost/GoCan/src/modules/php/listadoctores.php', '#lista-veterinarios'); // Recarga la lista de veterinarios
+                } else {
+                    alert('Error al registrar veterinario: ' + data.mensaje);
+                }
+            } catch (e) {
+                console.error('Error al analizar JSON:', e);
+                console.error('Respuesta recibida:', text);
+                alert('Error al procesar la solicitud. Verifique la consola para más detalles.');
+            }
+        })
+        .catch(error => {
+            console.error('Error al registrar veterinario:', error);
+            alert('Error al procesar la solicitud');
+        });
+    });
+    
+    
+    
     document.getElementById('historySearchInput').addEventListener('input', function() {
         const searchText = this.value.toLowerCase();
         const filteredReportes = reportes.filter(reporte => 

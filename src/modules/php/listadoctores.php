@@ -1,18 +1,14 @@
 <?php
 header('Content-Type: application/json');
 
-// Conectar a la base de datos
-$conexion = pg_connect("dbname=gocan user=postgres password=admin");
-if (!$conexion) {
-    echo json_encode(["estado" => "error", "mensaje" => "No se pudo conectar a la base de datos"]);
-    exit;
-}
+// Incluir el archivo de conexión
+include('conexion.php');  // Asegúrate de que la ruta sea correcta
 
 // Consulta para obtener todos los doctores con sus especialidades
-$sql = "SELECT d.nombre, d.cargo, d.estado, e.nombre_especialidad AS especialidad 
+$sql = "SELECT d.id_doctores, d.nombre, d.cargo, d.estado, e.nombre_especialidad AS especialidad 
         FROM doctores d
         LEFT JOIN especialidad e ON d.id_especialidad = e.id_especialidad
-        ORDER BY d.nombre, d.cargo, e.nombre_especialidad, d.estado;";
+        ORDER BY d.id_doctores, d.nombre, d.cargo, e.nombre_especialidad, d.estado;";
 
 $result = pg_query($conexion, $sql);
 
