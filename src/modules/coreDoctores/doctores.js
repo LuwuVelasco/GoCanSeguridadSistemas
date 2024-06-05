@@ -309,10 +309,10 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     
     const petForm = document.getElementById('petForm');
-    const idUsuario = localStorage.getItem('id_usuario'); // Asegúrate de que el ID del usuario esté almacenado en localStorage
-    if (idUsuario) {
-        document.getElementById('id_usuario').value = idUsuario;
-    }
+    // const idUsuario = localStorage.getItem('id_usuario'); // Asegúrate de que el ID del usuario esté almacenado en localStorage
+    // if (idUsuario) {
+    //     document.getElementById('id_usuario').value = idUsuario;
+    // }
 
     petForm.addEventListener('submit', function(event) {
         event.preventDefault();
