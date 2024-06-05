@@ -1,7 +1,7 @@
 .modal {
     display: none; /* Asegúrate de que el modal esté oculto inicialmente */
     position: fixed;
-    z-index: 5;
+    z-index: 1050;
     left: 0;
     top: 0;
     width: 100%;

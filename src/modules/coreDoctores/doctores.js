@@ -224,6 +224,12 @@ document.addEventListener("DOMContentLoaded", function() {
     
             const fecha = document.createElement("p");
             fecha.textContent = `Fecha: ${reporte.fecha}`;
+
+            const editButton = document.createElement("button");
+            editButton.textContent = "Editar";
+            editButton.addEventListener("click", function() {
+                abrirFormularioEdicion(reporte);
+            });
     
             const deleteButton = document.createElement("button");
             deleteButton.textContent = "Eliminar";
@@ -238,12 +244,26 @@ document.addEventListener("DOMContentLoaded", function() {
             detalle.appendChild(receta);
             detalle.appendChild(fecha);
             detalle.appendChild(deleteButton);
+            detalle.appendChild(editButton);
     
             div.appendChild(resumen);
             div.appendChild(detalle);
     
             reportHistory.appendChild(div);
         });
+    }
+
+    function abrirFormularioEdicion(reporte) {
+        // Abre el modal y carga los datos del reporte seleccionado
+        const modal = document.getElementById('reportModal');
+        modal.style.display = 'block';
+        document.getElementById('id_reporte').value = reporte.id_reporte; // Añade el ID del reporte al campo oculto
+        document.getElementById('propietario').value = reporte.propietario;
+        document.getElementById('nombre_mascota').value = reporte.nombre_mascota;
+        document.getElementById('sintomas').value = reporte.sintomas;
+        document.getElementById('diagnostico').value = reporte.diagnostico;
+        document.getElementById('receta').value = reporte.receta;
+        document.getElementById('fecha').value = reporte.fecha;
     }
     
     
