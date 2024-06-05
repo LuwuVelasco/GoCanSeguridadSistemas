@@ -93,11 +93,11 @@ document.addEventListener('DOMContentLoaded', function() {
             data.forEach(item => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${item.id_actividad || item.id}</td>
                     <td>${item.nombre}</td>
-                    <td>${item.hora_ingreso || item.cargo}</td>
-                    <td>${item.nombre_usuario || item.especialidad}</td>
-                    <td>${item.estado || ''}</td>
+                    <td>${item.cargo}</td>
+                    <td>${item.especialidad || 'No asignada'}</td>
+                    <td>${item.estado}</td>
+
                 `;
                 tbody.appendChild(row);
             });
@@ -107,7 +107,28 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Error al cargar los datos. Verifica la consola para más detalles.');
         });
     }
+    function loadActivities(url, tbodySelector) {
+        fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            const tbody = document.querySelector(tbodySelector);
+            tbody.innerHTML = ''; // Limpia la tabla antes de añadir nuevos datos
+            data.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.hora_ingreso}</td>
+                    <td>${item.nombre_usuario}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        })
+        .catch(error => {
+            console.error('Error al cargar los datos:', error);
+            alert('Error al cargar los datos. Verifica la consola para más detalles.');
+        });
+    }
+    
 
-    loadData('http://localhost/GoCan/src/modules/php/get_actividades.php', '#actividades-table tbody');
+    loadActivities('http://localhost/GoCan/src/modules/php/get_actividades.php', '#actividades-table tbody');
     loadData('http://localhost/GoCan/src/modules/php/listadoctores.php', '#lista-veterinarios');
 });

@@ -826,3 +826,34 @@ main > article, .hero, .main {
     flex: 1;               /* Los botones ocuparán el mismo espacio dentro del contenedor */
     margin: 0 10px;        /* Añade espacio entre los botones */
 }
+table {
+    width: 100%; /* Ajusta al ancho del contenedor */
+    border-collapse: collapse; /* Elimina el espacio entre bordes de celdas */
+    margin-bottom: 20px; /* Espacio después de la tabla */
+}
+
+th, td {
+    text-align: left; /* Alineación del texto */
+    padding: 8px; /* Espacio alrededor del texto en las celdas */
+    border-bottom: 1px solid #ccc; /* Línea divisoria entre filas */
+}
+
+th {
+    background-color: #f9f9f9; /* Color de fondo de los encabezados */
+    font-weight: bold; /* Texto en negrita para los encabezados */
+}
+
+tr:hover {
+    background-color: #f4f4f4; /* Color de fondo al pasar el mouse sobre una fila */
+}
+.estado-activo {
+    color: green;
+}
+
+.estado-inactivo {
+    color: red;
+}
+
+.estado-permiso {
+    color: rgb(219, 185, 50);
+}

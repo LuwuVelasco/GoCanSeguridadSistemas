@@ -10,8 +10,14 @@ if (!$conexion) {
 }
 
 // Consulta para obtener todas las actividades
-$sql = "SELECT * FROM actividades ORDER BY hora_ingreso DESC";
+$sql = "SELECT hora_ingreso, nombre_usuario FROM actividades ORDER BY hora_ingreso DESC";
 $result = pg_query($conexion, $sql);
+
+if (!$result) {
+    echo json_encode(["error" => "Error en la consulta SQL"]);
+    pg_close($conexion);
+    exit;
+}
 
 $actividades = array();
 while ($row = pg_fetch_assoc($result)) {
