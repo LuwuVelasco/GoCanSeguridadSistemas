@@ -1,48 +1,54 @@
 .modal {
-    display: none; /* Asegúrate de que el modal esté oculto inicialmente */
+    display: none;
     position: fixed;
-    z-index: 5;
+    z-index: 1050;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
     overflow: auto;
-    background-color: rgb(0, 0, 0);
-    background-color: rgba(0, 0, 0, 0.4);
-    padding-top: 60px;
+    background-color: rgba(0, 0, 0, 0.5);
     align-items: center;
+    justify-content: center;
 }
 
 .modal-content {
-    background-color: #fefefe;
+    background-color: #fff;
     margin: 5% auto;
     padding: 20px;
     border: 1px solid #888;
     width: 80%;
+    max-width: 500px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    position: relative;
+    display: flex;
+    flex-direction: column;
     align-items: center;
+    gap: 20px;
 }
 
 .close {
+    position: absolute;
+    top: 10px;
+    right: 20px;
     color: #aaa;
-    float: right;
     font-size: 28px;
     font-weight: bold;
+    cursor: pointer;
 }
 
 .close:hover,
 .close:focus {
     color: black;
     text-decoration: none;
-    cursor: pointer;
 }
 
 textarea#descripcion {
     width: 100%;
-    height: 100px; /* Ajusta la altura según sea necesario */
-    resize: vertical; /* Permite al usuario cambiar el tamaño verticalmente */
+    height: 100px;
+    resize: vertical;
 }
 
-/* Estilos para que los campos number se vean igual que los text */
 input[type="text"],
 input[type="number"],
 input[type="date"],
@@ -57,3 +63,29 @@ select {
     border-radius: 4px;
     box-sizing: border-box;
 }
+
+#petTable {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 15px; /* Ajusta el espacio entre las filas */
+}
+
+/* Espacio entre columnas */
+#petTable td, th {
+    padding: 16px 24px; /* Ajusta estos valores para más o menos espacio */
+    text-align: center; /* Centra el contenido */
+}
+
+table th {
+    background-color: #f2f2f2;
+    color: #333;
+    text-align: center; /* Centra el texto en los encabezados */
+}
+
+table td {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    text-align: center; /* Centra el texto en las celdas */
+}
+
+

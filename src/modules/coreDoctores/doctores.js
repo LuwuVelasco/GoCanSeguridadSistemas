@@ -186,4 +186,81 @@ document.addEventListener("DOMContentLoaded", function() {
     window.closePetModal = function() {
         document.getElementById('petModal').style.display = 'none';
     }
+
+    window.closeEditModal = function() {
+        document.getElementById('editModal').style.display = 'none';
+    }
+
+    window.openEditModal = function() {
+        fetch('http://localhost/GoCan/src/modules/php/obtener_mascotas.php')
+            .then(response => response.json())
+            .then(data => {
+                if (data.estado === "success") {
+                    llenarTablaMascotas(data.mascotas);
+                    document.getElementById('tablaModal').style.display = 'block';
+                } else {
+                    console.error("Error:", data.mensaje);
+                }
+            })
+            .catch(error => console.error("Error:", error));
+    };
+
+    function llenarTablaMascotas(mascotas) {
+        const tbody = document.querySelector("#petTable tbody");
+        tbody.innerHTML = ''; // Limpiar la tabla
+    
+        mascotas.forEach(mascota => {
+            const tr = document.createElement("tr");
+    
+            const tdNombre = document.createElement("td");
+            tdNombre.textContent = mascota.nombre_mascota;
+    
+            const tdEdad = document.createElement("td");
+            let edadTexto = '';
+            if (mascota.edad_day && mascota.edad_day != 0) {
+                edadTexto = `${mascota.edad_day} día(s)`;
+            } else if (mascota.edad_month && mascota.edad_month != 0) {
+                edadTexto = `${mascota.edad_month} mes(es)`;
+            } else if (mascota.edad_year && mascota.edad_year != 0) {
+                edadTexto = `${mascota.edad_year} año(s)`;
+            }
+            tdEdad.textContent = edadTexto;
+    
+            const tdTipo = document.createElement("td");
+            tdTipo.textContent = mascota.tipo;
+    
+            const tdRaza = document.createElement("td");
+            tdRaza.textContent = mascota.raza;
+    
+            const tdPropietario = document.createElement("td");
+            tdPropietario.textContent = mascota.nombre_propietario;
+    
+            const tdEditar = document.createElement("td");
+            const btnEditar = document.createElement("button");
+            btnEditar.innerHTML = '<i class="fi fi-sr-pen-square"></i>';
+            btnEditar.onclick = function() {
+                // Lógica para editar la mascota
+            };
+            tdEditar.appendChild(btnEditar);
+    
+            tr.appendChild(tdNombre);
+            tr.appendChild(tdEdad);
+            tr.appendChild(tdTipo);
+            tr.appendChild(tdRaza);
+            tr.appendChild(tdPropietario);
+            tr.appendChild(tdEditar);
+    
+            tbody.appendChild(tr);
+        });
+    }
+
+    window.onclick = function(event) {
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach(modal => {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        });
+    }
+        
 });
