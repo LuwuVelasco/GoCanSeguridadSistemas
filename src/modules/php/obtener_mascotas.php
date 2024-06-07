@@ -11,6 +11,7 @@ if (!$conexion) {
 // Revisa la consulta para asegurar que las tablas y campos existan en tu base de datos
 $query = "
     SELECT 
+        m.id_mascota,
         m.nombre_mascota, 
         m.edad_year, 
         m.edad_month, 

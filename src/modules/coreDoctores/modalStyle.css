@@ -67,12 +67,12 @@ select {
 #petTable {
     width: 100%;
     border-collapse: separate;
-    border-spacing: 0 15px; /* Ajusta el espacio entre las filas */
+    /*border-spacing: 0 5px;  Ajusta el espacio entre las filas */
 }
 
 /* Espacio entre columnas */
 #petTable td, th {
-    padding: 16px 24px; /* Ajusta estos valores para más o menos espacio */
+    padding: 10px 10px; /* Ajusta estos valores para más o menos espacio */
     text-align: center; /* Centra el contenido */
 }
 

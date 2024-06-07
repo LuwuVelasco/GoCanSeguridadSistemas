@@ -32,7 +32,7 @@ $query = "
             WHEN m.edad_month IS NOT NULL THEN 'mes'
             WHEN m.edad_year IS NOT NULL THEN 'ano'
             ELSE NULL
-        END AS period,
+        END AS period,  
         m.tipo, 
         m.raza, 
         u.nombre as nombre_propietario

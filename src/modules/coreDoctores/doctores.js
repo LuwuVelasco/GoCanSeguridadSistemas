@@ -237,6 +237,9 @@ document.addEventListener("DOMContentLoaded", function() {
         mascotas.forEach(mascota => {
             const tr = document.createElement("tr");
     
+            const tdCodigo = document.createElement("td");
+            tdCodigo.textContent = mascota.id_mascota;
+    
             const tdNombre = document.createElement("td");
             tdNombre.textContent = mascota.nombre_mascota;
     
@@ -264,10 +267,12 @@ document.addEventListener("DOMContentLoaded", function() {
             const btnEditar = document.createElement("button");
             btnEditar.innerHTML = '<i class="fi fi-sr-pen-square"></i>';
             btnEditar.onclick = function() {
+                console.log(mascota.id_mascota); // Enviar el ID de la mascota a la consola
                 openEditForm(mascota.id_mascota);
             };
             tdEditar.appendChild(btnEditar);
     
+            tr.appendChild(tdCodigo);
             tr.appendChild(tdNombre);
             tr.appendChild(tdEdad);
             tr.appendChild(tdTipo);
@@ -277,7 +282,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
             tbody.appendChild(tr);
         });
-    }
+    }    
 
     function openEditForm(id_mascota) {
         fetch(`http://localhost/GoCan/src/modules/php/obtener_mascota.php?id_mascota=${id_mascota}`)
@@ -290,6 +295,7 @@ document.addEventListener("DOMContentLoaded", function() {
             .then(data => {
                 if (data.estado === "success") {
                     const mascota = data.mascota;
+                    document.getElementById('edit_id_mascota').value = mascota.id_mascota;
                     document.getElementById('edit_nombre_mascota').value = mascota.nombre_mascota;
                     document.getElementById('edit_edad').value = mascota.edad;
                     document.getElementById('edit_period').value = mascota.period;
