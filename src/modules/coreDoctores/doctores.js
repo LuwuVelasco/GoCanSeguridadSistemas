@@ -297,12 +297,22 @@ document.addEventListener("DOMContentLoaded", function() {
                     const mascota = data.mascota;
                     document.getElementById('edit_id_mascota').value = mascota.id_mascota;
                     document.getElementById('edit_nombre_mascota').value = mascota.nombre_mascota;
-                    document.getElementById('edit_edad').value = mascota.edad;
-                    document.getElementById('edit_period').value = mascota.period;
+                    if (mascota.edad_day && mascota.edad_day != 0) {
+                        document.getElementById('edit_edad').value = mascota.edad_day;
+                        document.getElementById('edit_period').value = 'dia';
+                    } else if (mascota.edad_month && mascota.edad_month != 0) {
+                        document.getElementById('edit_edad').value = mascota.edad_month;
+                        document.getElementById('edit_period').value = 'mes';
+                    } else if (mascota.edad_year && mascota.edad_year != 0) {
+                        document.getElementById('edit_edad').value = mascota.edad_year;
+                        document.getElementById('edit_period').value = 'ano';
+                    } else {
+                        document.getElementById('edit_edad').value = 0;
+                        document.getElementById('edit_period').value = '';
+                    }
                     document.getElementById('edit_tipo').value = mascota.tipo;
                     document.getElementById('edit_raza').value = mascota.raza;
                     document.getElementById('edit_nombre_propietario').value = mascota.nombre_propietario;
-    
                     document.getElementById('editModal').style.display = 'block';
                     document.getElementById('tablaModal').style.display = 'none';
                 } else {
@@ -314,18 +324,15 @@ document.addEventListener("DOMContentLoaded", function() {
                 console.error("Error:", error);
                 alert("Error al procesar la solicitud.");
             });
-    }          
-
+    }
     const editForm = document.getElementById('editForm');
     editForm.addEventListener('submit', function(event) {
         event.preventDefault();
-
         const formData = new FormData(editForm);
         const data = new URLSearchParams();
         for (const pair of formData) {
             data.append(pair[0], pair[1]);
         }
-
         fetch('http://localhost/GoCan/src/modules/php/editar_mascota.php', {
             method: 'POST',
             body: data
@@ -350,7 +357,6 @@ document.addEventListener("DOMContentLoaded", function() {
             alert('Error al procesar la solicitud');
         });
     });
-
     window.closeEditModal = function() {
         document.getElementById('editModal').style.display = 'none';
         document.getElementById('tablaModal').style.display = 'block'; // Volver a mostrar la tabla de mascotas después de cerrar el modal de edición

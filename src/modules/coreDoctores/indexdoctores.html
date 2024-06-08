@@ -97,7 +97,7 @@
                 <input type="text" id="nombre_mascota" name="nombre_mascota" required>
 
                 <button type="submit">Registrar</button>
-                <button type="button" onclick="closeReportModal()">Cancelar</button>
+                <button type="submit" onclick="closeReportModal()">Cancelar</button>
             </form>
         </div>
     </div>
@@ -140,13 +140,13 @@
                 <input type="text" id="nombre_propietario" name="nombre_propietario" required>
 
                 <button type="submit">Registrar</button>
-                <button type="button" onclick="closePetModal()">Cancelar</button>
+                <button type="submit" onclick="closePetModal()">Cancelar</button>
             </form>
         </div>
     </div>
 
     <!-- Modal para editar mascotas -->
-    <div id="tablaModal" class="modal">
+    <div id="tablaModal" class="modal" style="width: 600;">
         <div class="modal-content">
             <span class="close" onclick="closeTablaModal()">&times;</span>
             <h2>Editar Mascotas</h2>
@@ -166,7 +166,7 @@
                     <!-- Las filas de la tabla se agregarán dinámicamente aquí -->
                 </tbody>
             </table>
-            <button type="button" onclick="closeTablaModal()">Cancelar</button>
+            <button type="submit" onclick="closeTablaModal()">Cancelar</button>
         </div>
     </div>
 
@@ -209,7 +209,7 @@
                 <input type="text" id="edit_nombre_propietario" name="nombre_propietario" required>
 
                 <button type="submit">Editar</button>
-                <button type="button" onclick="closeEditModal()">Cancelar</button>
+                <button type="submit" onclick="closeEditModal()">Cancelar</button>
             </form>
         </div>
     </div>
