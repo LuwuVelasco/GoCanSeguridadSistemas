@@ -372,6 +372,5 @@ document.addEventListener("DOMContentLoaded", function() {
     window.closeEditModal = function() {
         document.getElementById('editModal').style.display = 'none';
         document.getElementById('tablaModal').style.display = 'block';
-        openEditModal();
     }
 });

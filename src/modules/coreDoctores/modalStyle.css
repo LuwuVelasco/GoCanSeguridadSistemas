@@ -27,6 +27,21 @@
     gap: 20px;
 }
 
+/* Botón de submit más atractivo */
+html .modal .modal-content button[type="button"] {
+    background-color: var(--portland-orange);
+    color: var(--white);
+    padding: 10px 15px;
+    border: none;
+    border-radius: var(--radius-10);
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  button[type="button"]:hover {
+    background-color: var(--bittersweet);
+  }
+
 #tablaModal .modal-content {
     width: 90%;
     max-width: 700px; /* Ajusta este valor según sea necesario */
