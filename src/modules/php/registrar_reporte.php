@@ -10,20 +10,22 @@ if (!$conexion) {
 
 // Recibir los datos del formulario
 $propietario = $_POST['propietario'] ?? '';
-$descripcion = $_POST['descripcion'] ?? '';
+$sintomas = $_POST['sintomas'] ?? '';
+$diagnostico = $_POST['diagnostico'] ?? '';
+$receta = $_POST['receta'] ?? '';
 $fecha = $_POST['fecha'] ?? '';
 $nombre_mascota = $_POST['nombre_mascota'] ?? '';
 
 // Validar que los campos no estén vacíos
-if (empty($propietario) || empty($descripcion) || empty($fecha) || empty($nombre_mascota)) {
+if (empty($propietario) || empty($sintomas) || empty($diagnostico) || empty($receta) || empty($fecha) || empty($nombre_mascota)) {
     echo json_encode(["estado" => "error", "mensaje" => "Todos los campos son obligatorios"]);
     exit;
 }
 
 // Consulta para insertar un nuevo reporte
-$sql = "INSERT INTO public.reporte (propietario, descripcion, fecha, nombre_mascota) VALUES ($1, $2, $3, $4) RETURNING id_reporte";
+$sql = "INSERT INTO public.reporte (propietario, sintomas, diagnostico, receta, fecha, nombre_mascota) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id_reporte";
 $result = pg_prepare($conexion, "insert_query", $sql);
-$result = pg_execute($conexion, "insert_query", array($propietario, $descripcion, $fecha, $nombre_mascota));
+$result = pg_execute($conexion, "insert_query", array($propietario, $sintomas, $diagnostico, $receta, $fecha, $nombre_mascota));
 
 if ($result) {
     $row = pg_fetch_assoc($result);
@@ -34,3 +36,4 @@ if ($result) {
 }
 
 pg_close($conexion);
+?>
