@@ -163,7 +163,6 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     
     const petForm = document.getElementById('petForm');
-
     petForm.addEventListener('submit', function(event) {
         event.preventDefault();
 
@@ -297,24 +296,35 @@ document.addEventListener("DOMContentLoaded", function() {
                     const mascota = data.mascota;
                     document.getElementById('edit_id_mascota').value = mascota.id_mascota;
                     document.getElementById('edit_nombre_mascota').value = mascota.nombre_mascota;
+
+                    const editEdadInput = document.getElementById('edit_edad');
+                    const editPeriodSelect = document.getElementById('edit_period');
+                    
+                    editEdadInput.value = 0; // Por defecto, establece la edad en 0
+                    editPeriodSelect.value = ''; // Por defecto, establece el período vacío
+
                     if (mascota.edad_day && mascota.edad_day != 0) {
-                        document.getElementById('edit_edad').value = mascota.edad_day;
-                        document.getElementById('edit_period').value = 'dia';
+                        editEdadInput.value = mascota.edad_day;
+                        editPeriodSelect.value = 'dia';
                     } else if (mascota.edad_month && mascota.edad_month != 0) {
-                        document.getElementById('edit_edad').value = mascota.edad_month;
-                        document.getElementById('edit_period').value = 'mes';
+                        editEdadInput.value = mascota.edad_month;
+                        editPeriodSelect.value = 'mes';
                     } else if (mascota.edad_year && mascota.edad_year != 0) {
-                        document.getElementById('edit_edad').value = mascota.edad_year;
-                        document.getElementById('edit_period').value = 'ano';
-                    } else {
-                        document.getElementById('edit_edad').value = 0;
-                        document.getElementById('edit_period').value = '';
+                        editEdadInput.value = mascota.edad_year;
+                        editPeriodSelect.value = 'ano';
                     }
+
                     document.getElementById('edit_tipo').value = mascota.tipo;
                     document.getElementById('edit_raza').value = mascota.raza;
                     document.getElementById('edit_nombre_propietario').value = mascota.nombre_propietario;
+
                     document.getElementById('editModal').style.display = 'block';
                     document.getElementById('tablaModal').style.display = 'none';
+
+                    // Añade un evento para manejar los cambios en el período
+                    editPeriodSelect.addEventListener('change', function() {
+                        editEdadInput.value = 0;
+                    });
                 } else {
                     console.error("Error:", data.mensaje);
                     alert("Error: " + data.mensaje);
@@ -325,6 +335,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 alert("Error al procesar la solicitud.");
             });
     }
+
     const editForm = document.getElementById('editForm');
     editForm.addEventListener('submit', function(event) {
         event.preventDefault();
@@ -357,8 +368,10 @@ document.addEventListener("DOMContentLoaded", function() {
             alert('Error al procesar la solicitud');
         });
     });
+
     window.closeEditModal = function() {
         document.getElementById('editModal').style.display = 'none';
-        document.getElementById('tablaModal').style.display = 'block'; // Volver a mostrar la tabla de mascotas después de cerrar el modal de edición
+        document.getElementById('tablaModal').style.display = 'block';
+        openEditModal();
     }
 });
