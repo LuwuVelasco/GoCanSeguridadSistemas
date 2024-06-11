@@ -1,6 +1,6 @@
 <?php
 $host = "localhost";
-$port = "5433";
+$port = "5432";
 $dbname = "gocan";
 $username = "postgres";
 $password = "admin";
