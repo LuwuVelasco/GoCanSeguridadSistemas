@@ -25,24 +25,36 @@ if (empty($id_mascota) || empty($nombre_mascota) || empty($tipo) || empty($raza)
     exit;
 }
 
-$query = "
-    UPDATE mascota
-    SET 
-        nombre_mascota = $1, 
-        edad_year = CASE WHEN $2 = 'ano' THEN $3::int ELSE 0 END,
-        edad_month = CASE WHEN $2 = 'mes' THEN $3::int ELSE 0 END,
-        edad_day = CASE WHEN $2 = 'dia' THEN $3::int ELSE 0 END,
-        tipo = $4,
-        raza = $5
-    WHERE id_mascota = $6";
+// Verificar si el nombre del propietario existe
+$query = "SELECT id_usuario FROM usuario WHERE nombre = $1";
+$result = pg_query_params($conexion, $query, [$nombre_propietario]);
 
-$params = array($nombre_mascota, $period, $edad, $tipo, $raza, $id_mascota);
-$result = pg_query_params($conexion, $query, $params);
+if ($result && pg_num_rows($result) > 0) {
+    $row = pg_fetch_assoc($result);
+    $id_usuario = $row['id_usuario'];
 
-if ($result) {
-    echo json_encode(["estado" => "success"]);
+    $query = "
+        UPDATE mascota
+        SET 
+            nombre_mascota = $1, 
+            edad_year = CASE WHEN $2 = 'ano' THEN $3::int ELSE 0 END,
+            edad_month = CASE WHEN $2 = 'mes' THEN $3::int ELSE 0 END,
+            edad_day = CASE WHEN $2 = 'dia' THEN $3::int ELSE 0 END,
+            tipo = $4,
+            raza = $5,
+            id_usuario = $6
+        WHERE id_mascota = $7";
+
+    $params = array($nombre_mascota, $period, $edad, $tipo, $raza, $id_usuario, $id_mascota);
+    $result = pg_query_params($conexion, $query, $params);
+
+    if ($result) {
+        echo json_encode(["estado" => "success"]);
+    } else {
+        $error = pg_last_error($conexion);
+        echo json_encode(["estado" => "error", "mensaje" => "Error al actualizar la mascota: " . $error]);
+    }
 } else {
-    $error = pg_last_error($conexion);
-    echo json_encode(["estado" => "error", "mensaje" => "Error al actualizar la mascota: " . $error]);
+    echo json_encode(["estado" => "error", "mensaje" => "El propietario no existe"]);
 }
 ?>
