@@ -2,6 +2,8 @@ document.addEventListener("DOMContentLoaded", function() {
     let citas = [];
     let reportes = [];
     const id_doctor = localStorage.getItem('id_doctores');
+    let mascotaIdToDelete = null;
+    let editingMascotaData = null;
 
     fetchCitas(id_doctor);
 
@@ -11,7 +13,12 @@ document.addEventListener("DOMContentLoaded", function() {
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: `id_doctor=${encodeURIComponent(id_doctor)}`
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.estado === "success") {
                 citas = data.citas;
@@ -20,7 +27,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 console.error("Error:", data.mensaje);
             }
         })
-        .catch(error => console.error("Error:", error));
+        .catch(error => {
+            console.error("Error:", error);
+        });
     }
 
     function mostrarCitas(citas) {
@@ -150,7 +159,12 @@ document.addEventListener("DOMContentLoaded", function() {
             method: 'POST',
             body: formData
         })
-        .then(response => response.text()) // Cambiar a text() temporalmente para depuración
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.text(); // Cambiar a text() temporalmente para depuración
+        })
         .then(text => {
             try {
                 const data = JSON.parse(text);
@@ -324,6 +338,12 @@ document.addEventListener("DOMContentLoaded", function() {
             data.append(pair[0], pair[1]);
         }
 
+        const edad = formData.get('edad');
+        if (edad === '0' || edad === 0) {
+            alert('La edad no puede ser 0');
+            return;
+        }
+
         fetch('http://localhost/GoCan/src/modules/php/registrar_mascota.php', {
             method: 'POST',
             body: data
@@ -351,21 +371,18 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     });
 
-    window.openPetModal = function() {
-        document.getElementById('petModal').style.display = 'block';
-    }
-    
-    window.closePetModal = function() {
-        document.getElementById('petModal').style.display = 'none';
-    }
-
-    window.closeEditModal = function() {
-        document.getElementById('editModal').style.display = 'none';
+    window.closeTablaModal = function() {
+        document.getElementById('tablaModal').style.display = 'none';
     }
 
     window.openEditModal = function() {
         fetch('http://localhost/GoCan/src/modules/php/obtener_mascotas.php')
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data.estado === "success") {
                     llenarTablaMascotas(data.mascotas);
@@ -374,7 +391,9 @@ document.addEventListener("DOMContentLoaded", function() {
                     console.error("Error:", data.mensaje);
                 }
             })
-            .catch(error => console.error("Error:", error));
+            .catch(error => {
+                console.error("Error:", error);
+            });
     };
 
     function llenarTablaMascotas(mascotas) {
@@ -383,6 +402,9 @@ document.addEventListener("DOMContentLoaded", function() {
     
         mascotas.forEach(mascota => {
             const tr = document.createElement("tr");
+    
+            const tdCodigo = document.createElement("td");
+            tdCodigo.textContent = mascota.id_mascota;
     
             const tdNombre = document.createElement("td");
             tdNombre.textContent = mascota.nombre_mascota;
@@ -411,28 +433,226 @@ document.addEventListener("DOMContentLoaded", function() {
             const btnEditar = document.createElement("button");
             btnEditar.innerHTML = '<i class="fi fi-sr-pen-square"></i>';
             btnEditar.onclick = function() {
-                // Lógica para editar la mascota
+                console.log(mascota.id_mascota); // Enviar el ID de la mascota a la consola
+                openEditForm(mascota.id_mascota);
             };
             tdEditar.appendChild(btnEditar);
+
+            const tdEliminar = document.createElement("td");
+            const btnEliminar = document.createElement("button");
+            btnEliminar.innerHTML = '<i class="fi fi-sr-trash-xmark"></i>';
+            btnEliminar.onclick = function() {
+                mascotaIdToDelete = mascota.id_mascota;
+                document.getElementById('confirmModal').style.display = 'block';
+            };
+            tdEliminar.appendChild(btnEliminar);
     
+            tr.appendChild(tdCodigo);
             tr.appendChild(tdNombre);
             tr.appendChild(tdEdad);
             tr.appendChild(tdTipo);
             tr.appendChild(tdRaza);
             tr.appendChild(tdPropietario);
             tr.appendChild(tdEditar);
+            tr.appendChild(tdEliminar);
     
             tbody.appendChild(tr);
         });
+    }    
+
+    function openEditForm(id_mascota) {
+        fetch(`http://localhost/GoCan/src/modules/php/obtener_mascota.php?id_mascota=${id_mascota}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.estado === "success") {
+                    const mascota = data.mascota;
+                    document.getElementById('edit_id_mascota').value = mascota.id_mascota;
+                    document.getElementById('edit_nombre_mascota').value = mascota.nombre_mascota;
+
+                    const editEdadInput = document.getElementById('edit_edad');
+                    const editPeriodSelect = document.getElementById('edit_period');
+                    
+                    editEdadInput.value = 0; // Por defecto, establece la edad en 0
+                    editPeriodSelect.value = ''; // Por defecto, establece el período vacío
+
+                    if (mascota.edad_day && mascota.edad_day != 0) {
+                        editEdadInput.value = mascota.edad_day;
+                        editPeriodSelect.value = 'dia';
+                    } else if (mascota.edad_month && mascota.edad_month != 0) {
+                        editEdadInput.value = mascota.edad_month;
+                        editPeriodSelect.value = 'mes';
+                    } else if (mascota.edad_year && mascota.edad_year != 0) {
+                        editEdadInput.value = mascota.edad_year;
+                        editPeriodSelect.value = 'ano';
+                    }
+
+                    document.getElementById('edit_tipo').value = mascota.tipo;
+                    document.getElementById('edit_raza').value = mascota.raza;
+                    document.getElementById('edit_nombre_propietario').value = mascota.nombre_propietario;
+
+                    // Almacenar los datos originales
+                    editingMascotaData = {
+                        id_mascota: mascota.id_mascota,
+                        nombre_mascota: mascota.nombre_mascota,
+                        edad: editEdadInput.value,
+                        period: editPeriodSelect.value,
+                        tipo: mascota.tipo,
+                        raza: mascota.raza,
+                        nombre_propietario: mascota.nombre_propietario
+                    };
+
+                    document.getElementById('editModal').style.display = 'block';
+                    document.getElementById('tablaModal').style.display = 'none';
+
+                    // Añade un evento para manejar los cambios en el período
+                    editPeriodSelect.addEventListener('change', function() {
+                        editEdadInput.value = 0;
+                    });
+                } else {
+                    console.error("Error:", data.mensaje);
+                    alert("Error: " + data.mensaje);
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Error al procesar la solicitud.");
+            });
     }
 
-    window.onclick = function(event) {
-        const modals = document.querySelectorAll('.modal');
-        modals.forEach(modal => {
-            if (event.target == modal) {
-                modal.style.display = 'none';
+    const editForm = document.getElementById('editForm');
+    editForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        // Verificar si hay cambios
+        const formData = new FormData(editForm);
+        const data = new URLSearchParams();
+        for (const pair of formData) {
+            data.append(pair[0], pair[1]);
+        }
+
+        const edad = formData.get('edad');
+        const period = formData.get('period');
+        const nombre_mascota = formData.get('nombre_mascota');
+        const tipo = formData.get('tipo');
+        const raza = formData.get('raza');
+        const nombre_propietario = formData.get('nombre_propietario');
+
+        const hasChanges =
+            editingMascotaData.nombre_mascota !== nombre_mascota ||
+            editingMascotaData.edad !== edad ||
+            editingMascotaData.period !== period ||
+            editingMascotaData.tipo !== tipo ||
+            editingMascotaData.raza !== raza ||
+            editingMascotaData.nombre_propietario !== nombre_propietario;
+
+        if (hasChanges) {
+            document.getElementById('confirmEditModal').style.display = 'block';
+        } else {
+            alert("No hubo cambios a realizar.");
+            closeEditModal();
+        }
+    });
+
+    document.getElementById('confirmEdit').addEventListener('click', function() {
+        const formData = new FormData(editForm);
+        const data = new URLSearchParams();
+        for (const pair of formData) {
+            data.append(pair[0], pair[1]);
+        }
+
+        const edad = formData.get('edad');
+        const nombre_propietario = formData.get('nombre_propietario');
+
+        if (edad === '0' || edad === 0) {
+            alert('La edad no puede ser 0');
+            document.getElementById('confirmEditModal').style.display = 'none';
+            document.getElementById('editModal').style.display = 'block';
+            return;
+        }
+
+        if (!nombre_propietario || data.mensaje == "El propietario no existe") {
+            alert('No hay propietario');
+            document.getElementById('confirmEditModal').style.display = 'none';
+            document.getElementById('editModal').style.display = 'block';
+            return;
+        }
+
+        fetch('http://localhost/GoCan/src/modules/php/editar_mascota.php', {
+            method: 'POST',
+            body: data
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
             }
+            return response.json();
+        })
+        .then(data => {
+            if (data.estado === 'success') {
+                alert('Mascota actualizada exitosamente');
+                closeConfirmEditModal();
+                closeEditModal();
+                openEditModal();
+            } else {
+                alert('Error al actualizar la mascota: ' + data.mensaje);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al procesar la solicitud');
+        });
+    });
+
+    window.closeConfirmEditModal = function() {
+        document.getElementById('confirmEditModal').style.display = 'none';
+    }
+
+    window.closeEditModal = function() {
+        document.getElementById('editModal').style.display = 'none';
+        document.getElementById('tablaModal').style.display = 'block';
+    }
+
+    function eliminarMascota(id_mascota) {
+        const data = new URLSearchParams();
+        data.append('id_mascota', id_mascota);
+
+        fetch('http://localhost/GoCan/src/modules/php/eliminar_mascota.php', {
+            method: 'POST',
+            body: data
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.estado === 'success') {
+                alert('Mascota eliminada exitosamente');
+                closeConfirmModal();
+                openEditModal(); // Refresh the table
+            } else {
+                alert('Error al eliminar la mascota: ' + data.mensaje);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al procesar la solicitud');
         });
     }
-        
+
+    document.getElementById('confirmDelete').addEventListener('click', function() {
+        if (mascotaIdToDelete !== null) {
+            eliminarMascota(mascotaIdToDelete);
+        }
+    });
+
+    window.closeConfirmModal = function() {
+        document.getElementById('confirmModal').style.display = 'none';
+    }
 });

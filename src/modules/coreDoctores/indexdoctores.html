@@ -184,26 +184,41 @@
     </div>
 
     <!-- Modal para editar mascotas -->
-    <div id="tablaModal" class="modal">
+    <div id="tablaModal" class="modal" style="width: 600;">
         <div class="modal-content">
-            <span class="close" onclick="closeEditModal()">&times;</span>
+            <span class="close" onclick="closeTablaModal()">&times;</span>
             <h2>Editar Mascotas</h2>
             <table id="petTable">
                 <thead>
                     <tr>
+                        <th>Código</th>
                         <th>Nombre</th>
                         <th class="edad">Edad</th>
                         <th>Tipo</th>
                         <th>Raza</th>
                         <th>Propietario</th>
                         <th>Editar</th>
+                        <th>Eliminar</th>
                     </tr>
                 </thead>
                 <tbody>
                     <!-- Las filas de la tabla se agregarán dinámicamente aquí -->
                 </tbody>
             </table>
-            <button type="submit" onclick="closeEditModal()">Cancelar</button>
+            <button type="submit" onclick="closeTablaModal()">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- Modal de confirmación eliminación-->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeConfirmModal()">&times;</span>
+            <h2>Confirmar Eliminación</h2>
+            <p>¿Estás seguro de que quieres eliminar esta mascota?</p>
+            <div class="button-container">
+                <button type="eliminar" id="confirmDelete">Eliminar</button>
+                <button type="button" onclick="closeConfirmModal()">Cancelar</button>
+            </div>
         </div>
     </div>
 
@@ -213,6 +228,7 @@
             <span class="close" onclick="closeEditModal()">&times;</span>
             <h2>Editar Mascota</h2>
             <form id="editForm">
+                <input type="hidden" id="edit_id_mascota" name="id_mascota">
                 <label for="nombre_mascota">Nombre de la Mascota:</label>
                 <input type="text" id="edit_nombre_mascota" name="nombre_mascota" required>
 
@@ -245,7 +261,7 @@
                 <input type="text" id="edit_nombre_propietario" name="nombre_propietario" required>
 
                 <button type="submit">Editar</button>
-                <button type="submit" onclick="closeEditModal()">Cancelar</button>
+                <button type="button" onclick="closeEditModal()">Cancelar</button>
             </form>
         </div>
     </div>
@@ -258,6 +274,15 @@
             <input type="text" id="historySearchInput" class="search-input" placeholder="Buscar por propietario o mascota...">
             <div id="reportHistory">
                 <!-- Los reportes se agregarán aquí dinámicamente -->
+    <!-- Modal de confirmación edición-->
+    <div id="confirmEditModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeConfirmEditModal()">&times;</span>
+            <h2>Confirmar Edición</h2>
+            <p>¿Estás seguro de que quieres editar esta mascota?</p>
+            <div class="button-container">
+                <button type="editar" id="confirmEdit">Editar</button>
+                <button type="button" onclick="closeConfirmEditModal()">Cancelar</button>
             </div>
         </div>
     </div>

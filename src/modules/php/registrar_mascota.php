@@ -37,8 +37,8 @@ switch ($periodo) {
 }
 
 // Validar que los campos no estén vacíos
-if (empty($nombre_mascota) || empty($tipo) || empty($raza) || empty($nombre_propietario) || !is_numeric($edad)) {
-    echo json_encode(["estado" => "error", "mensaje" => "Todos los campos son obligatorios y la edad debe ser un número válido"]);
+if (empty($nombre_mascota) || empty($tipo) || empty($raza) || empty($nombre_propietario) || !is_numeric($edad) || $edad == 0) {
+    echo json_encode(["estado" => "error", "mensaje" => "Todos los campos son obligatorios y la edad debe ser un número válido mayor a 0"]);
     exit;
 }
 
