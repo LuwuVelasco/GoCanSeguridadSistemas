@@ -63,9 +63,6 @@ if ($row = pg_fetch_assoc($result)) {
 } else {
     handle_error("El email o la contraseña son incorrectos");
 }
-<<<<<<< HEAD
 
 pg_close($conexion);
-=======
->>>>>>> origin/MatyLastOne
 ?>
