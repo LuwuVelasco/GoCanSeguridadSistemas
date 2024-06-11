@@ -172,6 +172,12 @@ document.addEventListener("DOMContentLoaded", function() {
             data.append(pair[0], pair[1]);
         }
 
+        const edad = formData.get('edad');
+        if (edad === '0' || edad === 0) {
+            alert('La edad no puede ser 0');
+            return;
+        }
+
         fetch('http://localhost/GoCan/src/modules/php/registrar_mascota.php', {
             method: 'POST',
             body: data
@@ -344,6 +350,13 @@ document.addEventListener("DOMContentLoaded", function() {
         for (const pair of formData) {
             data.append(pair[0], pair[1]);
         }
+
+        const edad = formData.get('edad');
+        if (edad === '0' || edad === 0) {
+            alert('La edad no puede ser 0');
+            return;
+        }
+
         fetch('http://localhost/GoCan/src/modules/php/editar_mascota.php', {
             method: 'POST',
             body: data
