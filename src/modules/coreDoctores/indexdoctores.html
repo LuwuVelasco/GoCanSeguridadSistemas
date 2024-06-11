@@ -160,6 +160,7 @@
                         <th>Raza</th>
                         <th>Propietario</th>
                         <th>Editar</th>
+                        <th>Eliminar</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -167,6 +168,19 @@
                 </tbody>
             </table>
             <button type="submit" onclick="closeTablaModal()">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- Modal de confirmación -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeConfirmModal()">&times;</span>
+            <h2>Confirmar Eliminación</h2>
+            <p>¿Estás seguro de que quieres eliminar esta mascota?</p>
+            <div class="button-container">
+                <button type="eliminar" id="confirmDelete">Eliminar</button>
+                <button type="button" onclick="closeConfirmModal()">Cancelar</button>
+            </div>
         </div>
     </div>
 

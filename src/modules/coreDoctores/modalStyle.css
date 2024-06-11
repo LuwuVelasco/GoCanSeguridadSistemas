@@ -36,11 +36,11 @@ html .modal .modal-content button[type="button"] {
     border-radius: var(--radius-10);
     cursor: pointer;
     transition: background-color 0.3s;
-  }
-  
-  button[type="button"]:hover {
+}
+
+button[type="button"]:hover {
     background-color: var(--bittersweet);
-  }
+}
 
 #tablaModal .modal-content {
     width: 90%;
@@ -93,7 +93,8 @@ select {
     border-collapse: separate;
 }
 
-#petTable td, th {
+#petTable td,
+th {
     padding: 10px 10px;
     text-align: center;
 }
@@ -106,4 +107,26 @@ table th {
 table td {
     background-color: #fff;
     border: 1px solid #ddd;
+}
+
+.modal-content button[type="eliminar"] {
+    background-color: red; /* Color rojo */
+    color: white; /* Color del texto blanco */
+    padding: 10px 15px;
+    border: none;
+    border-radius: var(--radius-10);
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button[type="eliminar"]:hover {
+    background-color: darkred; /* Un tono más oscuro de rojo para el hover */
+}
+
+/* Contenedor de botones alineados horizontalmente */
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    width: 80%;
+    padding: 0 20px;
 }

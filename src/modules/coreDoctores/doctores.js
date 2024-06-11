@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", function() {
     let citas = [];
     const id_doctor = localStorage.getItem('id_doctores');
+    let mascotaIdToDelete = null;
 
     fetchCitas(id_doctor);
 
@@ -276,6 +277,15 @@ document.addEventListener("DOMContentLoaded", function() {
                 openEditForm(mascota.id_mascota);
             };
             tdEditar.appendChild(btnEditar);
+
+            const tdEliminar = document.createElement("td");
+            const btnEliminar = document.createElement("button");
+            btnEliminar.innerHTML = '<i class="fi fi-sr-trash-xmark"></i>';
+            btnEliminar.onclick = function() {
+                mascotaIdToDelete = mascota.id_mascota;
+                document.getElementById('confirmModal').style.display = 'block';
+            };
+            tdEliminar.appendChild(btnEliminar);
     
             tr.appendChild(tdCodigo);
             tr.appendChild(tdNombre);
@@ -284,6 +294,7 @@ document.addEventListener("DOMContentLoaded", function() {
             tr.appendChild(tdRaza);
             tr.appendChild(tdPropietario);
             tr.appendChild(tdEditar);
+            tr.appendChild(tdEliminar);
     
             tbody.appendChild(tr);
         });
@@ -385,5 +396,44 @@ document.addEventListener("DOMContentLoaded", function() {
     window.closeEditModal = function() {
         document.getElementById('editModal').style.display = 'none';
         document.getElementById('tablaModal').style.display = 'block';
+    }
+
+    function eliminarMascota(id_mascota) {
+        const data = new URLSearchParams();
+        data.append('id_mascota', id_mascota);
+
+        fetch('http://localhost/GoCan/src/modules/php/eliminar_mascota.php', {
+            method: 'POST',
+            body: data
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.estado === 'success') {
+                alert('Mascota eliminada exitosamente');
+                closeConfirmModal();
+                openEditModal(); // Refresh the table
+            } else {
+                alert('Error al eliminar la mascota: ' + data.mensaje);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al procesar la solicitud');
+        });
+    }
+
+    document.getElementById('confirmDelete').addEventListener('click', function() {
+        if (mascotaIdToDelete !== null) {
+            eliminarMascota(mascotaIdToDelete);
+        }
+    });
+
+    window.closeConfirmModal = function() {
+        document.getElementById('confirmModal').style.display = 'none';
     }
 });
