@@ -224,6 +224,12 @@ document.addEventListener("DOMContentLoaded", function() {
     
             const fecha = document.createElement("p");
             fecha.textContent = `Fecha: ${reporte.fecha}`;
+
+            const editButton = document.createElement("button");
+            editButton.textContent = "Editar";
+            editButton.addEventListener("click", function() {
+                abrirFormularioEdicion(reporte);
+            });
     
             const deleteButton = document.createElement("button");
             deleteButton.textContent = "Eliminar";
@@ -238,12 +244,27 @@ document.addEventListener("DOMContentLoaded", function() {
             detalle.appendChild(receta);
             detalle.appendChild(fecha);
             detalle.appendChild(deleteButton);
+            detalle.appendChild(editButton);
     
             div.appendChild(resumen);
             div.appendChild(detalle);
     
             reportHistory.appendChild(div);
         });
+    }
+
+    function abrirFormularioEdicion(reporte) {
+        // Abre el modal y carga los datos del reporte seleccionado
+        document.getElementById('id_reporte').value = reporte.id_reporte;
+        const modal = document.getElementById('reportModal');
+        modal.style.display = 'block';
+        document.getElementById('id_reporte').value = reporte.id_reporte; // Añade el ID del reporte al campo oculto
+        document.getElementById('propietario').value = reporte.propietario;
+        document.getElementById('nombre_mascota').value = reporte.nombre_mascota;
+        document.getElementById('sintomas').value = reporte.sintomas;
+        document.getElementById('diagnostico').value = reporte.diagnostico;
+        document.getElementById('receta').value = reporte.receta;
+        document.getElementById('fecha').value = reporte.fecha;
     }
     
     
@@ -289,10 +310,10 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     
     const petForm = document.getElementById('petForm');
-    const idUsuario = localStorage.getItem('id_usuario'); // Asegúrate de que el ID del usuario esté almacenado en localStorage
-    if (idUsuario) {
-        document.getElementById('id_usuario').value = idUsuario;
-    }
+    // const idUsuario = localStorage.getItem('id_usuario'); // Asegúrate de que el ID del usuario esté almacenado en localStorage
+    // if (idUsuario) {
+    //     document.getElementById('id_usuario').value = idUsuario;
+    // }
 
     petForm.addEventListener('submit', function(event) {
         event.preventDefault();
@@ -329,4 +350,89 @@ document.addEventListener("DOMContentLoaded", function() {
             alert('Error al procesar la solicitud');
         });
     });
+
+    window.openPetModal = function() {
+        document.getElementById('petModal').style.display = 'block';
+    }
+    
+    window.closePetModal = function() {
+        document.getElementById('petModal').style.display = 'none';
+    }
+
+    window.closeEditModal = function() {
+        document.getElementById('editModal').style.display = 'none';
+    }
+
+    window.openEditModal = function() {
+        fetch('http://localhost/GoCan/src/modules/php/obtener_mascotas.php')
+            .then(response => response.json())
+            .then(data => {
+                if (data.estado === "success") {
+                    llenarTablaMascotas(data.mascotas);
+                    document.getElementById('tablaModal').style.display = 'block';
+                } else {
+                    console.error("Error:", data.mensaje);
+                }
+            })
+            .catch(error => console.error("Error:", error));
+    };
+
+    function llenarTablaMascotas(mascotas) {
+        const tbody = document.querySelector("#petTable tbody");
+        tbody.innerHTML = ''; // Limpiar la tabla
+    
+        mascotas.forEach(mascota => {
+            const tr = document.createElement("tr");
+    
+            const tdNombre = document.createElement("td");
+            tdNombre.textContent = mascota.nombre_mascota;
+    
+            const tdEdad = document.createElement("td");
+            let edadTexto = '';
+            if (mascota.edad_day && mascota.edad_day != 0) {
+                edadTexto = `${mascota.edad_day} día(s)`;
+            } else if (mascota.edad_month && mascota.edad_month != 0) {
+                edadTexto = `${mascota.edad_month} mes(es)`;
+            } else if (mascota.edad_year && mascota.edad_year != 0) {
+                edadTexto = `${mascota.edad_year} año(s)`;
+            }
+            tdEdad.textContent = edadTexto;
+    
+            const tdTipo = document.createElement("td");
+            tdTipo.textContent = mascota.tipo;
+    
+            const tdRaza = document.createElement("td");
+            tdRaza.textContent = mascota.raza;
+    
+            const tdPropietario = document.createElement("td");
+            tdPropietario.textContent = mascota.nombre_propietario;
+    
+            const tdEditar = document.createElement("td");
+            const btnEditar = document.createElement("button");
+            btnEditar.innerHTML = '<i class="fi fi-sr-pen-square"></i>';
+            btnEditar.onclick = function() {
+                // Lógica para editar la mascota
+            };
+            tdEditar.appendChild(btnEditar);
+    
+            tr.appendChild(tdNombre);
+            tr.appendChild(tdEdad);
+            tr.appendChild(tdTipo);
+            tr.appendChild(tdRaza);
+            tr.appendChild(tdPropietario);
+            tr.appendChild(tdEditar);
+    
+            tbody.appendChild(tr);
+        });
+    }
+
+    window.onclick = function(event) {
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach(modal => {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        });
+    }
+        
 });
