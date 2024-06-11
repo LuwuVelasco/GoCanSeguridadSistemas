@@ -1,12 +1,17 @@
 <?php
-session_start(); // Iniciar la sesión
+session_start();
 header('Content-Type: application/json');
 
-// Conectar a la base de datos
-$conexion = pg_connect("dbname=gocan user=postgres password=admin");
-if (!$conexion) {
-    echo json_encode(["estado" => "error", "mensaje" => "No se pudo conectar a la base de datos"]);
+// Función para manejar errores
+function handle_error($mensaje) {
+    echo json_encode(["estado" => "error", "mensaje" => $mensaje]);
     exit;
+}
+
+// Conectar a la base de datos
+$conexion = pg_connect("dbname=gocan user=postgres password=admin port='5433'");
+if (!$conexion) {
+    handle_error("No se pudo conectar a la base de datos");
 }
 
 $email = $_POST['email'];
@@ -15,12 +20,16 @@ $password = $_POST['password'];
 // Consulta para buscar al usuario por email, contraseña y obtener el campo cargo, id_doctores, y nombre
 $sql = "SELECT id_usuario, cargo, id_doctores, nombre FROM usuario WHERE email = $1 AND password = $2";
 $result = pg_prepare($conexion, "login_query", $sql);
+if (!$result) {
+    handle_error("Error al preparar la consulta");
+}
+
 $result = pg_execute($conexion, "login_query", array($email, $password));
+if (!$result) {
+    handle_error("Error al ejecutar la consulta");
+}
 
 if ($row = pg_fetch_assoc($result)) {
-    // Si la consulta devuelve un resultado, las credenciales son correctas
-
-    // Guardar el ID del doctor en la sesión
     if (isset($row['id_doctores'])) {
         $_SESSION['id_doctores'] = $row['id_doctores'];
     }
@@ -52,9 +61,11 @@ if ($row = pg_fetch_assoc($result)) {
     }
 
 } else {
-    // No se encontró un usuario con esas credenciales
-    echo json_encode(["estado" => "error", "mensaje" => "El email o la contraseña son incorrectos"]);
+    handle_error("El email o la contraseña son incorrectos");
 }
+<<<<<<< HEAD
 
 pg_close($conexion);
+=======
+>>>>>>> origin/MatyLastOne
 ?>

@@ -2,7 +2,7 @@
 header('Content-Type: application/json');
 
 $host = "localhost";
-$port = "5432";
+$port = "5433";
 $dbname = "gocan";
 $username = "postgres";
 $password = "admin";
@@ -20,7 +20,7 @@ try {
             $doctores = $stmt->fetchAll(PDO::FETCH_ASSOC);
             echo json_encode($doctores);
         } else {
-            $stmt = $conn->query("SELECT id_especialidad,nombre_especialidad FROM especialidad");
+            $stmt = $conn->query("SELECT id_especialidad, nombre_especialidad FROM especialidad");
             $especialidades = $stmt->fetchAll(PDO::FETCH_ASSOC);
             echo json_encode($especialidades);
         }
@@ -28,7 +28,8 @@ try {
         $data = json_decode(file_get_contents("php://input"), true);
 
         $propietario = $data['propietario'];
-        $servicio = $data['servicio'];
+        $especialidadId = $data['especialidadId'];
+        $especialidadNombre = $data['especialidadNombre'];
         $doctor = $data['doctor'];
         $id_usuario = $data['id_usuario'];
         $fecha = $data['fecha'];
@@ -55,9 +56,9 @@ try {
                     "mensaje" => "El doctor ya tiene una cita en ese horario."
                 ]);
             } else {
-                $stmt = $conn->prepare("INSERT INTO cita (propietario, servicio, doctor, id_usuario, id_doctor, horario, fecha) VALUES (:propietario, :servicio, :doctor, :id_usuario, :id_doctor, :horario, :fecha)");
+                $stmt = $conn->prepare("INSERT INTO cita (propietario, servicio, doctor, id_usuario, id_doctor, fecha,horario) VALUES (:propietario, :servicio, :doctor, :id_usuario, :id_doctor, :fecha, :horario)");
                 $stmt->bindParam(':propietario', $propietario);
-                $stmt->bindParam(':servicio', $servicio);
+                $stmt->bindParam(':servicio', $especialidadNombre);
                 $stmt->bindParam(':doctor', $doctor);
                 $stmt->bindParam(':id_usuario', $id_usuario);
                 $stmt->bindParam(':id_doctor', $id_doctor);
