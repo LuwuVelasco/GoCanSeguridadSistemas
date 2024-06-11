@@ -123,10 +123,24 @@ button[type="eliminar"]:hover {
     background-color: darkred; /* Un tono más oscuro de rojo para el hover */
 }
 
+.modal-content button[type="editar"] {
+    background-color: green; /* Color rojo */
+    color: white; /* Color del texto blanco */
+    padding: 10px 15px;
+    border: none;
+    border-radius: var(--radius-10);
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button[type="editarr"]:hover {
+    background-color: darkgreen; /* Un tono más oscuro de rojo para el hover */
+}
+
 /* Contenedor de botones alineados horizontalmente */
 .button-container {
     display: flex;
     justify-content: space-between;
-    width: 80%;
+    width: 70%;
     padding: 0 20px;
 }

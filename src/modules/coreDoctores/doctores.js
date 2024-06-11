@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", function() {
     let citas = [];
     const id_doctor = localStorage.getItem('id_doctores');
     let mascotaIdToDelete = null;
+    let editingMascotaData = null;
 
     fetchCitas(id_doctor);
 
@@ -335,6 +336,17 @@ document.addEventListener("DOMContentLoaded", function() {
                     document.getElementById('edit_raza').value = mascota.raza;
                     document.getElementById('edit_nombre_propietario').value = mascota.nombre_propietario;
 
+                    // Almacenar los datos originales
+                    editingMascotaData = {
+                        id_mascota: mascota.id_mascota,
+                        nombre_mascota: mascota.nombre_mascota,
+                        edad: editEdadInput.value,
+                        period: editPeriodSelect.value,
+                        tipo: mascota.tipo,
+                        raza: mascota.raza,
+                        nombre_propietario: mascota.nombre_propietario
+                    };
+
                     document.getElementById('editModal').style.display = 'block';
                     document.getElementById('tablaModal').style.display = 'none';
 
@@ -356,6 +368,8 @@ document.addEventListener("DOMContentLoaded", function() {
     const editForm = document.getElementById('editForm');
     editForm.addEventListener('submit', function(event) {
         event.preventDefault();
+
+        // Verificar si hay cambios
         const formData = new FormData(editForm);
         const data = new URLSearchParams();
         for (const pair of formData) {
@@ -363,8 +377,49 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
         const edad = formData.get('edad');
+        const period = formData.get('period');
+        const nombre_mascota = formData.get('nombre_mascota');
+        const tipo = formData.get('tipo');
+        const raza = formData.get('raza');
+        const nombre_propietario = formData.get('nombre_propietario');
+
+        const hasChanges =
+            editingMascotaData.nombre_mascota !== nombre_mascota ||
+            editingMascotaData.edad !== edad ||
+            editingMascotaData.period !== period ||
+            editingMascotaData.tipo !== tipo ||
+            editingMascotaData.raza !== raza ||
+            editingMascotaData.nombre_propietario !== nombre_propietario;
+
+        if (hasChanges) {
+            document.getElementById('confirmEditModal').style.display = 'block';
+        } else {
+            alert("No hubo cambios a realizar.");
+            closeEditModal();
+        }
+    });
+
+    document.getElementById('confirmEdit').addEventListener('click', function() {
+        const formData = new FormData(editForm);
+        const data = new URLSearchParams();
+        for (const pair of formData) {
+            data.append(pair[0], pair[1]);
+        }
+
+        const edad = formData.get('edad');
+        const nombre_propietario = formData.get('nombre_propietario');
+
         if (edad === '0' || edad === 0) {
             alert('La edad no puede ser 0');
+            document.getElementById('confirmEditModal').style.display = 'none';
+            document.getElementById('editModal').style.display = 'block';
+            return;
+        }
+
+        if (!nombre_propietario || data.mensaje == "El propietario no existe") {
+            alert('No hay propietario');
+            document.getElementById('confirmEditModal').style.display = 'none';
+            document.getElementById('editModal').style.display = 'block';
             return;
         }
 
@@ -381,6 +436,7 @@ document.addEventListener("DOMContentLoaded", function() {
         .then(data => {
             if (data.estado === 'success') {
                 alert('Mascota actualizada exitosamente');
+                closeConfirmEditModal();
                 closeEditModal();
                 openEditModal();
             } else {
@@ -392,6 +448,10 @@ document.addEventListener("DOMContentLoaded", function() {
             alert('Error al procesar la solicitud');
         });
     });
+
+    window.closeConfirmEditModal = function() {
+        document.getElementById('confirmEditModal').style.display = 'none';
+    }
 
     window.closeEditModal = function() {
         document.getElementById('editModal').style.display = 'none';
