@@ -759,11 +759,12 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    document.getElementById('confirmDelete').addEventListener('click', function() {
-        if (mascotaIdToDelete !== null) {
-            eliminarMascota(mascotaIdToDelete);
-        }
-    });
+    // Remueve el segundo event listener para confirmDelete, ya que se está registrando dos veces
+    // document.getElementById('confirmDelete').addEventListener('click', function() {
+    //     if (mascotaIdToDelete !== null) {
+    //         eliminarMascota(mascotaIdToDelete);
+    //     }
+    // });
 
     window.closeConfirmModal = function() {
         document.getElementById('confirmModal').style.display = 'none';
