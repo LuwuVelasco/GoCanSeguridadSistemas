@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
-    emailjs.init("CgWcVJlbFn_MVTJRc");
+    emailjs.init("qzlkC2mOywaQA8mot");
     document.getElementById('crearCuentaBtn').addEventListener('click', registrarUsuario);
-});
 
 function registrarUsuario() {
     let email = document.getElementById('email').value;
@@ -18,7 +17,7 @@ function registrarUsuario() {
 
     console.log("Datos capturados:", email, nombre, password, token, cargo);
 
-    emailjs.send("service_zfiz7yd", "template_g2k2wgi", {
+    emailjs.send("service_kck40bs", "template_1ntv7se", {
         to_email: email,
         nombre: nombre,
         token: token
@@ -72,4 +71,5 @@ function promptForToken(sentToken, email, nombre, password, cargo) {
 function generateToken() {
     return Math.floor(Math.random() * 900000) + 100000;
 }
+});
 
