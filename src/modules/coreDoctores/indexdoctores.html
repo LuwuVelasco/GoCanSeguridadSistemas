@@ -54,8 +54,8 @@
                 </div>
                 <div class="profile-dropdown" id="profileDropdown">
                     <ul>
-                        <li><a href="#changeUser">Cambiar de usuario</a></li>
-                        <li><a href="#signOut">Cerrar sesión</a></li>
+                        <li><a href="/src/modules/login/sesionindex.html">Cambiar de usuario</a></li>
+                        <li><a href="/src/modules/login/sesionindex.html">Cerrar sesión</a></li>
                     </ul>
                 </div>
             </div>
@@ -231,7 +231,7 @@
                 <input type="hidden" id="edit_id_mascota" name="id_mascota">
                 <label for="nombre_mascota">Nombre de la Mascota:</label>
                 <input type="text" id="edit_nombre_mascota" name="nombre_mascota" required>
-
+    
                 <label for="edad">Edad:</label>
                 <div id="edit_edad-div" style="display: flex; flex-direction: column; width: 100%;">
                     <div style="display: flex;">
@@ -244,7 +244,7 @@
                         </select>
                     </div>
                 </div>
-
+    
                 <label for="tipo">Tipo:</label>
                 <select id="edit_tipo" name="tipo" required>
                     <option value="">Seleccionar tipo de animal...</option>
@@ -254,12 +254,12 @@
                     <option value="Conejo">Conejo</option>
                     <option value="Pez">Pez</option>
                 </select>
-
+    
                 <label for="raza">Raza:</label>
                 <input type="text" id="edit_raza" name="raza" required>
                 <label for="nombre_propietario">Nombre Propietario:</label>
                 <input type="text" id="edit_nombre_propietario" name="nombre_propietario" required>
-
+    
                 <button type="submit">Editar</button>
                 <button type="button" onclick="closeEditModal()">Cancelar</button>
             </form>

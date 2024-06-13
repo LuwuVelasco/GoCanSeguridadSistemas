@@ -783,7 +783,7 @@ document.addEventListener("DOMContentLoaded", function() {
         modal.style.display = 'none';
     }
 
-    function toggleDropdown() {
+    window.toggleDropdown = function() {
         var dropdown = document.getElementById('profileDropdown');
         dropdown.style.display = (dropdown.style.display === 'block') ? 'none' : 'block';
     }
