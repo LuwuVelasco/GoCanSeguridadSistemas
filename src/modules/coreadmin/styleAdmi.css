@@ -867,3 +867,55 @@ tr:hover {
 .delete-button:hover {
     opacity: 0.8;
 }
+
+/* Styles for the rating section */
+.rating-container {
+    margin-top: 20px;
+}
+
+.rating-average {
+    display: flex;
+    align-items: center;
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.rating-average span {
+    margin-right: 10px;
+}
+
+.rating-bars {
+    display: flex;
+    flex-direction: column;
+}
+
+.rating-bar {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.rating-bar span {
+    margin-right: 10px;
+    width: 20px;
+}
+
+.rating-bar div {
+    background-color: #ddd;
+    height: 10px;
+    flex: 1;
+    position: relative;
+}
+
+.rating-bar div span {
+    display: block;
+    height: 100%;
+    background-color: #1976d2;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.rating-count {
+    margin-left: 10px;
+}
