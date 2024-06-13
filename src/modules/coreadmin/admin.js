@@ -769,27 +769,24 @@ document.addEventListener("DOMContentLoaded", function() {
     window.closeConfirmModal = function() {
         document.getElementById('confirmModal').style.display = 'none';
     }
-});
 
-function openModal() {
-    var modal = document.getElementById('reserveModal');
-    modal.style.display = 'block';
-    modal.style.alignItems = 'center';
-    modal.style.justifyContent = 'center';
-    modal.style.display = 'flex';
-}
+    window.openModal = function() {
+        var modal = document.getElementById('reserveModal');
+        modal.style.display = 'block';
+        modal.style.alignItems = 'center';
+        modal.style.justifyContent = 'center';
+        modal.style.display = 'flex';
+    }
 
-function closeModal() {
-    var modal = document.getElementById('reserveModal');
-    modal.style.display = 'none';
-}
+    window.closeModal = function() {
+        var modal = document.getElementById('reserveModal');
+        modal.style.display = 'none';
+    }
 
-function toggleDropdown() {
-    var dropdown = document.getElementById('profileDropdown');
-    dropdown.style.display = (dropdown.style.display === 'block') ? 'none' : 'block';
-}
-
-document.addEventListener('DOMContentLoaded', function() {
+    function toggleDropdown() {
+        var dropdown = document.getElementById('profileDropdown');
+        dropdown.style.display = (dropdown.style.display === 'block') ? 'none' : 'block';
+    }
     var dropdowns = document.querySelectorAll('.profile-dropdown');
 
     window.onclick = function(event) {
