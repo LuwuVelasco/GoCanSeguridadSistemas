@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
 
-        fetch('http://localhost/GoCan/src/modules/php/login.php', {
+        fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/login.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
@@ -32,12 +32,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 localStorage.setItem('id_doctores', data.id_doctores);
                 if (data.cargo) {
                     if (data.id_doctores) {
-                        window.location.href = 'http://localhost/GoCan/src/modules/coreDoctores/indexdoctores.html';
+                        window.location.href = 'http://localhost/GoCanSeguridadSistemas/src/modules/coreDoctores/indexdoctores.html';
                     } else {
-                        window.location.href = 'http://localhost/GoCan/src/modules/citas/citas.html';
+                        window.location.href = 'http://localhost/GoCanSeguridadSistemas/src/modules/citas/citas.html';
                     }
                 } else {
-                    window.location.href = 'http://localhost/GoCan/src/modules/coreadmin/indexadmin.html';
+                    window.location.href = 'http://localhost/GoCanSeguridadSistemas/src/modules/coreadmin/indexadmin.html';
                 }
             } else {
                 intentosFallidos++;
@@ -115,7 +115,7 @@ function resetPassword() {
     }
 
     // Si el código de verificación es correcto, procedemos a cambiar la contraseña
-    fetch('http://localhost/GoCan/src/modules/php/new_password.php', {
+    fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/new_password.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: `email=${encodeURIComponent(email)}&new_password=${encodeURIComponent(newPassword)}`

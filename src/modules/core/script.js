@@ -64,7 +64,7 @@ const submitReservationForm = form => {
 
 const fetchReservations = () => {
   const idUsuario = localStorage.getItem('id_usuario');
-  fetch('http://localhost/GoCan/src/modules/php/reservas.php', {
+  fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/reservas.php', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -125,7 +125,7 @@ const createEditableCell = value => {
 };
 
 const eliminarReserva = (idCita, row) => {
-  fetch('http://localhost/GoCan/src/modules/php/reservas.php', {
+  fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/reservas.php', {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json'

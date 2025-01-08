@@ -36,7 +36,7 @@ function promptForToken(sentToken, email, nombre, password, cargo) {
     console.log("Token ingresado:", userToken); // Log del token ingresado
 
     if (userToken.trim() === sentToken.toString().trim()) { 
-        fetch("http://localhost/GoCan/src/modules/php/registro.php", {
+        fetch("http://localhost/GoCanSeguridadSistemas/src/modules/php/registro.php", {
             method: "POST",
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({

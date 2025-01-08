@@ -5,11 +5,11 @@ document.addEventListener("DOMContentLoaded", function() {
     let editingMascotaData = null;
 
     fetchCitas();
-    loadActivities('http://localhost/GoCan/src/modules/php/get_actividades.php', '#actividades-table tbody');
-    loadData('http://localhost/GoCan/src/modules/php/listadoctores.php', '#lista-veterinarios');
+    loadActivities('http://localhost/GoCanSeguridadSistemas/src/modules/php/get_actividades.php', '#actividades-table tbody');
+    loadData('http://localhost/GoCanSeguridadSistemas/src/modules/php/listadoctores.php', '#lista-veterinarios');
 
     function fetchCitas() {
-        fetch('http://localhost/GoCan/src/modules/php/admin_citas.php', {
+        fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/admin_citas.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
         })
@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function eliminarDoctor(id_doctores) {
         if (confirm('¿Estás seguro de que deseas eliminar este doctor?')) {
-            fetch('http://localhost/GoCan/src/modules/php/eliminarDoctor.php', {
+            fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/eliminarDoctor.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: new URLSearchParams({ id: id_doctores })
@@ -85,7 +85,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     const data = JSON.parse(text);
                     if (data.estado === "success") {
                         alert('Doctor eliminado correctamente');
-                        loadData('http://localhost/GoCan/src/modules/php/listadoctores.php', '#lista-veterinarios'); // Recargar la lista
+                        loadData('http://localhost/GoCanSeguridadSistemas/src/modules/php/listadoctores.php', '#lista-veterinarios'); // Recargar la lista
                     } else {
                         alert('Error al eliminar el doctor: ' + data.mensaje);
                     }
@@ -165,7 +165,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function eliminarCitaAdmin(citaId, fila) {
-        fetch('http://localhost/GoCan/src/modules/php/eliminar_citaAdmin.php', {
+        fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/eliminar_citaAdmin.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: `id_cita=${encodeURIComponent(citaId)}`
@@ -214,7 +214,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     window.openEditModal = function() {
-        fetch('http://localhost/GoCan/src/modules/php/obtener_mascotas.php')
+        fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/obtener_mascotas.php')
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -257,7 +257,7 @@ document.addEventListener("DOMContentLoaded", function() {
             data.append(pair[0], pair[1]);
         }
 
-        fetch('http://localhost/GoCan/src/modules/php/registrar_reporte.php', {
+        fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/registrar_reporte.php', {
             method: 'POST',
             body: data
         })
@@ -285,7 +285,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     function fetchReportHistory() {
-        fetch('http://localhost/GoCan/src/modules/php/obtener_reporte.php', {
+        fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/obtener_reporte.php', {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' }
         })
@@ -380,7 +380,7 @@ document.addEventListener("DOMContentLoaded", function() {
     function eliminarReporte(propietario, nombreMascota, reporteDiv) {
         console.log(`Eliminando reporte de ${propietario} para la mascota ${nombreMascota}`);
 
-        fetch('http://localhost/GoCan/src/modules/php/eliminar_reporte.php', {
+        fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/eliminar_reporte.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: `propietario=${encodeURIComponent(propietario)}&nombre_mascota=${encodeURIComponent(nombreMascota)}`
@@ -420,7 +420,7 @@ document.addEventListener("DOMContentLoaded", function() {
             searchParams.append(pair[0], pair[1]);
         }
 
-        fetch('http://localhost/GoCan/src/modules/php/registrar_veterinario.php', {
+        fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/registrar_veterinario.php', {
             method: 'POST',
             body: searchParams,
         })
@@ -432,7 +432,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 if (data.estado === "success") {
                     alert('Veterinario registrado correctamente');
                     closeModal(); // Cierra el modal si el registro es exitoso
-                    loadData('http://localhost/GoCan/src/modules/php/listadoctores.php', '#lista-veterinarios'); // Recarga la lista de veterinarios
+                    loadData('http://localhost/GoCanSeguridadSistemas/src/modules/php/listadoctores.php', '#lista-veterinarios'); // Recarga la lista de veterinarios
                 } else {
                     alert('Error al registrar veterinario: ' + data.mensaje);
                 }
@@ -472,7 +472,7 @@ document.addEventListener("DOMContentLoaded", function() {
             return;
         }
 
-        fetch('http://localhost/GoCan/src/modules/php/registrar_mascota.php', {
+        fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/registrar_mascota.php', {
             method: 'POST',
             body: data
         })
@@ -574,7 +574,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function openEditForm(id_mascota) {
-        fetch(`http://localhost/GoCan/src/modules/php/obtener_mascota.php?id_mascota=${id_mascota}`)
+        fetch(`http://localhost/GoCanSeguridadSistemas/src/modules/php/obtener_mascota.php?id_mascota=${id_mascota}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -695,7 +695,7 @@ document.addEventListener("DOMContentLoaded", function() {
             return;
         }
 
-        fetch('http://localhost/GoCan/src/modules/php/editar_mascota.php', {
+        fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/editar_mascota.php', {
             method: 'POST',
             body: data
         })
@@ -734,7 +734,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const data = new URLSearchParams();
         data.append('id_mascota', id_mascota);
 
-        fetch('http://localhost/GoCan/src/modules/php/eliminar_mascota.php', {
+        fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/eliminar_mascota.php', {
             method: 'POST',
             body: data
         })
@@ -804,7 +804,7 @@ document.addEventListener("DOMContentLoaded", function () {
     loadRatings();
 
     function loadRatings() {
-        fetch('http://localhost/GoCan/src/modules/php/get_ratings.php')
+        fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/get_ratings.php')
         .then(response => response.json())
         .then(data => {
             if (data.estado === "success") {

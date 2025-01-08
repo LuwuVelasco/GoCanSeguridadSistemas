@@ -25,7 +25,7 @@ async function actualizarEspecialidades() {
 
   try {
     const response = await fetch(
-      "http://localhost/GoCan/src/modules/php/citas.php"
+      "http://localhost/GoCanSeguridadSistemas/src/modules/php/citas.php"
     );
     console.log("Solicitando especialidades...");
     const especialidad = await response.json();
@@ -57,7 +57,7 @@ async function actualizarDoctores() {
     return;
   }
 
-  let url = `http://localhost/GoCan/src/modules/php/citas.php?especialidad_id=${especialidadId}`;
+  let url = `http://localhost/GoCanSeguridadSistemas/src/modules/php/citas.php?especialidad_id=${especialidadId}`;
 
   try {
     const response = await fetch(url);
@@ -104,7 +104,7 @@ function registrarcita() {
     console.log("doctor:", doctor);
     console.log("id_usuario:", id_usuario);
   
-    fetch("http://localhost/GoCan/src/modules/php/citas.php", {
+    fetch("http://localhost/GoCanSeguridadSistemas/src/modules/php/citas.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

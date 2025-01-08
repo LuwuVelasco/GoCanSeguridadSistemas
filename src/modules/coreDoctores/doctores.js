@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function() {
     fetchCitas(id_doctor);
 
     function fetchCitas(id_doctor) {
-        fetch('http://localhost/GoCan/src/modules/php/doctores.php', {
+        fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/doctores.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: `id_doctor=${encodeURIComponent(id_doctor)}`
@@ -79,7 +79,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function eliminarCita(citaId, fila) {
-        fetch('http://localhost/GoCan/src/modules/php/eliminar_cita.php', {
+        fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/eliminar_cita.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: `id_cita=${encodeURIComponent(citaId)}`
@@ -155,7 +155,7 @@ document.addEventListener("DOMContentLoaded", function() {
         formData.append('fecha', fecha);
         formData.append('nombre_mascota', nombre_mascota);
 
-        fetch('http://localhost/GoCan/src/modules/php/registrar_reporte.php', {
+        fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/registrar_reporte.php', {
             method: 'POST',
             body: formData
         })
@@ -188,7 +188,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     function fetchReportHistory() {
-        fetch('http://localhost/GoCan/src/modules/php/obtener_reporte.php', {
+        fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/obtener_reporte.php', {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' }
         })
@@ -285,7 +285,7 @@ document.addEventListener("DOMContentLoaded", function() {
     function eliminarReporte(propietario, nombreMascota, reporteDiv) {
         console.log(`Eliminando reporte de ${propietario} para la mascota ${nombreMascota}`);
     
-        fetch('http://localhost/GoCan/src/modules/php/eliminar_reporte.php', {
+        fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/eliminar_reporte.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: `propietario=${encodeURIComponent(propietario)}&nombre_mascota=${encodeURIComponent(nombreMascota)}`
@@ -344,7 +344,7 @@ document.addEventListener("DOMContentLoaded", function() {
             return;
         }
 
-        fetch('http://localhost/GoCan/src/modules/php/registrar_mascota.php', {
+        fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/registrar_mascota.php', {
             method: 'POST',
             body: data
         })
@@ -376,7 +376,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     window.openEditModal = function() {
-        fetch('http://localhost/GoCan/src/modules/php/obtener_mascotas.php')
+        fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/obtener_mascotas.php')
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -461,7 +461,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }    
 
     function openEditForm(id_mascota) {
-        fetch(`http://localhost/GoCan/src/modules/php/obtener_mascota.php?id_mascota=${id_mascota}`)
+        fetch(`http://localhost/GoCanSeguridadSistemas/src/modules/php/obtener_mascota.php?id_mascota=${id_mascota}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -582,7 +582,7 @@ document.addEventListener("DOMContentLoaded", function() {
             return;
         }
 
-        fetch('http://localhost/GoCan/src/modules/php/editar_mascota.php', {
+        fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/editar_mascota.php', {
             method: 'POST',
             body: data
         })
@@ -621,7 +621,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const data = new URLSearchParams();
         data.append('id_mascota', id_mascota);
 
-        fetch('http://localhost/GoCan/src/modules/php/eliminar_mascota.php', {
+        fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/eliminar_mascota.php', {
             method: 'POST',
             body: data
         })
