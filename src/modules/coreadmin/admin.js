@@ -118,7 +118,6 @@ document.addEventListener("DOMContentLoaded", function() {
                     <td>${item.nombre}</td>
                     <td>${item.cargo}</td>
                     <td>${item.especialidad || 'No asignada'}</td>
-                    <td class="estado ${getClassForEstado(item.estado)}">${item.estado}</td>
                     <td><button class="delete-button" onclick="eliminarDoctor(${item.id_doctores})"><i class="ri-delete-bin-6-line"></i></button></td>
                 `;
                 tbody.appendChild(row);
@@ -128,19 +127,6 @@ document.addEventListener("DOMContentLoaded", function() {
             console.error('Error al cargar los datos:', error);
             alert('Error al cargar los datos. Verifica la consola para más detalles.');
         });
-    }
-
-    function getClassForEstado(estado) {
-        switch (estado.toLowerCase()) {
-            case 'activo':
-                return 'estado-activo';
-            case 'inactivo':
-                return 'estado-inactivo';
-            case 'con permiso':
-                return 'estado-permiso';
-            default:
-                return 'estado-desconocido'; // Asegúrate de manejar estados desconocidos
-        }
     }
 
     function loadActivities(url, tbodySelector) {
