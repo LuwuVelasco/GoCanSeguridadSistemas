@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    emailjs.init("qzlkC2mOywaQA8mot");
+    emailjs.init("XhWMaSqNfASzICac5");
     document.getElementById('crearCuentaBtn').addEventListener('click', registrarUsuario);
 
 function registrarUsuario() {
@@ -17,7 +17,7 @@ function registrarUsuario() {
 
     console.log("Datos capturados:", email, nombre, password, token, cargo);
 
-    emailjs.send("service_kck40bs", "template_1ntv7se", {
+    emailjs.send("service_nhpwkm8", "template_guvck1n", {
         to_email: email,
         nombre: nombre,
         token: token
