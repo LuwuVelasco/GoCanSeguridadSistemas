@@ -9,31 +9,42 @@ if (!$conexion) {
     exit;
 }
 
+// Validar que los datos requeridos estén presentes
+if (empty($_POST['email']) || empty($_POST['password'])) {
+    echo json_encode(["estado" => "error", "mensaje" => "El email y la contraseña son obligatorios"]);
+    exit;
+}
+
 $email = $_POST['email'];
 $password = $_POST['password'];
 
-// Consulta para buscar al usuario por email, contraseña y obtener el campo cargo y id_doctores
-$sql = "SELECT id_usuario, cargo, id_doctores FROM usuario WHERE email = $1 AND password = $2";
+// Consulta para buscar al usuario por email
+$sql = "SELECT id_usuario, cargo, id_doctores, password FROM usuario WHERE email = $1";
 $result = pg_prepare($conexion, "login_query", $sql);
-$result = pg_execute($conexion, "login_query", array($email, $password));
+$result = pg_execute($conexion, "login_query", array($email));
 
 if ($row = pg_fetch_assoc($result)) {
-    // Si la consulta devuelve un resultado, las credenciales son correctas
+    // Verificar la contraseña ingresada con el hash almacenado
+    if (password_verify($password, $row['password'])) {
+        // Contraseña válida, iniciar sesión
+        if (isset($row['id_doctores'])) {
+            $_SESSION['id_doctores'] = $row['id_doctores'];
+        }
 
-    // Guardar el ID del doctor en la sesión
-    if (isset($row['id_doctores'])) {
-        $_SESSION['id_doctores'] = $row['id_doctores'];
+        echo json_encode([
+            "estado" => "success",
+            "id_usuario" => $row['id_usuario'],
+            "cargo" => $row['cargo'],
+            "id_doctores" => $row['id_doctores']
+        ]);
+    } else {
+        // Contraseña incorrecta
+        echo json_encode(["estado" => "error", "mensaje" => "El email o la contraseña son incorrectos"]);
     }
-
-    echo json_encode([
-        "estado" => "success",
-        "id_usuario" => $row['id_usuario'],
-        "cargo" => $row['cargo'],
-        "id_doctores" => $row['id_doctores']
-    ]);
 } else {
-    // No se encontró un usuario con esas credenciales
+    // No se encontró un usuario con ese email
     echo json_encode(["estado" => "error", "mensaje" => "El email o la contraseña son incorrectos"]);
 }
 
+// Cerrar la conexión
 pg_close($conexion);
