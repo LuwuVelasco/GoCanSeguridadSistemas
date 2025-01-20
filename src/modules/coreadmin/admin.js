@@ -1,75 +1,10 @@
 document.addEventListener("DOMContentLoaded", function() {
-    let citas = [];
     let reportes = [];
     let mascotaIdToDelete = null;
     let editingMascotaData = null;
 
-    fetchCitas();
     loadActivities('http://localhost/GoCanSeguridadSistemas/src/modules/php/get_actividades.php', '#actividades-table tbody');
     loadData('http://localhost/GoCanSeguridadSistemas/src/modules/php/listadoctores.php', '#lista-veterinarios');
-
-    function fetchCitas() {
-        fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/admin_citas.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.estado === "success") {
-                citas = data.citas;
-                mostrarCitas(citas);
-            } else {
-                console.error("Error:", data.mensaje);
-            }
-        })
-        .catch(error => console.error("Error:", error));
-    }
-
-    function mostrarCitas(citas) {
-        const tbody = document.querySelector("table tbody");
-        tbody.innerHTML = '';
-
-        citas.forEach(cita => {
-            const tr = document.createElement("tr");
-            tr.classList.add("selected");
-
-            const tdIcon = document.createElement("td");
-            tdIcon.classList.add("icon");
-            tdIcon.innerHTML = '<i class="fi fi-sr-paw"></i>';
-
-            const tdName = document.createElement("td");
-            tdName.classList.add("name");
-            tdName.textContent = `Cita con ${cita.propietario}`;
-
-            const tdExtension = document.createElement("td");
-            tdExtension.classList.add("extension");
-            tdExtension.textContent = `${cita.fecha}, ${cita.horario}`;
-
-            const tdCheckbox = document.createElement("td");
-            const checkbox = document.createElement("input");
-            checkbox.type = "checkbox";
-            checkbox.setAttribute("data-id", cita.id_cita); // Asignar ID de la cita al checkbox
-            checkbox.addEventListener("change", () => {
-                const citaId = checkbox.getAttribute("data-id");
-                console.log(`ID de la cita: ${citaId}`); // Mostrar el ID por consola
-                if (checkbox.checked) {
-                    if (confirm("¿La cita ya ha sido completada?")) {
-                        eliminarCitaAdmin(citaId, tr); // Eliminar la cita de la base de datos y ocultar la fila
-                    } else {
-                        checkbox.checked = false;
-                    }
-                }
-            });
-            tdCheckbox.appendChild(checkbox);
-
-            tr.appendChild(tdIcon);
-            tr.appendChild(tdName);
-            tr.appendChild(tdExtension);
-            tr.appendChild(tdCheckbox);
-
-            tbody.appendChild(tr);
-        });
-    }
 
     function eliminarDoctor(id_doctores) {
         if (confirm('¿Estás seguro de que deseas eliminar este doctor?')) {
@@ -118,7 +53,6 @@ document.addEventListener("DOMContentLoaded", function() {
                     <td>${item.nombre}</td>
                     <td>${item.cargo}</td>
                     <td>${item.especialidad || 'No asignada'}</td>
-                    <td class="estado ${getClassForEstado(item.estado)}">${item.estado}</td>
                     <td><button class="delete-button" onclick="eliminarDoctor(${item.id_doctores})"><i class="ri-delete-bin-6-line"></i></button></td>
                 `;
                 tbody.appendChild(row);
@@ -128,19 +62,6 @@ document.addEventListener("DOMContentLoaded", function() {
             console.error('Error al cargar los datos:', error);
             alert('Error al cargar los datos. Verifica la consola para más detalles.');
         });
-    }
-
-    function getClassForEstado(estado) {
-        switch (estado.toLowerCase()) {
-            case 'activo':
-                return 'estado-activo';
-            case 'inactivo':
-                return 'estado-inactivo';
-            case 'con permiso':
-                return 'estado-permiso';
-            default:
-                return 'estado-desconocido'; // Asegúrate de manejar estados desconocidos
-        }
     }
 
     function loadActivities(url, tbodySelector) {
@@ -162,46 +83,6 @@ document.addEventListener("DOMContentLoaded", function() {
             console.error('Error al cargar los datos:', error);
             alert('Error al cargar los datos. Verifica la consola para más detalles.');
         });
-    }
-
-    function eliminarCitaAdmin(citaId, fila) {
-        fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/eliminar_citaAdmin.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `id_cita=${encodeURIComponent(citaId)}`
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.estado === "success") {
-                fila.style.display = "none"; // Ocultar la fila de la tabla
-            } else {
-                console.error("Error:", data.mensaje);
-                alert("Error al eliminar la cita: " + data.mensaje);
-            }
-        })
-        .catch(error => {
-            console.error("Error:", error);
-            alert("Error al procesar la solicitud");
-        });
-    }
-
-    window.sortCitas = function() {
-        citas.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
-        mostrarCitas(citas);
-    }
-
-    window.filtrarCitas = function() {
-        const searchText = document.getElementById('searchInput').value.toLowerCase();
-        const filteredCitas = citas.filter(cita => cita.propietario.toLowerCase().includes(searchText));
-        mostrarCitas(filteredCitas);
-    }
-
-    window.openReportModal = function() {
-        document.getElementById('reportModal').style.display = 'block';
-    }
-
-    window.closeReportModal = function() {
-        document.getElementById('reportModal').style.display = 'none';
     }
 
     window.openHistoryModal = function() {
@@ -247,43 +128,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    const reportForm = document.getElementById('reportForm');
-    reportForm.addEventListener('submit', function(event) {
-        event.preventDefault();
-
-        const formData = new FormData(reportForm);
-        const data = new URLSearchParams();
-        for (const pair of formData) {
-            data.append(pair[0], pair[1]);
-        }
-
-        fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/registrar_reporte.php', {
-            method: 'POST',
-            body: data
-        })
-        .then(response => response.text()) // Cambiar a text() temporalmente para depuración
-        .then(text => {
-            try {
-                const data = JSON.parse(text);
-                if (data.estado === 'success') {
-                    alert('Reporte registrado exitosamente');
-                    closeReportModal();
-                    reportForm.reset();
-                } else {
-                    alert('Error al registrar el reporte: ' + data.mensaje);
-                }
-            } catch (e) {
-                console.error('Error al analizar JSON:', e);
-                console.error('Respuesta recibida:', text);
-                alert('Error al procesar la solicitud. Verifique la consola para más detalles.');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error al procesar la solicitud');
-        });
-    });
-
+    //Modificar para obtener TODOS los reportes
     function fetchReportHistory() {
         fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/obtener_reporte.php', {
             method: 'GET',
@@ -758,13 +603,6 @@ document.addEventListener("DOMContentLoaded", function() {
             alert('Error al procesar la solicitud');
         });
     }
-
-    // Remueve el segundo event listener para confirmDelete, ya que se está registrando dos veces
-    // document.getElementById('confirmDelete').addEventListener('click', function() {
-    //     if (mascotaIdToDelete !== null) {
-    //         eliminarMascota(mascotaIdToDelete);
-    //     }
-    // });
 
     window.closeConfirmModal = function() {
         document.getElementById('confirmModal').style.display = 'none';

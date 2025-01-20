@@ -49,6 +49,7 @@
 </head>
 
 <body>
+    <script src="admin.js"></script>
     <header class="header" data-header>
         <div class="container">
             <a href="#" class="logo">GoCan</a>
@@ -76,39 +77,23 @@
             <div class="main">
                 <h3 class="separator">Opciones</h3>
                 <div class="quick-access">
-                    <div id="bt0" class="button" onclick="openPetModal()">
-                        <i class="fi fi-sr-paw-heart"></i>
-                        <h5>Registro mascotas</h5>
+                    <div id="bt0" class="button" onclick="">
+                        <i class="fi fi-sr-customer-care"></i>
+                        <h5>Información Clientes</h5>
                     </div>
-                    <div id="bt4" class="button" onclick="openEditModal()">
-                        <i class="fi fi-sr-pets"></i>
-                        <h5>Información Mascotas</h5>
-                    </div>
-                    <div id="bt1" class="button" onclick="openReportModal()">
-                        <i class="fi fi-sr-clipboard-list"></i>
-                        <h5>Registro reportes</h5>
-                    </div>
-                    <div id="bt2" class="button" onclick="openHistoryModal()">
+                    <div id="bt1" class="button" onclick="openHistoryModal()">
                         <i class="fi fi-sr-time-past"></i>
                         <h5>Historial reportes</h5>
                     </div>
-                    <div id="bt3" class="button" onclick="openModal()">
+                    <div id="bt2" class="button" onclick="openModal()">
                         <i class="fi fi-sr-stethoscope"></i>
                         <h5>Registro veterinarios</h5>
                     </div>
+                    <div id="bt3" class="button" onclick="openEditModal()">
+                        <i class="fi fi-sr-pets"></i>
+                        <h5>Información Mascotas</h5>
+                    </div>
                 </div>
-
-                <div class="separator">
-                    <h3>Citas Próximas</h3>
-                    <button id="sortButton" onclick="sortCitas()">Ordenar por Fecha</button>
-                    <input type="text" id="searchInput" oninput="filtrarCitas()" placeholder="Buscar por propietario...">
-                </div>
-
-                <table>
-                    <tbody>
-                        <!-- Las filas de citas se agregarán aquí dinámicamente -->
-                    </tbody>
-                </table>
 
                 <!-- Rating Section -->
                 <div class="separator">
@@ -157,7 +142,6 @@
                             <th>Nombre</th>
                             <th>Cargo</th>
                             <th>Especialidad</th>
-                            <th>Estado</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -188,35 +172,6 @@
             </div>
         </article>
     </main>
-
-    <div id="reportModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeReportModal()">&times;</span>
-            <h2>Registrar Reporte</h2>
-            <form id="reportForm">
-                <label for="propietario">Propietario:</label>
-                <input type="text" id="propietario" name="propietario" required>
-
-                <label for="sintomas">Síntomas:</label>
-                <textarea id="sintomas" name="sintomas" required style="resize: vertical;"></textarea>
-
-                <label for="diagnostico">Diagnóstico:</label>
-                <textarea id="diagnostico" name="diagnostico" required style="resize: vertical;"></textarea>
-
-                <label for="receta">Receta:</label>
-                <textarea id="receta" name="receta" required style="resize: vertical;"></textarea>
-
-                <label for="fecha">Fecha:</label>
-                <input type="date" id="fecha" name="fecha" required>
-
-                <label for="nombre_mascota">Nombre de la Mascota:</label>
-                <input type="text" id="nombre_mascota" name="nombre_mascota" required>
-
-                <button type="submit">Registrar</button>
-                <button type="button" onclick="closeReportModal()">Cancelar</button>
-            </form>
-        </div>
-    </div>
 
     <div id="historyModal" class="modal">
         <div class="modal-content">
@@ -260,49 +215,6 @@
                     <button type="submit">Registrar</button>
                     <button type="button" onclick="closeModal()">Cancelar</button>
                 </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal para registro de mascotas -->
-    <div id="petModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closePetModal()">&times;</span>
-            <h2>Registrar Mascota</h2>
-            <form id="petForm">
-                <label for="nombre_mascota">Nombre de la Mascota:</label>
-                <input type="text" id="nombre_mascota" name="nombre_mascota" required>
-
-                <label for="edad">Edad:</label>
-                <div id="edad-div" style="display: flex; flex-direction: column; width: 100%;">
-                    <div style="display: flex;">
-                        <input type="number" id="edad" name="edad" required style="margin-right: 10px; flex: 1; width: 100%;">
-                        <select id="period" name="period" required style="flex: 1;">
-                            <option value="">Seleccionar periodo...</option>
-                            <option value="dia">Día/días</option>
-                            <option value="mes">Mes/meses</option>
-                            <option value="ano">Año/años</option>
-                        </select>
-                    </div>
-                </div>
-
-                <label for="tipo">Tipo:</label>
-                <select id="tipo" name="tipo" required>
-                    <option value="">Seleccionar tipo de animal...</option>
-                    <option value="Perro">Perro</option>
-                    <option value="Gato">Gato</option>
-                    <option value="Pájaro">Pájaro</option>
-                    <option value="Conejo">Conejo</option>
-                    <option value="Pez">Pez</option>
-                </select>
-
-                <label for="raza">Raza:</label>
-                <input type="text" id="raza" name="raza" required>
-                <label for="nombre_propietario">Nombre Propietario:</label>
-                <input type="text" id="nombre_propietario" name="nombre_propietario" required>
-
-                <button type="submit">Registrar</button>
-                <button type="button" onclick="closePetModal()">Cancelar</button>
             </form>
         </div>
     </div>
