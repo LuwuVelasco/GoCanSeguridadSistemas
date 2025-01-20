@@ -3,7 +3,6 @@ document.addEventListener("DOMContentLoaded", function() {
     let mascotaIdToDelete = null;
     let editingMascotaData = null;
 
-    fetchCitas();
     loadActivities('http://localhost/GoCanSeguridadSistemas/src/modules/php/get_actividades.php', '#actividades-table tbody');
     loadData('http://localhost/GoCanSeguridadSistemas/src/modules/php/listadoctores.php', '#lista-veterinarios');
 
