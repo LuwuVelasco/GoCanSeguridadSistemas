@@ -18,8 +18,17 @@ if (empty($_POST['email']) || empty($_POST['password'])) {
 $email = $_POST['email'];
 $password = $_POST['password'];
 
-// Consulta para buscar al usuario por email
-$sql = "SELECT id_usuario, cargo, id_doctores, password FROM usuario WHERE email = $1";
+// Consulta para buscar al usuario por email, incluyendo el rol
+$sql = "
+    SELECT 
+        u.id_usuario, 
+        u.id_doctores, 
+        u.password, 
+        r.nombre AS rol
+    FROM usuario u
+    INNER JOIN rol r ON u.rol_id = r.id
+    WHERE u.email = $1
+";
 $result = pg_prepare($conexion, "login_query", $sql);
 $result = pg_execute($conexion, "login_query", array($email));
 
@@ -34,7 +43,7 @@ if ($row = pg_fetch_assoc($result)) {
         echo json_encode([
             "estado" => "success",
             "id_usuario" => $row['id_usuario'],
-            "cargo" => $row['cargo'],
+            "rol" => $row['rol'], // Retorna el nombre del rol
             "id_doctores" => $row['id_doctores']
         ]);
     } else {
@@ -48,3 +57,4 @@ if ($row = pg_fetch_assoc($result)) {
 
 // Cerrar la conexión
 pg_close($conexion);
+
