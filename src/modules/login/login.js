@@ -30,14 +30,19 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.estado === "success") {
                 localStorage.setItem('id_usuario', data.id_usuario);
                 localStorage.setItem('id_doctores', data.id_doctores);
-                if (data.cargo) {
+            
+                if (data.rol === "Doctor") {
                     if (data.id_doctores) {
                         window.location.href = 'http://localhost/GoCanSeguridadSistemas/src/modules/coreDoctores/indexdoctores.html';
                     } else {
                         window.location.href = 'http://localhost/GoCanSeguridadSistemas/src/modules/citas/citas.html';
                     }
-                } else {
+                } else if (data.rol === "Administrador") {
                     window.location.href = 'http://localhost/GoCanSeguridadSistemas/src/modules/coreadmin/indexadmin.html';
+                } else if (data.rol === "Cliente") {
+                    window.location.href = 'http://localhost/GoCanSeguridadSistemas/src/modules/citas/citas.html';
+                } else {
+                    alert("Rol no reconocido");
                 }
             } else {
                 intentosFallidos++;
@@ -45,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     bloquearBoton();
                 }
                 alert(data.mensaje);
-            }
+            }     
         })
         .catch(error => {
             console.error('Error:', error);

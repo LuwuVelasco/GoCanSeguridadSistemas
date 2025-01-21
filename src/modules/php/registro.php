@@ -6,10 +6,6 @@ header('Access-Control-Allow-Headers: Content-Type');
 $json = file_get_contents('php://input');
 $data = json_decode($json, true);
 
-// Removemos el print_r que causaba el error de JSON
-// echo "Datos recibidos: ";
-// print_r($data);
-
 if (isset($data['token'], $data['verified']) && $data['verified'] == true) {
     if (isset($data['email'], $data['nombre'], $data['password'])) {
         $email = $data['email'];

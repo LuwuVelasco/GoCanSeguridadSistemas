@@ -46,8 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     function validarEmail(email) {
         // Expresión regular para validar formato de email
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    
+        const emailRegex = /^[^\s@]+@gmail\.com$/;    
         if (!emailRegex.test(email)) {
             Swal.fire({
                 title: 'Correo electrónico no válido',

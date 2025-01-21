@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="sesionstyle.css">
     <script src="login.js"></script>
     <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script>
       (function(){
         emailjs.init("YOUR_USER_ID_FROM_EMAILJS");
@@ -72,7 +73,9 @@
                 <label><input type="checkbox" /> Recuérdame</label>
                 <a href="#" id="forgotPassword">¿Olvidó la contraseña?</a>
             </div>
-        
+            <div>
+                <div class="g-recaptcha" data-sitekey="6Ldn970qAAAAALLJMwj-HE02sUaq1lN0JBfDPYjz" name="g-recaptcha-response"></div>
+            </div>
             <button type="submit" id="ingresarBtn" class="btn">Ingresar</button>
         
             <div class="register-link">
