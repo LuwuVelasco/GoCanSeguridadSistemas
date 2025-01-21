@@ -29,8 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             if (data.estado === "success") {
                 localStorage.setItem('id_usuario', data.id_usuario);
-                localStorage.setItem('id_doctores', data.id_doctores);
-            
+                localStorage.setItem('id_doctores', data.id_doctores);           
                 if (data.rol === "Doctor") {
                     if (data.id_doctores) {
                         window.location.href = 'http://localhost/GoCanSeguridadSistemas/src/modules/coreDoctores/indexdoctores.html';
