@@ -9,7 +9,11 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!bloqueado) {
                 iniciarSesion();
             } else {
-                alert('Contraseña Incorrecta, demasiados intentos. Por favor, espere 30 segundos.');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Acceso bloqueado',
+                    text: 'Contraseña incorrecta, demasiados intentos. Por favor, espere 30 segundos.'
+                });
             }
         });
     } else {
@@ -41,19 +45,31 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else if (data.rol === "Cliente") {
                     window.location.href = 'http://localhost/GoCanSeguridadSistemas/src/modules/citas/citas.html';
                 } else {
-                    alert("Rol no reconocido");
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Rol no reconocido',
+                        text: 'El rol proporcionado no es válido.'
+                    });
                 }
             } else {
                 intentosFallidos++;
                 if (intentosFallidos >= 3) {
                     bloquearBoton();
                 }
-                alert(data.mensaje);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error de inicio de sesión',
+                    text: data.mensaje
+                });
             }     
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Error al procesar la solicitud');
+            Swal.fire({
+                icon: 'error',
+                title: 'Error de red',
+                text: 'Error al procesar la solicitud'
+            });
         });
     }
 
@@ -67,9 +83,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 document.addEventListener('DOMContentLoaded', function() {
-    emailjs.init("qzlkC2mOywaQA8mot"); // Asegúrate de usar tu userID correcto aquí
-
-    
+    emailjs.init("XhWMaSqNfASzICac5");
     const forgotPasswordLink = document.getElementById('forgotPassword');
     const forgotPasswordModal = document.getElementById('forgotPasswordModal');
     const resetPasswordModal = document.getElementById('resetPasswordModal');
@@ -112,13 +126,30 @@ function resetPassword() {
     const verificationCode = document.getElementById('verificationCode').value;
     const newPassword = document.getElementById('newPassword').value;
 
-    // Verificar que el código de verificación ingresado sea igual al código generado aleatoriamente
-    if (verificationCode !== sessionStorage.getItem('verificationCode')) {
-        alert('El código de verificación es incorrecto');
+    // Validar la contraseña
+    const validacion = validarPassword(newPassword);
+
+    if (!validacion.isValid) {
+        // Mostrar los requisitos que no se cumplen
+        Swal.fire({
+            icon: 'error',
+            title: 'Contraseña inválida',
+            html: `La contraseña no cumple con los siguientes requisitos:<br><ul>${validacion.requisitos.map(req => `<li>${req}</li>`).join('')}</ul>`
+        });
         return;
     }
 
-    // Si el código de verificación es correcto, procedemos a cambiar la contraseña
+    // Verificar que el código de verificación ingresado sea igual al código generado aleatoriamente
+    if (verificationCode !== sessionStorage.getItem('verificationCode')) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Código incorrecto',
+            text: 'El código de verificación es incorrecto'
+        });
+        return;
+    }
+
+    // Si el código de verificación es correcto y la contraseña es válida, procedemos a cambiar la contraseña
     fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/new_password.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -127,16 +158,64 @@ function resetPassword() {
     .then(response => response.json())
     .then(data => {
         if (data.estado === "success") {
-            alert('Contraseña cambiada exitosamente');
+            Swal.fire({
+                icon: 'success',
+                title: 'Contraseña cambiada',
+                text: 'Contraseña cambiada exitosamente'
+            });
             document.getElementById('resetPasswordModal').style.display = 'none';
         } else {
-            alert(data.mensaje); // Mostrar mensaje de error
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: data.mensaje
+            });
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Error al procesar la solicitud');
+        Swal.fire({
+            icon: 'error',
+            title: 'Error de red',
+            text: 'Error al procesar la solicitud'
+        });
     });
+}
+
+// Función validarPassword
+function validarPassword(password) {
+    // Lista de validaciones ampliada y más precisa
+    const validaciones = [
+        { regex: /.{8,}/, mensaje: "Al menos 8 caracteres" },
+        { regex: /[A-Z]/, mensaje: "Una letra mayúscula" },
+        { regex: /[a-z]/, mensaje: "Una letra minúscula" },
+        { regex: /\d/, mensaje: "Un número" },
+        { regex: /[!@#$%^&*()_+\-=\[\]{};:,.<>?]/, mensaje: "Un carácter especial" },
+        { regex: /^[^\s]+$/, mensaje: "No debe contener espacios en blanco" },
+        { regex: /^(?!.*(.)\1{2})/, mensaje: "No debe tener caracteres repetidos más de dos veces seguidas" }
+    ];
+
+    const patronesComunes = ['123', '456', '789', 'abc', 'qwerty', 'password', 'admin', 'user'];
+
+    const requisitos = [];
+    validaciones.forEach(validacion => {
+        if (!validacion.regex.test(password)) {
+            requisitos.push(validacion.mensaje);
+        }
+    });
+
+    if (patronesComunes.some(patron => password.toLowerCase().includes(patron))) {
+        requisitos.push("No debe contener secuencias comunes (123, abc, qwerty, etc.)");
+    }
+
+    if (password.length > 50) {
+        requisitos.push("No debe exceder los 50 caracteres");
+    }
+
+    return {
+        isValid: requisitos.length === 0,
+        requisitos: requisitos
+    };
 }
 
 function sendVerificationCode() {
@@ -148,20 +227,27 @@ function sendVerificationCode() {
     sessionStorage.setItem('verificationCode', verificationCode);
 
     // Aquí debes enviar el correo electrónico con el código de verificación
-    emailjs.send("service_kck40bs", "template_hi16edm", {
+    emailjs.send("service_nhpwkm8", "template_48zopgh", {
         to_email: email,
         verification_code: verificationCode
     }).then(function(response) {
         console.log('Correo electrónico enviado con éxito:', response);
+        Swal.fire({
+            icon: 'success',
+            title: 'Código enviado',
+            text: 'Revisa tu correo electrónico para el código de verificación'
+        });
         document.getElementById('forgotPasswordModal').style.display = 'none';
         document.getElementById('resetPasswordModal').style.display = 'block';
     }, function(error) {
         console.error('Error al enviar el correo electrónico:', error);
-        alert('Error al enviar el correo electrónico');
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Error al enviar el correo electrónico'
+        });
     });
 }
-
-
 
 function generateRandomCode() {
     // Función para generar un código aleatorio de 5 caracteres
