@@ -19,11 +19,11 @@ document.addEventListener('DOMContentLoaded', function() {
     function iniciarSesion() {
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
-
+        const recaptchaResponse = grecaptcha.getResponse();
         fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/login.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
+            body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&g-recaptcha-response=${encodeURIComponent(recaptchaResponse)}`
         })
         .then(response => response.json())
         .then(data => {
