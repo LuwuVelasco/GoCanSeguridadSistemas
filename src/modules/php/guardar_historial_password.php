@@ -13,15 +13,16 @@ if (isset($data['id_usuario'], $data['password'])) {
     // Conexión a la base de datos
     $conexion = pg_connect("dbname=gocan user=postgres password=admin");
     if (!$conexion) {
-        echo json_encode(["estado" => "error", "mensaje" => "Error de conexión"]);
+        echo json_encode(["estado" => "error", "mensaje" => "Error de conexión a la base de datos"]);
         exit();
     }
 
-    // Obtener el id_configuracion más reciente
-    $sql_configuracion = "SELECT id_configuracion FROM configuracion_password ORDER BY id_configuracion DESC LIMIT 1";
+    // Obtener el id_configuracion más reciente de la tabla configuracion_passwords
+    $sql_configuracion = "SELECT id_configuracion FROM configuracion_passwords ORDER BY id_configuracion DESC LIMIT 1";
     $resultado_configuracion = pg_query($conexion, $sql_configuracion);
     if (!$resultado_configuracion) {
-        echo json_encode(["estado" => "error", "mensaje" => "Error al obtener configuración de contraseña"]);
+        $error = pg_last_error($conexion);
+        echo json_encode(["estado" => "error", "mensaje" => "Error al obtener configuración de contraseña: " . $error]);
         exit();
     }
 
@@ -37,14 +38,14 @@ if (isset($data['id_usuario'], $data['password'])) {
     $sql_historial = "INSERT INTO historial_passwords (id_usuario, password, fecha_creacion, id_configuracion, estado) VALUES ($1, $2, NOW(), $3, $4)";
     $stmt = pg_prepare($conexion, "insert_historial", $sql_historial);
     if ($stmt === false) {
-        echo json_encode(["estado" => "error", "mensaje" => "Error al preparar la consulta"]);
+        echo json_encode(["estado" => "error", "mensaje" => "Error al preparar la consulta para guardar historial"]);
         exit();
     }
 
     $resultado_historial = pg_execute($conexion, "insert_historial", array($id_usuario, $password, $id_configuracion, true));
     if (!$resultado_historial) {
         $error = pg_last_error($conexion);
-        echo json_encode(["estado" => "error", "mensaje" => "Error al insertar historial de contraseña: " . $error]);
+        echo json_encode(["estado" => "error", "mensaje" => "Error al insertar en historial de contraseñas: " . $error]);
         exit();
     }
 
@@ -54,3 +55,4 @@ if (isset($data['id_usuario'], $data['password'])) {
     echo json_encode(["estado" => "error", "mensaje" => "Faltan campos requeridos"]);
     exit();
 }
+?>
