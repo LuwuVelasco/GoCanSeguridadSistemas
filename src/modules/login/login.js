@@ -52,6 +52,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                 }
             } else {
+                grecaptcha.reset();
                 intentosFallidos++;
                 if (intentosFallidos >= 3) {
                     bloquearBoton();
