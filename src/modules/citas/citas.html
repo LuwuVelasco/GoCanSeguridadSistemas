@@ -142,16 +142,23 @@
       <span class="close">&times;</span>
       <form id="reserveForm">
         <input type="text" id="propietario" name="propietario" placeholder="Nombre del Propietario" required>
+        
+        <!-- Select de especialidad -->
         <select id="especialidad" name="especialidad" required>
             <option value="">Seleccionar servicio...</option>
         </select>
-        <select id="doctor" name="doctor" required>
-          <option value="">Seleccionar doctor...</option>
-        </select>
+        
+        <!-- Contenedor del select de doctores -->
+        <div id="doctorContainer" style="display: none;">
+            <select id="doctor" name="doctor" required>
+                <option value="">Seleccionar doctor...</option>
+            </select>
+        </div>
+        
         <input type="date" id="fecha" name="fecha" placeholder="Fecha" required>
         <input type="time" id="hora" name="hora" placeholder="Hora" required>
         <button id="reservar" type="submit">Reservar</button>
-    </form>
+    </form>    
   </div>
 </div>
 
@@ -1504,7 +1511,7 @@
   <link rel="stylesheet" href="../core/style.css?v=1.2"> <!-- Cambia la versión según sea necesario -->
   <script src="../core/script.js?v=1.2" defer></script> <!-- Cambia la versión según sea necesario -->
   <script src="../core/catalogo.js" defer></script>
-  <script src="citas.js" defer></script>
+  <script src="citas.js" type="module" defer></script>
   <script src="../core/favoritos.js" defer></script>
 
 
