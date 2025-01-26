@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="styleDoc.css">
     <link rel="stylesheet" href="../core/style.css">
     <link rel="stylesheet" href="modalStyle.css">
+    <link rel="stylesheet" href="../../assets/css/dropdown.css">
+    <script src="../core/toggleDropdown.js"></script>
     <title>GoCan / Doctor</title>
     <style>
         textarea {
@@ -48,17 +50,14 @@
             <a href="#" class="logo">GoCan</a>
 
             <div class="profile" onclick="toggleDropdown()">
-                <img src="../../assets/Images/user-md.png">
-                <div class="account">
-                    <h5>Bienvenido</h5>
-                </div>
+                <img src="../../assets/Images/user-md.png" alt="Perfil">
                 <div class="profile-dropdown" id="profileDropdown">
                     <ul>
-                        <li><a href="/src/modules/login/sesionindex.html">Cambiar de usuario</a></li>
-                        <li><a href="/src/modules/login/sesionindex.html">Cerrar sesión</a></li>
+                        <li><a href="http://localhost/GoCanSeguridadSistemas/src/modules/login/sesionindex.html">Cambiar de usuario</a></li>
+                        <li><a href="http://localhost/GoCanSeguridadSistemas/src/modules/core/index.html">Cerrar sesión</a></li>
                     </ul>
                 </div>
-            </div>
+            </div>            
         </div>
     </header>
 
