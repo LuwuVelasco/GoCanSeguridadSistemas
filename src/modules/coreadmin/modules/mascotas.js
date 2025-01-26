@@ -15,16 +15,8 @@ export function loadMascotasTable(url, tbodySelector) {
                     const tdNombre = document.createElement('td');
                     tdNombre.textContent = mascota.nombre_mascota;
 
-                    const tdEdad = document.createElement('td');
-                    let edadTexto = '';
-                    if (mascota.edad_day && mascota.edad_day != 0) {
-                        edadTexto = `${mascota.edad_day} día(s)`;
-                    } else if (mascota.edad_month && mascota.edad_month != 0) {
-                        edadTexto = `${mascota.edad_month} mes(es)`;
-                    } else if (mascota.edad_year && mascota.edad_year != 0) {
-                        edadTexto = `${mascota.edad_year} año(s)`;
-                    }
-                    tdEdad.textContent = edadTexto;
+                    const tdFechaNacimiento = document.createElement('td');
+                    tdFechaNacimiento.textContent = mascota.fecha_nacimiento || "Sin fecha registrada";
 
                     const tdTipo = document.createElement('td');
                     tdTipo.textContent = mascota.tipo;
@@ -38,7 +30,7 @@ export function loadMascotasTable(url, tbodySelector) {
                     // Agregar las celdas a la fila
                     tr.appendChild(tdCodigo);
                     tr.appendChild(tdNombre);
-                    tr.appendChild(tdEdad);
+                    tr.appendChild(tdFechaNacimiento);
                     tr.appendChild(tdTipo);
                     tr.appendChild(tdRaza);
                     tr.appendChild(tdPropietario);
