@@ -31,6 +31,7 @@ export function loadMascotasTable(url, tbodySelector) {
                     const tdEditar = document.createElement('td');
                     const btnEditar = document.createElement('button');
                     btnEditar.textContent = 'Editar';
+                    btnEditar.type = 'editar';
                     btnEditar.addEventListener('click', () => {
                         openEditForm(mascota.id_mascota);
                     });
@@ -40,6 +41,7 @@ export function loadMascotasTable(url, tbodySelector) {
                     const tdEliminar = document.createElement('td');
                     const btnEliminar = document.createElement('button');
                     btnEliminar.textContent = 'Eliminar';
+                    btnEliminar.type = 'eliminar';
                     btnEliminar.addEventListener('click', () => {
                         if (confirm(`¿Seguro que deseas eliminar a ${mascota.nombre_mascota}?`)) {
                             deleteMascota(mascota.id_mascota, tr);

@@ -112,7 +112,7 @@
 
     <div id="reportModal" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="closeModal('reportModal')">&times;</span>
+            <span class="close" onclick="clearForm('reportForm'); closeModal('reportModal')">&times;</span>
             <h2>Registrar Reporte</h2>
             <form id="reportForm">
                 <input type="hidden" id="id_reporte" name="id_reporte"> <!-- Campo oculto para el ID del reporte -->
@@ -134,8 +134,8 @@
                 <label for="nombre_mascota">Nombre de la Mascota:</label>
                 <input type="text" id="nombre_mascota" name="nombre_mascota" required>
 
+                <button type="button" onclick="closeModal('reportModal'); clearForm('reportForm')">Cancelar</button>
                 <button type="submit">Registrar</button>
-                <button type="button" onclick="closeModal('reportModal')">Cancelar</button>
             </form>            
         </div>
     </div>
@@ -143,7 +143,7 @@
     <!-- Modal para registro de mascotas -->
     <div id="petModal" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="closeModal('petModal')">&times;</span>
+            <span class="close" onclick="clearForm('petForm'); closeModal('petModal')">&times;</span>
             <h2>Registrar Mascota</h2>
             <form id="petForm">
                 <label for="nombre_mascota">Nombre de la Mascota:</label>
@@ -168,8 +168,8 @@
                 <label for="nombre_propietario">Nombre Propietario:</label>
                 <input type="text" id="nombre_propietario" name="nombre_propietario" required>
     
+                <button type="button" onclick="closeModal('petModal'); clearForm('petForm')">Cancelar</button>
                 <button type="submit">Registrar</button>
-                <button type="button" onclick="closeModal('petModal')">Cancelar</button>
             </form>
         </div>
     </div>     
@@ -216,8 +216,8 @@
     <!-- Modal para editar mascota -->
     <div id="editModal" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="closeModal('editModal')">&times;</span>
-            <h2>Editar Mascota</h2>
+            <span class="close" onclick="clearForm('editForm'); closeModal('editModal')">&times;</span>
+            <h2>Información Mascota</h2>
             <form id="editForm">
                 <input type="hidden" id="edit_id_mascota" name="id_mascota">
     
@@ -242,9 +242,9 @@
     
                 <label for="edit_nombre_propietario">Nombre del Propietario:</label>
                 <input type="text" id="edit_nombre_propietario" name="nombre_propietario" required>
-    
+                
+                <button type="button" onclick="closeModal('editModal'); clearForm('editForm')">Cancelar</button>
                 <button type="submit">Guardar Cambios</button>
-                <button type="button" onclick="closeModal('editModal')">Cancelar</button>
             </form>
         </div>
     </div>    
@@ -268,14 +268,15 @@
             <h2>Confirmar Edición</h2>
             <p>¿Estás seguro de que quieres editar esta mascota?</p>
             <div class="button-container">
-                <button type="editar" id="confirmEdit">Editar</button>
                 <button type="button" onclick="closeModal('confirmEditModal')">Cancelar</button>
+                <button type="editar" id="confirmEdit">Editar</button>
             </div>
         </div>
     </div>
 
     <script src="../coreDoctores/doctores.js" type="module"></script>
     <script src="./modules/reportesSubmit.js"></script>
+    <script src="./modules/clearForm.js"></script>
 </body>
 
 </html>
