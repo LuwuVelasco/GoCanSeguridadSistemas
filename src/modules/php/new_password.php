@@ -8,6 +8,9 @@ if (!$conexion) {
     exit;
 }
 
+// Forzar la zona horaria a La Paz, Bolivia.
+pg_query($conexion, "SET TIME ZONE 'America/La_Paz'");
+
 $email = $_POST['email'];
 $newPassword = $_POST['new_password'];
 
@@ -88,7 +91,7 @@ if (!$result_update_historial) {
     exit;
 }
 
-// Guardar la nueva contraseña en el historial
+// Guardar la nueva contraseña en el historial (fecha_creacion con NOW(), pero en zona horaria La Paz)
 $sql_guardar_historial = "
     INSERT INTO historial_passwords (id_usuario, password, fecha_creacion, id_configuracion, estado) 
     VALUES ($1, $2, NOW(), (SELECT id_configuracion FROM configuracion_passwords ORDER BY id_configuracion DESC LIMIT 1), true)
@@ -99,6 +102,32 @@ $result_guardar_historial = pg_execute($conexion, "guardar_historial", array($id
 if (!$result_guardar_historial) {
     echo json_encode(["estado" => "error", "mensaje" => "Error al guardar la nueva contraseña en el historial"]);
     exit;
+}
+
+// Comprobar si el historial supera el numero_historico y si es así, borrar la contraseña más antigua
+$sql_count_history = "SELECT COUNT(*) AS total FROM historial_passwords WHERE id_usuario = $1";
+$result_count_history = pg_prepare($conexion, "count_history", $sql_count_history);
+$result_count_history = pg_execute($conexion, "count_history", array($id_usuario));
+$count_data = pg_fetch_assoc($result_count_history);
+
+if ($count_data['total'] > $numero_historico) {
+    // Borramos la contraseña más antigua de este usuario
+    $sql_delete_oldest = "
+        DELETE FROM historial_passwords
+        WHERE id_password IN (
+            SELECT id_password
+            FROM historial_passwords
+            WHERE id_usuario = $1
+            ORDER BY fecha_creacion ASC
+            LIMIT 1
+        )
+    ";
+    $result_delete_oldest = pg_prepare($conexion, "delete_oldest", $sql_delete_oldest);
+    $result_delete_oldest = pg_execute($conexion, "delete_oldest", array($id_usuario));
+    if (!$result_delete_oldest) {
+        echo json_encode(["estado" => "error", "mensaje" => "Error al eliminar la contraseña más antigua"]);
+        exit;
+    }
 }
 
 // Actualizar la contraseña del usuario
