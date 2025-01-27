@@ -17,11 +17,12 @@ if (empty($_POST['email']) || empty($_POST['password'])) {
 
 $email = $_POST['email'];
 $password = $_POST['password'];
-//Prueba capcha
-$recaptchaResponse = $_POST['g-recaptcha-response'];
+$recaptchaResponse = $_POST['g-recaptcha-response'] ?? null;
 $secretKey = '6Ldn970qAAAAANB2ogY4Ml1jVCvjt203gjG0jamr';
 
+// Verificar el reCAPTCHA
 if (empty($recaptchaResponse)) {
+    registrarLog(null, 'captcha_fallido', 'Captcha no enviado');
     echo json_encode(['estado' => 'error', 'mensaje' => 'Captcha no enviado']);
     exit;
 }
@@ -31,11 +32,12 @@ $response = file_get_contents($verifyUrl . '?secret=' . $secretKey . '&response=
 $responseData = json_decode($response);
 
 if (!$responseData->success) {
-    error_log('Captcha error codes: ' . implode(', ', $responseData->{'error-codes'} ?? []));
+    registrarLog(null, 'captcha_fallido', 'Captcha inválido');
     echo json_encode(['estado' => 'error', 'mensaje' => 'Captcha no válido']);
     exit;
 }
-// Consulta para buscar al usuario por email, incluyendo el rol
+
+// Consulta para buscar al usuario por email
 $sql = "
     SELECT 
         u.id_usuario, 
@@ -57,6 +59,9 @@ if ($row = pg_fetch_assoc($result)) {
             $_SESSION['id_doctores'] = $row['id_doctores'];
         }
 
+        // Registrar log de login exitoso
+        registrarLog($row['id_usuario'], 'login_exitoso', 'Inicio de sesión exitoso');
+
         echo json_encode([
             "estado" => "success",
             "id_usuario" => $row['id_usuario'],
@@ -65,13 +70,36 @@ if ($row = pg_fetch_assoc($result)) {
         ]);
     } else {
         // Contraseña incorrecta
+        registrarLog(null, 'login_fallido', 'Contraseña incorrecta para el correo ' . $email);
         echo json_encode(["estado" => "error", "mensaje" => "El email o la contraseña son incorrectos"]);
     }
 } else {
-    // No se encontró un usuario con ese email
+    // Usuario no encontrado
+    registrarLog(null, 'login_fallido', 'Intento de inicio de sesión con un correo inexistente: ' . $email);
     echo json_encode(["estado" => "error", "mensaje" => "El email o la contraseña son incorrectos"]);
 }
 
 // Cerrar la conexión
 pg_close($conexion);
 
+//Función para registrar log de usuario
+function registrarLog($idUsuario, $accion, $descripcion) {
+    $url = 'http://localhost/GoCanSeguridadSistemas/src/modules/php/registrar_log_usuario.php';
+
+    $data = http_build_query([
+        'id_usuario' => $idUsuario,
+        'accion' => $accion,
+        'descripcion' => $descripcion
+    ]);
+
+    $options = [
+        'http' => [
+            'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+            'method'  => 'POST',
+            'content' => $data,
+        ],
+    ];
+    $context = stream_context_create($options);
+    file_get_contents($url, false, $context);
+}
+?>

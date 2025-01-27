@@ -115,8 +115,31 @@ document.addEventListener('DOMContentLoaded', function() {
                     grecaptcha.reset();
                     intentosFallidos++;
                     if (intentosFallidos >= 3) {
+                        // Preparar los datos que se enviarán
+                        const logData = {
+                            accion: 'bloqueo_usuario',
+                            descripcion: 'Bloqueo por demasiados intentos fallidos'
+                        };
+                    
+                        // Mostrar los datos en la consola antes de enviarlos
+                        console.log("Datos enviados para registrar log:", logData);
+                    
+                        // Registrar log de bloqueo
+                        fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/registrar_log_usuario.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                            body: new URLSearchParams(logData)
+                        })
+                        .then(r => r.json())
+                        .then(response => {
+                            console.log("Respuesta del servidor al registrar log:", response);
+                        })
+                        .catch(e => {
+                            console.error("Error al registrar log:", e);
+                        });
+                    
                         bloquearBoton();
-                    }
+                    }                        
                     Swal.fire({
                         icon: 'error',
                         title: 'Error de inicio de sesión',
