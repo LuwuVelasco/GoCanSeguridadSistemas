@@ -1,4 +1,4 @@
-<?php
+<?php 
 session_start(); // Iniciar la sesión
 header('Content-Type: application/json');
 
@@ -43,9 +43,9 @@ $sql = "
         u.id_usuario, 
         u.id_doctores, 
         u.password, 
-        r.nombre AS rol
+        r.nombre_rol AS rol
     FROM usuario u
-    INNER JOIN rol r ON u.rol_id = r.id
+    INNER JOIN roles_y_permisos r ON u.rol_id = r.id_rol
     WHERE u.email = $1
 ";
 $result = pg_prepare($conexion, "login_query", $sql);
