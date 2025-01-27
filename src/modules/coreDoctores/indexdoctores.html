@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="../core/style.css">
     <link rel="stylesheet" href="modalStyle.css">
     <link rel="stylesheet" href="../../assets/css/dropdown.css">
-    <script src="../core/toggleDropdown.js"></script>
+    <script src="../components/toggleDropdown.js"></script>
     <title>GoCan / Doctor</title>
     <style>
         textarea {
@@ -111,7 +111,7 @@
 
     <div id="reportModal" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="clearForm('reportForm'); closeModal('reportModal')">&times;</span>
+            <span class="close" onclick="closeModal('reportModal'); clearForm('reportForm')">&times;</span>
             <h2>Registrar Reporte</h2>
             <form id="reportForm">
                 <input type="hidden" id="id_reporte" name="id_reporte"> <!-- Campo oculto para el ID del reporte -->
@@ -274,8 +274,8 @@
     </div>
 
     <script src="../coreDoctores/doctores.js" type="module"></script>
-    <script src="./modules/reportesSubmit.js"></script>
-    <script src="./modules/clearForm.js"></script>
+    <script src="../components/reportesSubmit.js"></script>
+    <script src="../components/clearForm.js"></script>
 </body>
 
 </html>

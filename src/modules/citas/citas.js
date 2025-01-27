@@ -1,5 +1,5 @@
-import { loadEspecialidades, loadDoctores } from './modules/especialidades.js';
-import { registrarCita } from './modules/citasRegistro.js';
+import { loadEspecialidades, loadDoctores } from '../components/especialidades.js';
+import { registrarCita } from '..components/citasRegistro.js';
 
 document.addEventListener("DOMContentLoaded", () => {
     const especialidadSelect = document.querySelector("#especialidad");

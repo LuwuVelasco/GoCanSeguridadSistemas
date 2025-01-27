@@ -9,18 +9,17 @@ try {
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     $nombre = $_POST['nombre'] ?? 'No proporcionado';
-    $cargo = $_POST['cargo'] ?? 'No proporcionado';
     $especialidad = $_POST['especialidad'] ?? 'No proporcionado';
 
-    $stmt = $conn->prepare("INSERT INTO doctores (nombre, cargo, especialidad) VALUES (:nombre, :cargo, :especialidad)");
+    $stmt = $conn->prepare("INSERT INTO doctores (nombre, especialidad) VALUES (:nombre, :especialidad)");
     $stmt->bindParam(':nombre', $nombre);
-    $stmt->bindParam(':cargo', $cargo);
     $stmt->bindParam(':especialidad', $especialidad);
 
     $stmt->execute();
-    echo "Veterinario registrado con éxito.";
+    echo json_encode(["estado" => "success", "mensaje" => "Veterinario registrado con éxito."]);
 } catch (PDOException $e) {
-    echo "Error de conexión o consulta: " . $e->getMessage();
+    echo json_encode(["estado" => "error", "mensaje" => "Error al registrar el veterinario: " . $e->getMessage()]);
 }
 
 $conn = null;
+?>

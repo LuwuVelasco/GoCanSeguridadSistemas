@@ -1,7 +1,7 @@
-import { loadMascotasTable } from "./modules/mascotasEdit.js";
-import { loadDoctorReports } from "../coreadmin/modules/reportes.js";
-import { loadDoctorCitas, deleteDoctorCita } from "./modules/citas.js";
-import { openModal, closeModal, setupModalCloseOnOutsideClick } from "../coreadmin/modules/modals.js";
+import { loadMascotasTable } from "../components/mascotasEdit.js";
+import { loadDoctorReports } from "../components/reportes.js";
+import { loadDoctorCitas, deleteDoctorCita } from "../components/citas.js";
+import { openModal, closeModal, setupModalCloseOnOutsideClick } from "../components/modals.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     const id_doctor = localStorage.getItem("id_doctores");

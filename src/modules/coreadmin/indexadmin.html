@@ -9,7 +9,8 @@
     <link rel="stylesheet" href="../core/style.css">
     <link rel="stylesheet" href="styleAdmi.css">
     <link rel="stylesheet" href="modalStyle2.css">
-
+    <link rel="stylesheet" href="../../assets/css/dropdown.css">
+    <script src="../components/toggleDropdown.js"></script>
     <title>GoCan / Administrador</title>
     <style>
         textarea {
@@ -54,14 +55,11 @@
         <div class="container">
             <a href="#" class="logo">GoCan</a>
             <div class="profile" onclick="toggleDropdown()">
-                <img src="../../assets/Images/user-md.png">
-                <div class="account">
-                    <h5>Bienvenido</h5>
-                </div>
+                <img src="../../assets/Images/user-md.png" alt="Perfil">
                 <div class="profile-dropdown" id="profileDropdown">
                     <ul>
-                        <li><a href="/src/modules/login/sesionindex.html">Cambiar de usuario</a></li>
-                        <li><a href="/src/modules/login/sesionindex.html">Cerrar sesión</a></li>
+                        <li><a href="http://localhost/GoCanSeguridadSistemas/src/modules/login/sesionindex.html">Cambiar de usuario</a></li>
+                        <li><a href="http://localhost/GoCanSeguridadSistemas/src/modules/core/index.html">Cerrar sesión</a></li>
                     </ul>
                 </div>
             </div>
@@ -85,7 +83,7 @@
                         <i class="fi fi-sr-time-past"></i>
                         <h5>Historial reportes</h5>
                     </div>
-                    <div id="bt2" class="button" onclick="openModal('reserveModal')">
+                    <div id="bt2" class="button" onclick="openModal('doctorModal')">
                         <i class="fi fi-sr-stethoscope"></i>
                         <h5>Registro veterinarios</h5>
                     </div>                    
@@ -140,11 +138,10 @@
                         <tr>
                             <th>Id Doctor</th>
                             <th>Nombre</th>
-                            <th>Cargo</th>
                             <th>Especialidad</th>
                             <th>Acciones</th>
                         </tr>
-                    </thead>
+                    </thead>                    
                     <tbody id="lista-veterinarios">
                         <!-- Las filas se añadirán aquí mediante JavaScript -->
                     </tbody>
@@ -186,62 +183,48 @@
     </div>    
 
     <!-- Sección del modal para registrar veterinarios -->
-    <div id="reserveModal" class="modal" style="display:none;">
+    <div id="doctorModal" class="modal" style="display:none;">
         <div class="modal-content">
             <div class="modal-header">Registrar Veterinario</div>
-            <span class="close" onclick="closeModal('reserveModal')">&times;</span>
-            <form id="registroV">
-                <input type="text" id="nombre" name="nombre" placeholder="Nombre del Veterinario" required>
-                <input type="text" id="cargo" name="cargo" placeholder="Cargo del Veterinario" required>
-                <select id="estado" name="estado" required>
-                    <option value="">Seleccionar el estado del doctor/a:</option>
-                    <option value="activo">Activo</option>
-                    <option value="con_permiso">Con Permiso</option>
-                    <option value="inactivo">Inactivo</option>
-                </select>
+            <span class="close" onclick="closeModal('doctorModal')">&times;</span>
+            <form id="registroDoctor">
+                <input type="text" id="nombre" name="nombre" placeholder="Nombre Completo" required>
+                <input type="text" id="correo" name="correo" placeholder="Correo" required>
                 <div class="especialidad-container">
                     <label for="especialidad">Especialidad:</label>
                     <select id="especialidad" name="especialidad" required>
-                        <option value="1">Traumatología</option>
-                        <option value="2">Medicina General</option>
-                        <option value="3">Radiografías</option>
-                        <option value="4">Odontologia</option>
-                        <option value="5">Etóloga</option>
-                        <option value="6">Nutricionista</option>
-                        <option value="7">Dermatología</option>
-                        <option value="8">Oftalmólogo</option>
                     </select>
                 </div>
-                <div class="button-group">
-                    <button type="submit">Registrar</button>
-                    <button type="button" onclick="closeModal('reserveModal')">Cancelar</button>
-                </div>
             </form>
+            <div class="button-group">
+                <button type="submit">Registrar</button>
+                <button type="button" onclick="closeModal('doctorModal')">Cancelar</button>
+            </div>
         </div>
-    </div>
+    </div>    
 
     <!-- Modal para editar mascotas -->
     <div id="tablaModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('tablaModal')">&times;</span>
             <h3 class="separator">Lista de Mascotas</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Código</th>
-                        <th>Nombre</th>
-                        <th>Fecha de Nacimiento</th>
-                        <th>Tipo</th>
-                        <th>Raza</th>
-                        <th>Propietario</th>
-                    </tr>
-                </thead>
-                <tbody id="lista-mascotas">
-                    <!-- Las filas se añadirán aquí mediante JavaScript -->
-                </tbody>
-            </table>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Nombre</th>
+                            <th>Fecha de Nacimiento</th>
+                            <th>Tipo</th>
+                            <th>Raza</th>
+                            <th>Propietario</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lista-mascotas">
+                        <!-- Las filas se añadirán aquí mediante JavaScript -->
+                    </tbody>
+                </table>
+                <button type="button" onclick="closeModal('tablaModal')">Cancelar</button>
             </div>
-            <button type="button" onclick="closeModal('tablaModal')">Cancelar</button>
         </div>
     </div>
 
