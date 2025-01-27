@@ -84,20 +84,12 @@
                 <div class="quick-access">
                     <div id="bt0" class="button" onclick="">
                         <i class="fi fi-sr-customer-care"></i>
-                        <h5>Información Clientes</h5>
+                        <h5>Configuración Seguridad</h5>
                     </div>
-                    <div id="bt1" class="button" onclick="openModal('historyModal')">
-                        <i class="fi fi-sr-time-past"></i>
-                        <h5>Historial reportes</h5>
-                    </div>
-                    <div id="bt2" class="button" onclick="openModal('doctorModal')">
+                    <div id="bt1" class="button" onclick="openModal('doctorModal')">
                         <i class="fi fi-sr-stethoscope"></i>
                         <h5>Registro funcionarios</h5>
                     </div>                    
-                    <div id="bt3" class="button" onclick="openModal('tablaModal')">
-                        <i class="fi fi-sr-pets"></i>
-                        <h5>Información Mascotas</h5>
-                    </div>
                 </div>
 
                 <h3 class="separator">Lista de veterinarios</h3>
@@ -115,18 +107,23 @@
                     </tbody>
                 </table>
 
-                <h3 class="separator">Registro de Actividades en la Página</h3>
-                <table id="actividades-table">
-                    <thead>
-                        <tr>
-                            <th>Hora de Ingreso</th>
-                            <th>Nombre del Usuario</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Las filas se añadirán aquí mediante JavaScript -->
-                    </tbody>
-                </table>
+                <h3 class="separator">Registro de Usuarios en la Página</h3>
+                <div style="max-height: 280px; overflow-y: auto; border: 1px solid #ddd; border-radius: 5px;">
+                    <table id="log-usuarios-table" style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>Fecha y Hora</th>
+                                <th>Nombre del Usuario</th>
+                                <th>Acción</th>
+                                <th>Descripción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Las filas se añadirán aquí mediante JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+
             </div>
 
             <div class="right-section">
@@ -136,19 +133,7 @@
                 </div>
             </div>
         </article>
-    </main>
-
-    <!-- Los reportes se mostrarán aquí -->
-    <div id="historyModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('historyModal')">&times;</span>
-            <h2>Historial de Reportes</h2>
-            <input type="text" id="historySearchInput" class="search-input" placeholder="Buscar por propietario o mascota...">
-            <div id="reportHistory">
-                <!-- Aquí se añadirán dinámicamente los reportes -->
-            </div>
-        </div>
-    </div>    
+    </main>  
 
     <!-- Sección del modal para registrar veterinarios -->
     <div id="doctorModal" class="modal" style="display:none;">
@@ -218,31 +203,6 @@
             <div class="button-group" style="display: flex; justify-content: space-around; gap: 10px;">
                 <button id="cancelConfirmation" type="button" style="background-color: #f44336; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer;">Cancelar</button>
                 <button id="confirmAction" type="button" style="background-color: #4caf50; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer;">Aceptar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal para editar mascotas -->
-    <div id="tablaModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('tablaModal')">&times;</span>
-            <h3 class="separator">Lista de Mascotas</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Código</th>
-                            <th>Nombre</th>
-                            <th>Fecha de Nacimiento</th>
-                            <th>Tipo</th>
-                            <th>Raza</th>
-                            <th>Propietario</th>
-                        </tr>
-                    </thead>
-                    <tbody id="lista-mascotas">
-                        <!-- Las filas se añadirán aquí mediante JavaScript -->
-                    </tbody>
-                </table>
-                <button type="button" onclick="closeModal('tablaModal')">Cancelar</button>
             </div>
         </div>
     </div>

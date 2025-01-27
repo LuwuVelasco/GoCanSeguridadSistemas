@@ -4,7 +4,7 @@ include 'conexion.php';
 
 try {
     // Consulta para obtener todos los roles
-    $query = "SELECT id, nombre FROM rol";
+    $query = "SELECT id_rol AS id, nombre_rol AS nombre FROM roles_y_permisos";
     $result = pg_query($conexion, $query);
 
     if (!$result) {
