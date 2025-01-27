@@ -66,6 +66,7 @@
                 <div class="profile-dropdown" id="profileDropdown">
                     <ul>
                         <li><a href="http://localhost/GoCanSeguridadSistemas/src/modules/login/sesionindex.html">Cambiar de usuario</a></li>
+                        <li><a href="#" onclick="openModal('passwordConfigModal')">Configuración de contraseñas</a></li>
                         <li><a href="http://localhost/GoCanSeguridadSistemas/src/modules/core/index.html">Cerrar sesión</a></li>
                     </ul>
                 </div>
@@ -206,6 +207,32 @@
             </div>
         </div>
     </div>
+<!-- Modal para configuración de contraseñas -->
+<div id="passwordConfigModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('passwordConfigModal')">&times;</span>
+        <h3>Configuración de Contraseñas</h3>
+        <form id="passwordConfigForm">
+            <!-- Campo para tiempo de vida útil -->
+            <div class="form-row" style="width: 100%; margin-bottom: 15px;">
+                <label for="tiempoVidaUtil">Tiempo de vida útil (días):</label>
+                <input type="number" id="tiempoVidaUtil" name="tiempoVidaUtil" placeholder="Ejemplo: 90" required>
+            </div>
+
+            <!-- Campo para número histórico -->
+            <div class="form-row" style="width: 100%; margin-bottom: 15px;">
+                <label for="numeroHistorico">Número de contraseñas históricas:</label>
+                <input type="number" id="numeroHistorico" name="numeroHistorico" placeholder="Ejemplo: 2" required>
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="form-row button-group" style="width: 100%; display: flex; gap: 10px;">
+                <button type="button" onclick="closeModal('passwordConfigModal')">Cancelar</button>
+                <button type="submit">Guardar Configuración</button>
+            </div>
+        </form>
+    </div>
+</div>
     <script type="module" src="admin.js"></script>
 </body>
 </html>

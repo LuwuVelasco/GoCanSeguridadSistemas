@@ -37,99 +37,109 @@ document.addEventListener('DOMContentLoaded', function() {
                     localStorage.setItem('id_doctores', data.id_doctores);
     
                     // Verificar si la contraseña ha expirado
-                    fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/verificar_password.php', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ id_usuario: data.id_usuario })
-                    })
-                        .then(resp => resp.json())
-                        .then(passwordCheck => {
-                            if (passwordCheck.estado === "expired") {
-                                // Mostrar modal para cambiar contraseña
-                                const expiredModal = new bootstrap.Modal(document.getElementById('passwordExpiredModal'));
-                                expiredModal.show();
-    
-                                document.getElementById('updateExpiredPasswordBtn').addEventListener('click', () => {
-                                    const newPassword = document.getElementById('expiredNewPassword').value;
-    
-                                    // Validar la nueva contraseña
-                                    const validacion = validarPassword(newPassword);
-                                    if (!validacion.isValid) {
-                                        Swal.fire({
-                                            icon: 'error',
-                                            title: 'Contraseña inválida',
-                                            html: `La contraseña no cumple con los siguientes requisitos:<br><ul>${validacion.requisitos.map(req => `<li>${req}</li>`).join('')}</ul>`
-                                        });
-                                        return;
-                                    }
-    
-                                    // Actualizar la contraseña
-                                    fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/new_password.php', {
+                fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/verificar_password.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id_usuario: data.id_usuario })
+                })
+                .then(resp => resp.json())
+                .then(passwordCheck => {
+                    if (passwordCheck.estado === "expired" || passwordCheck.estado === "change_required") {
+                        
+                        // Mostrar modal para cambiar contraseña
+                        const expiredModal = new bootstrap.Modal(document.getElementById('passwordExpiredModal'));
+                        expiredModal.show();
+
+                        document.getElementById('updateExpiredPasswordBtn').addEventListener('click', () => {
+                            const newPassword = document.getElementById('expiredNewPassword').value;
+
+                            // Validar la nueva contraseña
+                            const validacion = validarPassword(newPassword);
+                            if (!validacion.isValid) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Contraseña inválida',
+                                    html: `La contraseña no cumple con los siguientes requisitos:<br><ul>${validacion.requisitos.map(req => `<li>${req}</li>`).join('')}</ul>`
+                                });
+                                return;
+                            }
+
+                            // Actualizar la contraseña
+                            fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/new_password.php', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                                body: `email=${encodeURIComponent(email)}&new_password=${encodeURIComponent(newPassword)}`
+                            })
+                            .then(updateResp => updateResp.json())
+                            .then(updateData => {
+                                if (updateData.estado === "success") {
+                                    // Registrar el log de actualización de contraseña
+                                    const logData = {
+                                        id_usuario: data.id_usuario, // ID del usuario ya disponible
+                                        accion: 'actualizacion_contrasena',
+                                        descripcion: `El usuario con ID ${data.id_usuario} ha actualizado su contraseña.`
+                                    };
+                                    // Enviar el log al servidor
+                                    fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/registrar_log_usuario.php', {
                                         method: 'POST',
                                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                                        body: `email=${encodeURIComponent(email)}&new_password=${encodeURIComponent(newPassword)}`
+                                        body: new URLSearchParams(logData).toString()
                                     })
-                                        .then(updateResp => updateResp.json())
-                                        .then(updateData => {
-                                            if (updateData.estado === "success") {
-                                                // Registrar el log de actualización de contraseña
-                                                const logData = {
-                                                    id_usuario: data.id_usuario, // ID del usuario ya disponible
-                                                    accion: 'actualizacion_contrasena',
-                                                    descripcion: `El usuario con ID ${data.id_usuario} ha actualizado su contraseña.`
-                                                };
-                                                // Enviar el log al servidor
-                                                fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/registrar_log_usuario.php', {
-                                                    method: 'POST',
-                                                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                                                    body: new URLSearchParams(logData)
-                                                })
-                                                    .then(logResp => logResp.json())
-                                                    .then(logResponse => {
-                                                        console.log("Log de actualización de contraseña registrado:", logResponse);
-                                                    })
-                                                    .catch(logError => {
-                                                        console.error("Error al registrar el log de actualización de contraseña:", logError);
-                                                    });
-                                                Swal.fire({
-                                                    icon: 'success',
-                                                    title: 'Contraseña actualizada',
-                                                    text: 'Tu contraseña ha sido actualizada con éxito.'
-                                                }).then(() => {
-                                                    expiredModal.hide();
-                                                    // Redirigir al usuario según su rol
-                                                    redirigirUsuario(data);
-                                                });
+                                        .then(logResp => {
+                                            if (!logResp.ok) {
+                                                throw new Error('Error al registrar el log en el servidor');
+                                            }
+                                            return logResp.json();
+                                        })
+                                        .then(logResponse => {
+                                            if (logResponse.estado === "success") {
+                                                console.log("Log de actualización de contraseña registrado con éxito:", logResponse);
                                             } else {
-                                                Swal.fire({
-                                                    icon: 'error',
-                                                    title: 'Error',
-                                                    text: updateData.mensaje
-                                                });
+                                                console.error("Error al registrar el log:", logResponse.mensaje);
                                             }
                                         })
-                                        .catch(error => {
-                                            console.error('Error:', error);
-                                            Swal.fire({
-                                                icon: 'error',
-                                                title: 'Error de red',
-                                                text: 'No se pudo actualizar la contraseña. Inténtalo de nuevo.'
-                                            });
+                                        .catch(logError => {
+                                            console.error("Error al registrar el log de actualización de contraseña:", logError);
                                         });
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Contraseña actualizada',
+                                        text: 'Tu contraseña ha sido actualizada con éxito.'
+                                    }).then(() => {
+                                        expiredModal.hide();
+                                        // Redirigir al usuario según su rol
+                                        redirigirUsuario(data);
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: updateData.mensaje
+                                    });
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error de red',
+                                    text: 'No se pudo actualizar la contraseña. Inténtalo de nuevo.'
                                 });
-                            } else {
-                                // Redirigir al usuario según su rol si la contraseña está vigente
-                                redirigirUsuario(data);
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error de red',
-                                text: 'Error al verificar la contraseña. Inténtalo de nuevo.'
                             });
                         });
+                    } else {
+                        // Contraseña vigente, o no requiere cambio forzado
+                        redirigirUsuario(data);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error de red',
+                        text: 'Error al verificar la contraseña. Inténtalo de nuevo.'
+                    });
+                });
                 } else {
                     grecaptcha.reset();
                     intentosFallidos++;
