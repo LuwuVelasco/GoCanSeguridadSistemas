@@ -72,6 +72,25 @@ document.addEventListener('DOMContentLoaded', function() {
                                         .then(updateResp => updateResp.json())
                                         .then(updateData => {
                                             if (updateData.estado === "success") {
+                                                // Registrar el log de actualización de contraseña
+                                                const logData = {
+                                                    id_usuario: data.id_usuario, // ID del usuario ya disponible
+                                                    accion: 'actualizacion_contrasena',
+                                                    descripcion: `El usuario con ID ${data.id_usuario} ha actualizado su contraseña.`
+                                                };
+                                                // Enviar el log al servidor
+                                                fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/registrar_log_usuario.php', {
+                                                    method: 'POST',
+                                                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                                                    body: new URLSearchParams(logData)
+                                                })
+                                                    .then(logResp => logResp.json())
+                                                    .then(logResponse => {
+                                                        console.log("Log de actualización de contraseña registrado:", logResponse);
+                                                    })
+                                                    .catch(logError => {
+                                                        console.error("Error al registrar el log de actualización de contraseña:", logError);
+                                                    });
                                                 Swal.fire({
                                                     icon: 'success',
                                                     title: 'Contraseña actualizada',
@@ -120,9 +139,6 @@ document.addEventListener('DOMContentLoaded', function() {
                             accion: 'bloqueo_usuario',
                             descripcion: 'Bloqueo por demasiados intentos fallidos'
                         };
-                    
-                        // Mostrar los datos en la consola antes de enviarlos
-                        console.log("Datos enviados para registrar log:", logData);
                     
                         // Registrar log de bloqueo
                         fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/registrar_log_usuario.php', {
@@ -264,6 +280,36 @@ function resetPassword() {
     .then(response => response.json())
     .then(data => {
         if (data.estado === "success") {
+            // Obtener id_usuario y nombre para el registro del log
+            fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/obtener_usuario_por_email.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({ email })
+            })
+            .then(resp => resp.json())
+            .then(userResponse => {
+                if (userResponse.estado === "success") {
+                    const { id_usuario, nombre } = userResponse.data;
+
+                    // Registrar log de restablecimiento de contraseña
+                    fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/registrar_log_usuario.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: new URLSearchParams({
+                            id_usuario,
+                            nombre_usuario: nombre,
+                            accion: 'restablecimiento_contrasena',
+                            descripcion: `Se ha restablecido la contraseña para el usuario ${nombre} (${email})`
+                        })
+                    })
+                    .then(logResponse => logResponse.json())
+                    .then(logData => console.log("Log registrado:", logData))
+                    .catch(error => console.error("Error al registrar el log:", error));
+                } else {
+                    console.error("Error al obtener usuario:", userResponse.mensaje);
+                }
+            });
+            // Mostrar mensaje de éxito
             Swal.fire({
                 icon: 'success',
                 title: 'Contraseña cambiada',
