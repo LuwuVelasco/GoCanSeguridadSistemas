@@ -191,13 +191,13 @@
                 <!-- Fila para el nombre -->
                 <div class="form-row" style="width: 100%;">
                     <label for="nombre">Nombre Completo:</label>
-                    <input type="text" id="nombre" name="nombre" placeholder="Nombre Completo" required>
+                    <input type="text" id="nombre" name="nombre" placeholder="Nombre y apellido" required>
                 </div>
     
                 <!-- Fila para el correo -->
                 <div class="form-row" style="width: 100%;">
                     <label for="correo">Correo Electrónico:</label>
-                    <input type="email" id="correo" name="correo" placeholder="Correo Electrónico" required>
+                    <input type="email" style="height: 30px; font-size:small;" id="correo" name="correo" placeholder="...@gmail.com" required>
                 </div>
     
                 <!-- Fila para la contraseña -->
@@ -229,17 +229,10 @@
                 <div class="form-row" style="width: 100%;">
                     <label for="rol">Rol:</label>
                     <select id="rol" name="rol" required>
-                        <option value="1">Administrador</option>
-                        <option value="2">Doctor</option>
-                        <option value="3">Cliente</option>
+                        <!-- Opciones cargadas dinámicamente -->
                     </select>
                 </div>
-    
-                <!-- Advertencia para el rol de administrador -->
-                <div class="form-row warning" id="confirmAdministrador" style="display: none;">
-                    <small>¡Atención! Estás asignando el rol de Administrador. Confirma que esto es correcto.</small>
-                </div>
-    
+                
                 <!-- Fila para botones -->
                 <div class="form-row button-group" style="width: 100%; display: flex; align-items: center; gap: 10px;">
                     <button type="button" onclick="closeModal('doctorModal')">Cancelar</button>
@@ -247,7 +240,19 @@
                 </div>
             </form>
         </div>
-    </div>             
+    </div>    
+    
+    <!-- Modal de Confirmación -->
+    <div id="confirmModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h3>Confirmación</h3>
+            <p>Estás asignando el rol de <strong>Administrador</strong>. ¿Deseas continuar?</p>
+            <div class="button-group" style="display: flex; justify-content: space-around; gap: 10px;">
+                <button id="cancelConfirmation" type="button" style="background-color: #f44336; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer;">Cancelar</button>
+                <button id="confirmAction" type="button" style="background-color: #4caf50; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer;">Aceptar</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Modal para editar mascotas -->
     <div id="tablaModal" class="modal">

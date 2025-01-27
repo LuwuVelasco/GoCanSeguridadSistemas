@@ -56,13 +56,21 @@ export function initFuncionarioForm(formSelector, especialidadUrl) {
     const form = document.querySelector(formSelector);
     const esVeterinarioCheckbox = form.querySelector("#esVeterinario");
     const especialidadContainer = form.querySelector(".especialidad-container");
+    const especialidadSelect = form.querySelector("#especialidad");
     const rolSelect = form.querySelector("#rol");
-    const confirmAdministrador = form.querySelector("#confirmAdministrador");
+    const emailField = form.querySelector("#correo");
+    const nameField = form.querySelector("#nombre");
     const passwordField = form.querySelector("#password");
 
+    const confirmModal = document.getElementById("confirmModal");
+    const confirmActionBtn = document.getElementById("confirmAction");
+    const cancelConfirmationBtn = document.getElementById("cancelConfirmation");
+
+    let isAdmin = false; // Variable para verificar si es rol de administrador
+
     // Generar contraseña autogenerada basada en el nombre
-    form.nombre.addEventListener("input", () => {
-        const nombre = form.nombre.value.trim().toLowerCase();
+    nameField.addEventListener("input", () => {
+        const nombre = nameField.value.trim().toLowerCase();
         const [firstName, lastName] = nombre.split(" ");
         passwordField.value = firstName && lastName ? `${firstName}_${lastName}.123` : "Autogenerada.123";
     });
@@ -72,38 +80,100 @@ export function initFuncionarioForm(formSelector, especialidadUrl) {
         especialidadContainer.style.display = esVeterinarioCheckbox.checked ? "block" : "none";
     });
 
-    // Mostrar advertencia si se selecciona "Administrador"
+    // Detectar si se selecciona el rol de Administrador
     rolSelect.addEventListener("change", () => {
-        confirmAdministrador.style.display = rolSelect.value === "1" ? "block" : "none";
+        isAdmin = rolSelect.value === "1"; // Asume que el rol de Administrador tiene el ID 1
     });
+
+    // Validar formato del email
+    function validateEmail(email) {
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+        return emailPattern.test(email);
+    }
+
+    // Validar nombre completo (nombre y apellido)
+    function validateFullName(name) {
+        const nameParts = name.trim().split(" ");
+        return nameParts.length >= 2 && nameParts[0] !== "" && nameParts[1] !== "";
+    }
+
+    // Validar que la especialidad esté seleccionada si es veterinario
+    function validateEspecialidad() {
+        return especialidadSelect.value !== "";
+    }
 
     // Enviar formulario
     form.addEventListener("submit", (e) => {
         e.preventDefault();
-    
-        const esVeterinario = esVeterinarioCheckbox.checked;
-        const url = esVeterinario
+
+        const email = emailField.value.trim();
+        const nombre = nameField.value.trim();
+
+        // Verificar que el nombre tenga al menos dos palabras (nombre y apellido)
+        if (!validateFullName(nombre)) {
+            alert("El nombre debe incluir al menos un nombre y un apellido.");
+            nameField.focus();
+            return;
+        }
+
+        // Verificar formato del email
+        if (!validateEmail(email)) {
+            alert("El correo electrónico debe ser válido y terminar en @gmail.com.");
+            emailField.focus();
+            return;
+        }
+
+        // Verificar que la especialidad esté seleccionada si es veterinario
+        if (esVeterinarioCheckbox.checked && !validateEspecialidad()) {
+            alert("Debes seleccionar una especialidad si el usuario es veterinario.");
+            especialidadSelect.focus();
+            return;
+        }
+
+        const data = new FormData(form);
+        const url = esVeterinarioCheckbox.checked
             ? "http://localhost/GoCanSeguridadSistemas/src/modules/php/registrar_veterinario.php"
             : "http://localhost/GoCanSeguridadSistemas/src/modules/php/registrar_funcionario.php";
-    
-        const data = new FormData(form);
-    
-        fetch(url, {
-            method: "POST",
-            body: data,
+
+        if (isAdmin) {
+            // Mostrar el modal de confirmación
+            confirmModal.style.display = "flex";
+
+            // Manejar la confirmación
+            confirmActionBtn.onclick = () => {
+                confirmModal.style.display = "none";
+                registrarFuncionario(url, data, form);
+            };
+
+            // Manejar la cancelación
+            cancelConfirmationBtn.onclick = () => {
+                confirmModal.style.display = "none";
+            };
+        } else {
+            // Registrar directamente si no es administrador
+            registrarFuncionario(url, data, form);
+        }
+    });
+}
+
+// Función para registrar al funcionario
+function registrarFuncionario(url, data, form) {
+    fetch(url, {
+        method: "POST",
+        body: data,
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.estado === "success") {
+                alert(data.mensaje);
+                closeModal("doctorModal");
+                form.reset(); // Reinicia el formulario
+            } else {
+                alert("Error: " + data.mensaje);
+            }
         })
-            .then((response) => response.json())
-            .then((data) => {
-                if (data.estado === "success") {
-                    alert(data.mensaje);
-                    closeModal("doctorModal");
-                } else {
-                    alert("Error: " + data.mensaje);
-                }
-            })
-            .catch((error) => {
-                console.error("Error:", error);
-                alert("Ocurrió un error al registrar el funcionario.");
-            });
-    });    
+        .catch((error) => {
+            console.error("Error:", error);
+            alert("Ocurrió un error al registrar el funcionario.");
+        });
 }

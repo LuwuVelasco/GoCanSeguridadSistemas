@@ -4,7 +4,7 @@ import { loadRatings } from '../components/ratings.js';
 import { loadActivities } from '../components/actividades.js';
 import { eliminarDoctor, loadData, initFuncionarioForm } from '../components/funcionarios.js';
 import { loadDoctorReports } from '../components/reportes.js';
-import { loadEspecialidades } from '../components/especialidades.js';
+import { loadEspecialidades, loadRolesFuncionario } from '../components/loadSelects.js';
 
 document.addEventListener("DOMContentLoaded", () => {
     // Configuración de modales
@@ -41,6 +41,8 @@ document.addEventListener("DOMContentLoaded", () => {
     
     const especialidadesUrl = "http://localhost/GoCanSeguridadSistemas/src/modules/php/citas.php";
     loadEspecialidades(especialidadesUrl, "#especialidad");
+
+    loadRolesFuncionario('http://localhost/GoCanSeguridadSistemas/src/modules/php/obtener_roles.php', '#rol');
 
     // Configuración de botones
     document.getElementById('bt1').addEventListener('click', () => openModal('historyModal'));
