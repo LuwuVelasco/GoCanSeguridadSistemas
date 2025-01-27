@@ -144,3 +144,24 @@ button[type="editarr"]:hover {
     width: 70%;
     padding: 0 20px;
 }
+
+/* Ajuste del diseño del checkbox */
+.form-row {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+.form-row[style*="align-items: center;"] {
+    flex-direction: row; /* Alinea el contenido en fila */
+    align-items: center; /* Centra verticalmente */
+    gap: 10px; /* Espaciado entre el texto y el checkbox */
+}
+
+/* Estilo del checkbox */
+input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}

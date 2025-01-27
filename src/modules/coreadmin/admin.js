@@ -2,7 +2,7 @@ import { loadMascotasTable } from '../components/mascotas.js';
 import { openModal, closeModal, setupModalCloseOnOutsideClick } from '../components/modals.js';
 import { loadRatings } from '../components/ratings.js';
 import { loadActivities } from '../components/actividades.js';
-import { eliminarDoctor, loadData, registrarDoctor } from '../components/doctores.js';
+import { eliminarDoctor, loadData, initFuncionarioForm } from '../components/funcionarios.js';
 import { loadDoctorReports } from '../components/reportes.js';
 import { loadEspecialidades } from '../components/especialidades.js';
 
@@ -30,11 +30,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     
     // Configurar el formulario para registrar doctores
-    registrarDoctor(
-        '#registroDoctor', // Selector del formulario
-        'http://localhost/GoCanSeguridadSistemas/src/modules/php/AñadirDoc.php', // URL para registrar doctor
-        'http://localhost/GoCanSeguridadSistemas/src/modules/php/listadoctores.php', // URL para refrescar la tabla
-        '#lista-veterinarios' // Selector del tbody de la tabla
+    initFuncionarioForm(
+        "#registroFuncionario",
+        "http://localhost/GoCanSeguridadSistemas/src/modules/php/cargar_especialidades.php"
     );
 
     // Cargar actividades y doctores
