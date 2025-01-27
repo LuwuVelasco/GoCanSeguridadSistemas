@@ -5,11 +5,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio de Sesión</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="sesionstyle.css">
+    <script src="/GoCanSeguridadSistemas/src/modules/login/validaciones.js"></script>
     <script src="login.js"></script>
     <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
       (function(){
         emailjs.init("YOUR_USER_ID_FROM_EMAILJS");
@@ -18,10 +22,13 @@
 
     <style>
         /* Estilos para los modales */
+        .modal-backdrop {
+    z-index: 1040;
+}
         .modal {
             display: none;
             position: fixed;
-            z-index: 1;
+            z-index: 1050;
             left: 0;
             top: 0;
             width: 100%;
@@ -106,7 +113,25 @@
             <button id="resetPasswordBtn">Cambiar Contraseña</button>
         </div>
     </div>
-    
+    <!-- Modal para cambio de contraseña por expiración -->
+    <div class="modal fade" id="passwordExpiredModal" tabindex="-1" aria-labelledby="passwordExpiredModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="passwordExpiredModalLabel">Cambio de Contraseña</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Tu contraseña ha expirado. Por favor, ingresa una nueva para continuar.</p>
+                    <input type="password" id="expiredNewPassword" class="form-control" placeholder="Nueva contraseña" required />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" id="updateExpiredPasswordBtn" class="btn btn-primary">Actualizar Contraseña</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
     <script src="animacionbg.js"></script>
     

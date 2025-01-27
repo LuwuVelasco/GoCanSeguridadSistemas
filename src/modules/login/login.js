@@ -9,7 +9,11 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!bloqueado) {
                 iniciarSesion();
             } else {
-                alert('Contraseña Incorrecta, demasiados intentos. Por favor, espere 30 segundos.');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Acceso bloqueado',
+                    text: 'Contraseña incorrecta, demasiados intentos. Por favor, espere 30 segundos.'
+                });
             }
         });
     } else {
@@ -19,43 +23,138 @@ document.addEventListener('DOMContentLoaded', function() {
     function iniciarSesion() {
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
-
+        const recaptchaResponse = grecaptcha.getResponse();
+    
         fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/login.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
+            body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&g-recaptcha-response=${encodeURIComponent(recaptchaResponse)}`
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.estado === "success") {
-                localStorage.setItem('id_usuario', data.id_usuario);
-                localStorage.setItem('id_doctores', data.id_doctores);           
-                if (data.rol === "Doctor") {
-                    if (data.id_doctores) {
-                        window.location.href = 'http://localhost/GoCanSeguridadSistemas/src/modules/coreDoctores/indexdoctores.html';
-                    } else {
-                        window.location.href = 'http://localhost/GoCanSeguridadSistemas/src/modules/citas/citas.html';
-                    }
-                } else if (data.rol === "Administrador") {
-                    window.location.href = 'http://localhost/GoCanSeguridadSistemas/src/modules/coreadmin/indexadmin.html';
-                } else if (data.rol === "Cliente") {
-                    window.location.href = 'http://localhost/GoCanSeguridadSistemas/src/modules/citas/citas.html';
+            .then(response => response.json())
+            .then(data => {
+                if (data.estado === "success") {
+                    localStorage.setItem('id_usuario', data.id_usuario);
+                    localStorage.setItem('id_doctores', data.id_doctores);
+    
+                    // Verificar si la contraseña ha expirado
+                    fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/verificar_password.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id_usuario: data.id_usuario })
+                    })
+                        .then(resp => resp.json())
+                        .then(passwordCheck => {
+                            if (passwordCheck.estado === "expired") {
+                                // Mostrar modal para cambiar contraseña
+                                const expiredModal = new bootstrap.Modal(document.getElementById('passwordExpiredModal'));
+                                expiredModal.show();
+    
+                                document.getElementById('updateExpiredPasswordBtn').addEventListener('click', () => {
+                                    const newPassword = document.getElementById('expiredNewPassword').value;
+    
+                                    // Validar la nueva contraseña
+                                    const validacion = validarPassword(newPassword);
+                                    if (!validacion.isValid) {
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Contraseña inválida',
+                                            html: `La contraseña no cumple con los siguientes requisitos:<br><ul>${validacion.requisitos.map(req => `<li>${req}</li>`).join('')}</ul>`
+                                        });
+                                        return;
+                                    }
+    
+                                    // Actualizar la contraseña
+                                    fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/new_password.php', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                                        body: `email=${encodeURIComponent(email)}&new_password=${encodeURIComponent(newPassword)}`
+                                    })
+                                        .then(updateResp => updateResp.json())
+                                        .then(updateData => {
+                                            if (updateData.estado === "success") {
+                                                Swal.fire({
+                                                    icon: 'success',
+                                                    title: 'Contraseña actualizada',
+                                                    text: 'Tu contraseña ha sido actualizada con éxito.'
+                                                }).then(() => {
+                                                    expiredModal.hide();
+                                                    // Redirigir al usuario según su rol
+                                                    redirigirUsuario(data);
+                                                });
+                                            } else {
+                                                Swal.fire({
+                                                    icon: 'error',
+                                                    title: 'Error',
+                                                    text: updateData.mensaje
+                                                });
+                                            }
+                                        })
+                                        .catch(error => {
+                                            console.error('Error:', error);
+                                            Swal.fire({
+                                                icon: 'error',
+                                                title: 'Error de red',
+                                                text: 'No se pudo actualizar la contraseña. Inténtalo de nuevo.'
+                                            });
+                                        });
+                                });
+                            } else {
+                                // Redirigir al usuario según su rol si la contraseña está vigente
+                                redirigirUsuario(data);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error de red',
+                                text: 'Error al verificar la contraseña. Inténtalo de nuevo.'
+                            });
+                        });
                 } else {
-                    alert("Rol no reconocido");
+                    grecaptcha.reset();
+                    intentosFallidos++;
+                    if (intentosFallidos >= 3) {
+                        bloquearBoton();
+                    }
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error de inicio de sesión',
+                        text: data.mensaje
+                    });
                 }
-            } else {
-                intentosFallidos++;
-                if (intentosFallidos >= 3) {
-                    bloquearBoton();
-                }
-                alert(data.mensaje);
-            }     
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error al procesar la solicitud');
-        });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error de red',
+                    text: 'Error al procesar la solicitud'
+                });
+            });
     }
+    
+    // Función para redirigir al usuario según su rol
+    function redirigirUsuario(data) {
+        if (data.rol === "Doctor") {
+            if (data.id_doctores) {
+                window.location.href = 'http://localhost/GoCanSeguridadSistemas/src/modules/coreDoctores/indexdoctores.html';
+            } else {
+                window.location.href = 'http://localhost/GoCanSeguridadSistemas/src/modules/citas/citas.html';
+            }
+        } else if (data.rol === "Administrador") {
+            window.location.href = 'http://localhost/GoCanSeguridadSistemas/src/modules/coreadmin/indexadmin.html';
+        } else if (data.rol === "Cliente") {
+            window.location.href = 'http://localhost/GoCanSeguridadSistemas/src/modules/citas/citas.html';
+        } else {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Rol no reconocido',
+                text: 'El rol proporcionado no es válido.'
+            });
+        }
+    }
+    
 
     function bloquearBoton() {
         bloqueado = true;
@@ -67,9 +166,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 document.addEventListener('DOMContentLoaded', function() {
-    emailjs.init("qzlkC2mOywaQA8mot"); // Asegúrate de usar tu userID correcto aquí
-
-    
+    emailjs.init("XhWMaSqNfASzICac5");
     const forgotPasswordLink = document.getElementById('forgotPassword');
     const forgotPasswordModal = document.getElementById('forgotPasswordModal');
     const resetPasswordModal = document.getElementById('resetPasswordModal');
@@ -112,13 +209,30 @@ function resetPassword() {
     const verificationCode = document.getElementById('verificationCode').value;
     const newPassword = document.getElementById('newPassword').value;
 
-    // Verificar que el código de verificación ingresado sea igual al código generado aleatoriamente
-    if (verificationCode !== sessionStorage.getItem('verificationCode')) {
-        alert('El código de verificación es incorrecto');
+    // Validar la contraseña
+    const validacion = validarPassword(newPassword);
+
+    if (!validacion.isValid) {
+        // Mostrar los requisitos que no se cumplen
+        Swal.fire({
+            icon: 'error',
+            title: 'Contraseña inválida',
+            html: `La contraseña no cumple con los siguientes requisitos:<br><ul>${validacion.requisitos.map(req => `<li>${req}</li>`).join('')}</ul>`
+        });
         return;
     }
 
-    // Si el código de verificación es correcto, procedemos a cambiar la contraseña
+    // Verificar que el código de verificación ingresado sea igual al código generado aleatoriamente
+    if (verificationCode !== sessionStorage.getItem('verificationCode')) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Código incorrecto',
+            text: 'El código de verificación es incorrecto'
+        });
+        return;
+    }
+
+    // Si el código de verificación es correcto y la contraseña es válida, procedemos a cambiar la contraseña
     fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/new_password.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -127,18 +241,29 @@ function resetPassword() {
     .then(response => response.json())
     .then(data => {
         if (data.estado === "success") {
-            alert('Contraseña cambiada exitosamente');
+            Swal.fire({
+                icon: 'success',
+                title: 'Contraseña cambiada',
+                text: 'Contraseña cambiada exitosamente'
+            });
             document.getElementById('resetPasswordModal').style.display = 'none';
         } else {
-            alert(data.mensaje); // Mostrar mensaje de error
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: data.mensaje
+            });
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Error al procesar la solicitud');
+        Swal.fire({
+            icon: 'error',
+            title: 'Error de red',
+            text: 'Error al procesar la solicitud'
+        });
     });
 }
-
 function sendVerificationCode() {
     const email = document.getElementById('forgotEmail').value;
     const verificationCode = generateRandomCode(); // Generar código aleatorio
@@ -148,20 +273,27 @@ function sendVerificationCode() {
     sessionStorage.setItem('verificationCode', verificationCode);
 
     // Aquí debes enviar el correo electrónico con el código de verificación
-    emailjs.send("service_kck40bs", "template_hi16edm", {
+    emailjs.send("service_nhpwkm8", "template_48zopgh", {
         to_email: email,
         verification_code: verificationCode
     }).then(function(response) {
         console.log('Correo electrónico enviado con éxito:', response);
+        Swal.fire({
+            icon: 'success',
+            title: 'Código enviado',
+            text: 'Revisa tu correo electrónico para el código de verificación'
+        });
         document.getElementById('forgotPasswordModal').style.display = 'none';
         document.getElementById('resetPasswordModal').style.display = 'block';
     }, function(error) {
         console.error('Error al enviar el correo electrónico:', error);
-        alert('Error al enviar el correo electrónico');
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Error al enviar el correo electrónico'
+        });
     });
 }
-
-
 
 function generateRandomCode() {
     // Función para generar un código aleatorio de 5 caracteres

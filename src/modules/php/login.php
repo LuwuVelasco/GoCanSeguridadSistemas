@@ -17,7 +17,24 @@ if (empty($_POST['email']) || empty($_POST['password'])) {
 
 $email = $_POST['email'];
 $password = $_POST['password'];
+//Prueba capcha
+$recaptchaResponse = $_POST['g-recaptcha-response'];
+$secretKey = '6Ldn970qAAAAANB2ogY4Ml1jVCvjt203gjG0jamr';
 
+if (empty($recaptchaResponse)) {
+    echo json_encode(['estado' => 'error', 'mensaje' => 'Captcha no enviado']);
+    exit;
+}
+
+$verifyUrl = 'https://www.google.com/recaptcha/api/siteverify';
+$response = file_get_contents($verifyUrl . '?secret=' . $secretKey . '&response=' . $recaptchaResponse);
+$responseData = json_decode($response);
+
+if (!$responseData->success) {
+    error_log('Captcha error codes: ' . implode(', ', $responseData->{'error-codes'} ?? []));
+    echo json_encode(['estado' => 'error', 'mensaje' => 'Captcha no válido']);
+    exit;
+}
 // Consulta para buscar al usuario por email, incluyendo el rol
 $sql = "
     SELECT 
