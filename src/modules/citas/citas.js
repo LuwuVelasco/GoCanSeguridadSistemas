@@ -1,5 +1,6 @@
 import { loadEspecialidades, loadDoctores } from '../components/loadSelects.js';
 import { registrarCita } from '..components/citasRegistro.js';
+import { openModal, closeModal, setupModalCloseOnOutsideClick } from '../components/modals.js';
 
 document.addEventListener("DOMContentLoaded", () => {
     const especialidadSelect = document.querySelector("#especialidad");
@@ -15,6 +16,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Cargar especialidades
     loadEspecialidades(especialidadesUrl, "#especialidad");
+
+    document.getElementById('bt0').addEventListener('click', () => openModal('reserveModal'));
+    document.getElementById('bt1').addEventListener('click', () => openModal('viewReservationsModal'));    
+
+    setupModalCloseOnOutsideClick();
+
+        window.openModal = openModal;
+        window.closeModal = closeModal;
 
     // Evento al cambiar la especialidad
     especialidadSelect.addEventListener("change", (event) => {

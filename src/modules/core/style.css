@@ -154,10 +154,6 @@ body {
     #REUSED STYLE
   \*-----------------------------------*/
 
-.container {
-  padding-inline: 15px;
-}
-
 .section {
   padding-block: var(--section-padding);
 }
@@ -1121,10 +1117,6 @@ body {
      * REUSED STYLE
      */
 
-  .container {
-    padding-inline: 30px;
-  }
-
   .scrollbar-item {
     min-width: calc(20% - 24px);
   }
@@ -1594,7 +1586,7 @@ select:focus {
 }
 
 .modal {
-  display: none; /* Oculto por defecto */
+  display: flex; /* Oculto por defecto */
   position: fixed; /* Se queda en su lugar incluso al desplazarse */
   z-index: 10; /* Se sitúa sobre todo */
   left: 0;
