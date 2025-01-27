@@ -1,4 +1,4 @@
-import { loadEspecialidades, loadDoctores } from '../components/especialidades.js';
+import { loadEspecialidades, loadDoctores } from '../components/loadSelects.js';
 import { registrarCita } from '..components/citasRegistro.js';
 
 document.addEventListener("DOMContentLoaded", () => {

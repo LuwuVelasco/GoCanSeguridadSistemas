@@ -165,3 +165,43 @@ input[type="checkbox"] {
     height: 18px;
     cursor: pointer;
 }
+
+#confirmModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1050;
+}
+
+#confirmModal .modal-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    width: 400px;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+#confirmModal h3 {
+    margin-bottom: 10px;
+    color: #333;
+}
+
+#confirmModal p {
+    margin-bottom: 20px;
+    color: #666;
+}
+
+#confirmModal .button-group button {
+    width: 100px;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+}
