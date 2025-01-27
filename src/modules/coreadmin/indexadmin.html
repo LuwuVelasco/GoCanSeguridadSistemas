@@ -66,7 +66,6 @@
                 <div class="profile-dropdown" id="profileDropdown">
                     <ul>
                         <li><a href="http://localhost/GoCanSeguridadSistemas/src/modules/login/sesionindex.html">Cambiar de usuario</a></li>
-                        <li><a href="#" onclick="openModal('passwordConfigModal')">Configuración de contraseñas</a></li>
                         <li><a href="http://localhost/GoCanSeguridadSistemas/src/modules/core/index.html">Cerrar sesión</a></li>
                     </ul>
                 </div>
@@ -83,9 +82,9 @@
             <div class="main">
                 <h3 class="separator">Opciones</h3>
                 <div class="quick-access">
-                    <div id="bt0" class="button" onclick="">
+                    <div id="bt0" class="button" onclick="openModal('passwordConfigModal')">
                         <i class="fi fi-sr-customer-care"></i>
-                        <h5>Configuración Seguridad</h5>
+                        <h5>Configuración contraseñas</h5>
                     </div>
                     <div id="bt1" class="button" onclick="openModal('doctorModal')">
                         <i class="fi fi-sr-stethoscope"></i>
