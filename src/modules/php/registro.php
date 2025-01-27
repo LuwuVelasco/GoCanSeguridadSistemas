@@ -5,29 +5,38 @@ header('Access-Control-Allow-Headers: Content-Type');
 
 $json = file_get_contents('php://input');
 $data = json_decode($json, true);
-
+date_default_timezone_set('America/La_Paz');
 if (isset($data['verified']) && $data['verified'] == true) {
     if (isset($data['email'], $data['nombre'], $data['password'])) {
         $email = $data['email'];
         $nombre = $data['nombre'];
         $hashedPassword = password_hash($data['password'], PASSWORD_BCRYPT);
         $rol_id = 3; // Asignar un rol por defecto para los nuevos usuarios
-
+        $fecha_registro = date('Y-m-d H:i:s'); // Obtener la fecha actual
         $conexion = pg_connect("dbname=gocan user=postgres password=admin");
         if (!$conexion) {
             echo json_encode(["estado" => "error", "mensaje" => "Error de conexión a la base de datos"]);
             exit();
         }
-
+        // Verificar si el correo ya está registrado
+        $sql_verificar = "SELECT COUNT(*) AS total FROM usuario WHERE email = $1";
+        $resultado_verificar = pg_query_params($conexion, $sql_verificar, array($email));
+        if ($resultado_verificar) {
+            $row_verificar = pg_fetch_assoc($resultado_verificar);
+            if ($row_verificar['total'] > 0) {
+                echo json_encode(["estado" => "error", "mensaje" => "El correo ya está registrado"]);
+                exit();
+            }
+        }
         // Insertar en la tabla usuario
-        $sql_usuario = "INSERT INTO usuario (email, nombre, password, rol_id) VALUES ($1, $2, $3, $4) RETURNING id_usuario";
+        $sql_usuario = "INSERT INTO usuario (email, nombre, password, fecha_registro, rol_id) VALUES ($1, $2, $3, $4, $5) RETURNING id_usuario";
         $stmt = pg_prepare($conexion, "insert_usuario", $sql_usuario);
         if ($stmt === false) {
             echo json_encode(["estado" => "error", "mensaje" => "Error al preparar la consulta"]);
             exit();
         }
 
-        $resultado_usuario = pg_execute($conexion, "insert_usuario", array($email, $nombre, $hashedPassword, $rol_id));
+        $resultado_usuario = pg_execute($conexion, "insert_usuario", array($email, $nombre, $hashedPassword, $fecha_registro, $rol_id));
         if (!$resultado_usuario) {
             $error = pg_last_error($conexion);
             echo json_encode(["estado" => "error", "mensaje" => "Error al insertar usuario: " . $error]);

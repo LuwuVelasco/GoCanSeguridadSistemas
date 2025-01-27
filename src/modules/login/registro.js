@@ -14,17 +14,48 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         return true;
     }
+    function verificarEmail(email) {
+        return fetch("http://localhost/GoCanSeguridadSistemas/src/modules/php/verificar_email.php", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email: email })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.estado === "error") {
+                    Swal.fire({
+                        title: 'Correo en uso',
+                        text: data.mensaje,
+                        icon: 'error'
+                    });
+                    return false;
+                }
+                return true;
+            })
+            .catch(error => {
+                console.error('Error al verificar el correo:', error);
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Hubo un problema al verificar el correo.',
+                    icon: 'error'
+                });
+                return false;
+            });
+    }
+    
 
     function registrarUsuario() {
         let email = document.getElementById('email').value;
         let nombre = document.getElementById('nombre').value;
         let password = document.getElementById('password').value;
         let token = generateToken();
-
+        // Validar el formato del email
         if (!validarEmail(email)) {
             return;
         }
-
+        // Validar la contraseña
         const validacionPassword = validarPassword(password);
         if (!validacionPassword.isValid) {
             Swal.fire({
@@ -34,23 +65,29 @@ document.addEventListener('DOMContentLoaded', function () {
             });
             return;
         }
-
-        emailjs.send("service_nhpwkm8", "template_guvck1n", {
-            to_email: email,
-            nombre: nombre,
-            token: token
-        }).then(function () {
-            console.log('Correo electrónico enviado con éxito');
-            promptForToken(token, email, nombre, password);
-        }).catch(function (error) {
-            console.error('Error al enviar el correo electrónico:', error);
-            Swal.fire({
-                title: 'Error',
-                text: 'Error al enviar el correo electrónico',
-                icon: 'error'
+        // Verificar si el correo ya existe
+        verificarEmail(email).then(isUnique => {
+            if (!isUnique) {
+                return; // Detener si el correo ya existe
+            }
+            // Enviar el token al correo usando EmailJS
+            emailjs.send("service_nhpwkm8", "template_guvck1n", {
+                to_email: email,
+                nombre: nombre,
+                token: token
+            }).then(function () {
+                console.log('Correo electrónico enviado con éxito');
+                promptForToken(token, email, nombre, password);
+            }).catch(function (error) {
+                console.error('Error al enviar el correo electrónico:', error);
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al enviar el correo electrónico',
+                    icon: 'error'
+                });
             });
         });
-    }
+    }    
 
     function promptForToken(sentToken, email, nombre, password) {
         Swal.fire({

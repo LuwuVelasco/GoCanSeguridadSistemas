@@ -51,6 +51,25 @@ export function loadData(url, tbodySelector) {
         });
 }
 
+// Función para enviar el correo con la contraseña generada
+function enviarCorreoPassword(email, password, nombre) {
+    emailjs.init("ij9YfbRaftvgLVSFc"); // Inicializar EmailJS con la clave pública
+
+    emailjs.send("service_r6padno", "template_84cbdhr", {
+        to_name: nombre, // Nombre del usuario
+        to_email: email, // Email del usuario
+        password: password // Contraseña generada
+    })
+    .then(() => {
+        console.log("Correo enviado exitosamente");
+        alert("El correo con la contraseña ha sido enviado correctamente.");
+    })
+    .catch((error) => {
+        console.error("Error al enviar el correo:", error);
+        alert("Ocurrió un error al enviar el correo con la contraseña.");
+    });
+}
+
 // Función para inicializar el formulario de registro de funcionarios
 export function initFuncionarioForm(formSelector, especialidadUrl) {
     const form = document.querySelector(formSelector);
@@ -87,6 +106,9 @@ export function initFuncionarioForm(formSelector, especialidadUrl) {
             : "http://localhost/GoCanSeguridadSistemas/src/modules/php/registrar_funcionario.php";
     
         const data = new FormData(form);
+        const email = form.querySelector("#correo").value;
+        const nombre = form.querySelector("#nombre").value;
+        const password = passwordField.value;
     
         fetch(url, {
             method: "POST",
@@ -96,6 +118,7 @@ export function initFuncionarioForm(formSelector, especialidadUrl) {
             .then((data) => {
                 if (data.estado === "success") {
                     alert(data.mensaje);
+                    enviarCorreoPassword(email, password, nombre); // Llamar a la función para enviar el correo
                     closeModal("doctorModal");
                 } else {
                     alert("Error: " + data.mensaje);
@@ -105,5 +128,5 @@ export function initFuncionarioForm(formSelector, especialidadUrl) {
                 console.error("Error:", error);
                 alert("Ocurrió un error al registrar el funcionario.");
             });
-    });    
+    });
 }
