@@ -2,7 +2,7 @@
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Headers: Content-Type');
-
+date_default_timezone_set('America/La_Paz');
 $json = file_get_contents('php://input');
 $data = json_decode($json, true);
 

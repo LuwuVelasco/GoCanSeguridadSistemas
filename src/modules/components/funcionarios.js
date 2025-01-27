@@ -61,8 +61,6 @@ function enviarCorreoPassword(email, password, nombre) {
         password: password // Contraseña generada
     })
     .then(() => {
-        console.log("Correo enviado exitosamente");
-        alert("El correo con la contraseña ha sido enviado correctamente.");
     })
     .catch((error) => {
         console.error("Error al enviar el correo:", error);
@@ -181,19 +179,40 @@ function registrarFuncionario(url, data, form, email, password, nombre) {
         method: "POST",
         body: data,
     })
-        .then((response) => response.json())
-        .then((data) => {
-            if (data.estado === "success") {
-                alert(data.mensaje);
-                enviarCorreoPassword(email, password, nombre); // Enviar el correo con la contraseña
+    .then((response) => response.json())
+    .then((res) => {
+        if (res.estado === "success") {
+            // Mostrar mensaje de éxito con SweetAlert2
+            Swal.fire({
+                title: 'Éxito',
+                text: res.mensaje,
+                icon: 'success',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                // Enviar correo con la contraseña
+                enviarCorreoPassword(email, password, nombre);
+                // Cerrar modal y resetear formulario
                 closeModal("doctorModal");
-                form.reset(); // Reinicia el formulario
-            } else {
-                alert("Error: " + data.mensaje);
-            }
-        })
-        .catch((error) => {
-            console.error("Error:", error);
-            alert("Ocurrió un error al registrar el funcionario.");
+                form.reset();
+            });
+        } else {
+            // Mostrar mensaje de error con SweetAlert2
+            Swal.fire({
+                title: 'Error',
+                text: res.mensaje,
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
+    })
+    .catch((error) => {
+        console.error("Error:", error);
+        // Mostrar error genérico con SweetAlert2
+        Swal.fire({
+            title: 'Error',
+            text: 'Ocurrió un error al registrar el funcionario.',
+            icon: 'error',
+            confirmButtonText: 'OK'
         });
+    });
 }
