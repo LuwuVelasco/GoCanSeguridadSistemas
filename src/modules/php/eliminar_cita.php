@@ -1,27 +1,30 @@
 <?php
 header('Content-Type: application/json');
-session_start();
 
+// Verificar sesión activa
+session_start();
 if (!isset($_SESSION['id_doctores'])) {
     echo json_encode(["estado" => "error", "mensaje" => "No se encontró la sesión del doctor"]);
     exit;
 }
 
-$id_doctor = $_SESSION['id_doctores'];
-
-if (!isset($_POST['id_cita'])) {
+// Obtener datos de la solicitud
+$data = json_decode(file_get_contents("php://input"), true);
+if (!isset($data['id_cita'])) {
     echo json_encode(["estado" => "error", "mensaje" => "No se proporcionó el ID de la cita"]);
     exit;
 }
 
-$id_cita = $_POST['id_cita'];
+$id_cita = $data['id_cita'];
 
+// Conectar a la base de datos
 $conexion = pg_connect("dbname=gocan user=postgres password=admin");
 if (!$conexion) {
     echo json_encode(["estado" => "error", "mensaje" => "No se pudo conectar a la base de datos"]);
     exit;
 }
 
+// Eliminar la cita
 $query = "DELETE FROM cita WHERE id_cita = $1";
 $result = pg_query_params($conexion, $query, array($id_cita));
 

@@ -28,7 +28,6 @@
 </head>
 
 <body id="top">
-  <script src="citas.js" type="module"></script>
   <header class="header" data-header>
     <div class="container">
         <a href="#" class="logo">GoCan</a>
@@ -63,201 +62,78 @@
                 <i class="fi fi-sr-notebook-alt"></i>
                 <h5>Agendar Cita</h5>
             </div>
-            <div id="bt1" class="button" onclick="openModal('viewReservationsModal')">
+            <div id="bt1" class="button" onclick="openModal('viewReservationsModal');">
                 <i class="fi fi-sr-ballot"></i>
                 <h5>Reservas</h5>
-            </div>
-            <div id="bt2" class="button" onclick="openModal('')">
-              <i class="fi fi-sr-star"></i>
-                <h5>Calificación de la página</h5>
-            </div>                    
+            </div>                  
         </div>
-
-        <!-- Ventana Modal para Reservas -->
-        <div id="reserveModal" class="modal" style="display:none;">
-          <div class="modal-content">
-              <div class="modal-header">Agendar Cita</div>
-              <span class="close">&times;</span>
-              <form id="reserveForm">
-                <input type="text" id="propietario" name="propietario" placeholder="Nombre del Propietario" required>
-                
-                <!-- Select de especialidad -->
-                <select id="especialidad" name="especialidad" required>
-                    <option value="">Seleccionar servicio...</option>
-                </select>
-                
-                <!-- Contenedor del select de doctores -->
-                <div id="doctorContainer" style="display: none;">
-                    <select id="doctor" name="doctor" required>
-                        <option value="">Seleccionar doctor...</option>
-                    </select>
-                </div>
-                
-                <input type="date" id="fecha" name="fecha" placeholder="Fecha" required>
-                <input type="time" id="hora" name="hora" placeholder="Hora" required>
-                <button id="reservar" type="submit">Reservar</button>
-            </form>    
-          </div>
-        </div>
-
-
-      <!-- Ventana Modal para Ver Reservas -->
-      <div id="viewReservationsModal" class="modal" style="display:none;">
-        <div class="modal-content">
-          <div class="modal-header">Reservas Registradas</div>
-          <span class="close">&times;</span>
-          <table id="reservationsTable">
-            <thead>
-              <tr>
-                <th>Propietario</th>
-                <th>Servicio</th>
-                <th>Fecha</th>
-                <th>Hora</th>
-                <th>Eliminar</th>
-              </tr>
-            </thead>
-            <tbody id="reservationsList">
-              <!-- Las filas de reservas se insertarán aquí -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-      <!--Ventana de favoritos-->
-      <div id="modal" class="favoritos">
-        <div class="favoritos-content">
-          <div class="modal-header">
-            Productos Favoritos
-            <button class="action-btn" aria-label="Search" id="toggleSearchBtn">
-              <ion-icon name="search-outline" aria-hidden="true"></ion-icon>
-            </button>
-            <button class="action-btn" aria-label="Filter" id="filterBtn">
-              <ion-icon name="filter-outline" aria-hidden="true"></ion-icon>
-            </button>
-          </div>
-          <div class="search-container" style="display: none;">
-            <input type="text" id="searchInput" class="search-input" placeholder="Buscar...">
-            <button class="action-btn" aria-label="Search" id="searchBtn">
-              <ion-icon name="search-outline" aria-hidden="true"></ion-icon>
-            </button>
-          </div>
-          <div class="filter-options" id="filterOptions">
-            <label>
-              <input type="checkbox" value="precio" id="precioCheckbox"> Costo
-              <select class="filter-select" id="precioSelect">
-                <option value="asc">De menor a mayor</option>
-                <option value="desc">De mayor a menor</option>
-              </select>
-            </label>
-            <label>
-              <input type="checkbox" value="nombre" id="nombreCheckbox"> Nombre
-              <select class="filter-select" id="nombreSelect">
-                <option value="asc">A-Z</option>
-                <option value="desc">Z-A</option>
-              </select>
-            </label>
-          </div>
-          <span class="close-btn">&times;</span>
-          <div class="modal-body" id="favoritosBody"></div>
-        </div>
-      </div>
-
-
       <!-- 
         - #CATEGORY
       -->
-
       <section class="section category" id="category" aria-label="category">
         <div class="container">
-
           <h2 class="h2 section-title">
             <span class="span">Ofrecemos</span> servicios como
           </h2>
-
           <ul class="has-scrollbar">
-
             <li class="scrollbar-item">
               <div class="category-card">
-
                 <figure class="card-banner img-holder" style="--width: 330; --height: 300;">
                   <img src="../../assets/Images/servicio1.jpg" width="330" height="300" loading="lazy" alt="Cat Food"
                     class="img-cover">
                 </figure>
-
                 <h3 class="h3">
                   <a href="#" class="card-title">Vacunas</a>
                 </h3>
-
               </div>
             </li>
-
             <li class="scrollbar-item">
               <div class="category-card">
-
                 <figure class="card-banner img-holder" style="--width: 330; --height: 300;">
                   <img src="../../assets/Images/servicio2.jpg" width="330" height="300" loading="lazy" alt="Cat Toys"
                     class="img-cover">
                 </figure>
-
                 <h3 class="h3">
                   <a href="#" class="card-title">Peluquería</a>
                 </h3>
-
               </div>
             </li>
-
             <li class="scrollbar-item">
               <div class="category-card">
-
                 <figure class="card-banner img-holder" style="--width: 330; --height: 300;">
                   <img src="../../assets/Images/servicio3.jpg" width="330" height="300" loading="lazy" alt="Dog Food"
                     class="img-cover">
                 </figure>
-
                 <h3 class="h3">
                   <a href="#" class="card-title">Odontología</a>
                 </h3>
-
               </div>
             </li>
-
             <li class="scrollbar-item">
               <div class="category-card">
-
                 <figure class="card-banner img-holder" style="--width: 330; --height: 300;">
                   <img src="../../assets/Images/servicio4.jpg" width="330" height="300" loading="lazy" alt="Dog Toys"
                     class="img-cover">
                 </figure>
-
                 <h3 class="h3">
                   <a href="#" class="card-title">Desparasitación</a>
                 </h3>
-
               </div>
             </li>
-
             <li class="scrollbar-item">
               <div class="category-card">
-
                 <figure class="card-banner img-holder" style="--width: 330; --height: 300;">
                   <img src="../../assets/Images/Servicio5.jpg" width="330" height="300" loading="lazy"
                     alt="Dog Sumpplements" class="img-cover">
                 </figure>
-
                 <h3 class="h3">
                   <a href="#" class="card-title">Atención 24/7</a>
                 </h3>
-
               </div>
             </li>
-
           </ul>
-
         </div>
       </section>
-
-
-
-
 
       <!-- 
         - #OFFERS
@@ -265,9 +141,7 @@
 
       <section class="section offer" aria-label="offer">
         <div class="container">
-
           <ul class="grid-list">
-
             <li>
               <div class="offer-card has-bg-image">
                 <div class="bg-blur" style="background-image: url('../../assets/Images/offer-banner-1.jpg');"></div>
@@ -278,7 +152,6 @@
                 <a href="#" class="btn">Leer Más</a>
             </div>
             </li>
-
             <li>
               <div class="offer-card has-bg-image">
                 <div class="bg-blur" style="background-image: url('../../assets/Images/offer-banner-2.jpg');"></div>
@@ -289,7 +162,6 @@
                 <a href="#" class="btn">Leer Más</a>
             </div>
             </li>
-
             <li>
               <div class="offer-card has-bg-image">
                 <div class="bg-blur" style="background-image: url('../../assets/Images/offer-banner-3.jpg');"></div>
@@ -300,15 +172,9 @@
                 <a href="#" class="btn">Leer Más</a>
             </div>
             </li>
-
           </ul>
-
         </div>
       </section>
-
-
-
-
 
       <!-- 
         - #PRODUCT
@@ -319,7 +185,6 @@
           <h2 class="h2 section-title">
             <span class="span">Catálogo</span> en línea
           </h2>
-
           <div class="carousel-container">
             <button class="carousel-button prev" onclick="moveCarousel(-1)">
               &#10094;
@@ -360,7 +225,6 @@
                         ></ion-icon>
                       </button>
                     </div>
-
                     <div class="card-content">
                       <div class="wrapper">
                         <div class="rating">
@@ -373,7 +237,6 @@
                         <!-- Número de reseñas -->
                         <span class="review-count">(0)</span>
                       </div>
-
                       <h3 class="h3">
                         <a
                           class="card-title nombre"
@@ -382,7 +245,6 @@
                         <p class="invisible descripcion">Alimento balanceado para perros adultos de tamaño mediano, formulado para apoyar la salud general, incluyendo digestión, huesos y pelaje.
                         </p>
                       </h3>
-
                       <data class="card-price precio" value="88"
                         >88 bs</data
                       >
@@ -391,7 +253,6 @@
                     </div>
                   </div>
                 </li>
-
                 <li>
                   <div class="product-card">
                     <div
@@ -426,7 +287,6 @@
                         ></ion-icon>
                       </button>
                     </div>
-
                     <div class="card-content">
                       <div class="wrapper">
                         <div class="rating">
@@ -439,7 +299,6 @@
                         <!-- Número de reseñas -->
                         <span class="review-count">(0)</span>
                       </div>
-
                       <h3 class="h3">
                         <a
                           class="card-title nombre"
@@ -457,7 +316,6 @@
                     </div>
                   </div>
                 </li>
-
                 <li>
                   <div class="product-card">
                     <div
@@ -480,7 +338,6 @@
                         alt="Morbi vel arcu scelerisque"
                         class="img-cover hover"
                       />
-
                       <button
                       class="card-action-btn favorito"
                         aria-label="add to card"
@@ -492,7 +349,6 @@
                         ></ion-icon>
                       </button>
                     </div>
-
                     <div class="card-content">
                       <div class="wrapper">
                         <div class="rating">
@@ -505,7 +361,6 @@
                         <!-- Número de reseñas -->
                         <span class="review-count">(0)</span>
                       </div>
-
                       <h3 class="h3">
                         <a
                           class="card-title nombre"
@@ -514,7 +369,6 @@
                         <p class="invisible descripcion">Sobre de comida para perros adultos, sabor carne, diseñado para ofrecer una cena nutritiva y sabrosa.
                         </p>
                       </h3>
-
                       <data class="card-price precio" value="7"
                         >7 bs</data
                       >
@@ -523,7 +377,6 @@
                     </div>
                   </div>
                 </li>
-
                 <li>
                   <div class="product-card">
                     <div
@@ -558,7 +411,6 @@
                         ></ion-icon>
                       </button>
                     </div>
-
                     <div class="card-content">
                       <div class="wrapper">
                         <div class="rating">
@@ -571,7 +423,6 @@
                         <!-- Número de reseñas -->
                         <span class="review-count">(0)</span>
                       </div>
-
                       <h3 class="h3">
                         <a
                           class="card-title nombre"
@@ -588,7 +439,6 @@
                     </div>
                   </div>
                 </li>
-
                 <li>
                   <div class="product-card">
                     <div
@@ -611,7 +461,6 @@
                         alt="Morbi vel arcu scelerisque"
                         class="img-cover hover"
                       />
-
                       <button
                       class="card-action-btn favorito"
                         aria-label="add to card"
@@ -623,7 +472,6 @@
                         ></ion-icon>
                       </button>
                     </div>
-
                     <div class="card-content">
                       <div class="wrapper">
                         <div class="rating">
@@ -636,7 +484,6 @@
                         <!-- Número de reseñas -->
                         <span class="review-count">(0)</span>
                       </div>
-
                       <h3 class="h3">
                         <a
                           class="card-title nombre"
@@ -677,7 +524,6 @@
                         alt="Nam justo libero porta ege"
                         class="img-cover hover"
                       />
-
                       <button
                       class="card-action-btn favorito"
                         aria-label="add to card"
@@ -689,7 +535,6 @@
                         ></ion-icon>
                       </button>
                     </div>
-
                     <div class="card-content">
                       <div class="wrapper">
                         <div class="rating">
@@ -702,7 +547,6 @@
                         <!-- Número de reseñas -->
                         <span class="review-count">(0)</span>
                       </div>
-
                       <h3 class="h3">
                         <a
                           class="card-title nombre"
@@ -711,7 +555,6 @@
                         <p class="invisible descripcion">Una nutritiva y deliciosa opción para perros adultos, formulada con carne de alta calidad para una alimentación balanceada y sabrosa.
                         </p>
                       </h3>
-
                       <data class="card-price precio" value="11"
                         >11 bs</data
                       >
@@ -720,7 +563,6 @@
                     </div>
                   </div>
                 </li>
-
                 <li>
                   <div class="product-card">
                     <div
@@ -786,7 +628,6 @@
                     </div>
                   </div>
                 </li>
-
                 <li>
                   <div class="product-card">
                     <div
@@ -821,7 +662,6 @@
                         ></ion-icon>
                       </button>
                     </div>
-
                     <div class="card-content">
                       <div class="wrapper">
                         <div class="rating">
@@ -843,7 +683,6 @@
                         <p class="invisible descripcion">Comida especialmente formulada para cachorros de razas pequeñas, brindándoles la nutrición adecuada para su crecimiento y desarrollo óptimos.
                         </p>
                       </h3>
-
                       <data class="card-price precio" value="72"
                         >72 bs</data
                       >
@@ -852,7 +691,6 @@
                     </div>
                   </div>
                 </li>
-
                 <li>
                   <div class="product-card">
                     <div
@@ -887,7 +725,6 @@
                         ></ion-icon>
                       </button>
                     </div>
-
                     <div class="card-content">
                       <div class="wrapper">
                         <div class="rating">
@@ -900,7 +737,6 @@
                         <!-- Número de reseñas -->
                         <span class="review-count">(0)</span>
                       </div>
-
                       <h3 class="h3">
                         <a
                           class="card-title nombre"
@@ -909,7 +745,6 @@
                         <p class="invisible descripcion">Alimento diseñado para gatos adultos, ofreciendo un sabor a carne irresistible y una nutrición completa para mantener su salud y vitalidad.
                         </p>
                       </h3>
-
                       <data class="card-price precio" value="50"
                         >50 bs</data
                       >
@@ -918,7 +753,6 @@
                     </div>
                   </div>
                 </li>
-
                 <li>
                   <div class="product-card">
                     <div
@@ -953,7 +787,6 @@
                         ></ion-icon>
                       </button>
                     </div>
-
                     <div class="card-content">
                       <div class="wrapper">
                         <div class="rating">
@@ -966,7 +799,6 @@
                         <!-- Número de reseñas -->
                         <span class="review-count">(0)</span>
                       </div>
-
                       <h3 class="h3">
                         <a
                           class="card-title nombre"
@@ -975,7 +807,6 @@
                         <p class="invisible descripcion">Alimento especialmente creado para gatos adultos, con un delicioso sabor a pollo y una fórmula que proporciona la nutrición completa que necesitan para mantenerse saludables y activos.
                         </p>
                       </h3>
-
                       <data class="card-price precio" value="42"
                         >42 bs</data
                       >
@@ -984,7 +815,6 @@
                     </div>
                   </div>
                 </li>
-
                 <li>
                   <div class="product-card">
                     <div
@@ -1019,7 +849,6 @@
                         ></ion-icon>
                       </button>
                     </div>
-
                     <div class="card-content">
                       <div class="wrapper">
                         <div class="rating">
@@ -1032,7 +861,6 @@
                         <!-- Número de reseñas -->
                         <span class="review-count">(0)</span>
                       </div>
-
                       <h3 class="h3">
                         <a
                           class="card-title nombre"
@@ -1042,7 +870,6 @@
                         <p class="invisible descripcion">Selección variada de alimentos húmedos para gatos adultos, ofreciendo una mezcla deliciosa de carnes para satisfacer el paladar de tu felino y proporcionarle una alimentación equilibrada.
                         </p>
                       </h3>
-
                       <data class="card-price precio" value="66"
                         >66 bs</data
                       >
@@ -1051,7 +878,6 @@
                     </div>
                   </div>
                 </li>
-
                 <li>
                   <div class="product-card">
                     <div
@@ -1074,7 +900,6 @@
                         alt="Etiam commodo leo sed"
                         class="img-cover hover"
                       />
-
                       <button
                       class="card-action-btn favorito"
                         aria-label="add to card"
@@ -1086,7 +911,6 @@
                         ></ion-icon>
                       </button>
                     </div>
-
                     <div class="card-content">
                       <div class="wrapper">
                         <div class="rating">
@@ -1099,7 +923,6 @@
                         <!-- Número de reseñas -->
                         <span class="review-count">(0)</span>
                       </div>
-
                       <h3 class="h3">
                         <a
                           class="card-title nombre"
@@ -1108,7 +931,6 @@
                         <p class="invisible descripcion">Alimento especialmente diseñado para gatos castrados, con una fórmula que ayuda a mantener un peso saludable y cuidar la salud del tracto urinario, proporcionando una nutrición completa y equilibrada para su bienestar.
                         </p>
                       </h3>
-
                       <data class="card-price precio" value="28"
                         >28 bs</data
                       >
@@ -1119,7 +941,6 @@
                 </li>
               </ul>
             </div>
-
             <button class="carousel-button next" onclick="moveCarousel(1)">
               &#10095;
             </button>
@@ -1137,120 +958,142 @@
               Si tienes alguna consulta, contáctate con nosotros al <a href="mailto:ceivet.gocan@gmail.com"
                 class="link">ceivet.gocan@gmail.com</a>
             </p>
-            <ul class="contact-list">
-  
-              <li class="contact-item">
-                <ion-icon name="location-outline" aria-hidden="true"></ion-icon>
-  
-                <a href="https://www.google.com/maps/place/Av.+Mu%C3%B1oz+Reyes+31,+La+Paz,+Bolivia/@-16.5406023,-68.0716062,17z/data=!3m1!4b1!4m9!1m2!2m1!1sCota+Cota,+entre+calles+30+y+31,+Av.+Mu%C3%B1oz+Reyes+y+24+de+Septiempre!3m5!1s0x915f2148b9434f01:0x24a28ee95c09abcd!8m2!3d-16.5406075!4d-68.0667353!15sCkRDb3RhIENvdGEsIGVudHJlIGNhbGxlcyAzMCB5IDMxLCBBdi4gTXXDsW96IFJleWVzIHkgMjQgZGUgU2VwdGllbXByZZIBEGdlb2NvZGVkX2FkZHJlc3PgAQA?entry=ttu" target="_blank">
-                  <address class="address">
-                    Cota Cota, entre calles 30 y 31, Av. Muñoz Reyes y 24 de Septiembre 
-                  </address>
-                </a>
-                
-              </li>
-  
-              <li class="contact-item">
-                <ion-icon name="call-outline" aria-hidden="true"></ion-icon>
-  
-                <a href="tel:+59164161637" class="contact-link">(+591) 6-416-1637</a>
-              </li>
-  
-            </ul>
-  
-            <ul class="social-list">
-  
-              <li>
-                <a href="#" class="social-link">
-                  <ion-icon name="logo-facebook"></ion-icon>
-                </a>
-              </li>
-  
-              <li>
-                <a href="#" class="social-link">
-                  <ion-icon name="logo-instagram"></ion-icon>
-                </a>
-              </li>
-  
-            </ul>
-  
           </div>
-  
-          <ul class="footer-list">
-  
-            <li>
-              <p class="footer-list-title">Veterinaria</p>
-            </li>
-  
-            <li>
-              <a href="#" class="footer-link">Acerca de nosotros</a>
-            </li>
-  
-            <li>
-              <a href="#" class="footer-link">Contactanos</a>
-            </li>
-  
-          </ul>
-  
-          <ul class="footer-list">
-  
-            <li>
-              <p class="footer-list-title">Información</p>
-            </li>
-  
-            <li>
-              <a href="#" class="footer-link">Catalogo en línea</a>
-            </li>
-  
-          </ul>
-  
-          <ul class="footer-list">
-  
-            <li>
-              <p class="footer-list-title">Servicios</p>
-            </li>
-  
-            <li>
-              <a href="#" class="footer-link">Ecografías/Radiografías</a>
-            </li>
-  
-            <li>
-              <a href="#" class="footer-link">Traumatología</a>
-            </li>
-  
-            <li>
-              <a href="#" class="footer-link">Operaciones quirurjicas</a>
-            </li>
-  
-            <li>
-              <a href="#" class="footer-link">Citas médicas</a>
-            </li>
-  
-            <li>
-              <a href="#" class="footer-link">Vacunación</a>
-            </li>
-  
-            <li>
-              <a href="#" class="footer-link">Odontologías</a>
-            </li>
-  
-          </ul>
-  
+            <ul class="footer-list">
+              <li>
+                <p class="footer-list-title">Redes Sociales</p>
+              </li>
+              <ul class="social-list">
+                <li>
+                  <a href="#" class="social-link">
+                    <ion-icon name="logo-facebook"></ion-icon>
+                  </a>
+                </li>
+                <li>
+                  <a href="#" class="social-link">
+                    <ion-icon name="logo-instagram"></ion-icon>
+                  </a>
+                </li>
+              </ul>
+            </ul>
+            <ul class="footer-list">
+              <ul class="contact-list">
+                <li class="contact-item">
+                  <ion-icon name="location-outline" aria-hidden="true"></ion-icon>
+                  <a href="https://www.google.com/maps/place/Av.+Mu%C3%B1oz+Reyes+31,+La+Paz,+Bolivia/@-16.5406023,-68.0716062,17z/data=!3m1!4b1!4m9!1m2!2m1!1sCota+Cota,+entre+calles+30+y+31,+Av.+Mu%C3%B1oz+Reyes+y+24+de+Septiempre!3m5!1s0x915f2148b9434f01:0x24a28ee95c09abcd!8m2!3d-16.5406075!4d-68.0667353!15sCkRDb3RhIENvdGEsIGVudHJlIGNhbGxlcyAzMCB5IDMxLCBBdi4gTXXDsW96IFJleWVzIHkgMjQgZGUgU2VwdGllbXByZZIBEGdlb2NvZGVkX2FkZHJlc3PgAQA?entry=ttu" target="_blank">
+                    <address class="address">
+                      Cota Cota, entre calles 30 y 31, Av. Muñoz Reyes y 24 de Septiembre 
+                    </address>
+                  </a>
+                </li>
+              </ul>
+            </ul>
+            <ul class="footer-list">
+              <ul class="contact-list">
+                <li class="contact-item">
+                  <ion-icon name="call-outline" aria-hidden="true"></ion-icon>
+                  <a href="tel:+59164161637" class="contact-link">(+591) 6-416-1637</a>
+                </li>
+              </ul>
+            </ul>
         </div>
       </div>
-  
       <div class="footer-bottom">
         <div class="container">
-  
           <p class="copyright">
             &copy; Copyright 2024, <a href="#" class="copyright-link">ProtoCool OS</a>
           </p>
-  
         </div>
       </div>
-  
     </footer>
   </main>
+
+  <!-- Ventana Modal para Reservas -->
+  <div id="reserveModal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <div class="modal-header">Agendar Cita</div>
+      <span class="close" onclick="closeModal('reserveModal')">&times;</span>
+      <form id="reserveForm">
+        <input type="text" id="propietario" name="propietario" placeholder="Nombre del Propietario" required>
+            
+        <!-- Select de especialidad -->
+        <select id="especialidad" name="especialidad" required>
+          <option value="">Seleccionar servicio...</option>
+        </select>
+            
+        <!-- Contenedor del select de doctores -->
+        <div id="doctorContainer" style="display: none;">
+            <select id="doctor" name="doctor" required>
+                <option value="">Seleccionar doctor...</option>
+            </select>
+        </div>
+            
+        <input type="date" id="fecha" name="fecha" placeholder="Fecha" required>
+        <input type="time" id="hora" name="hora" placeholder="Hora" required>
+        <button id="reservar" type="submit">Reservar</button>
+      </form>  
+    </div>
+  </div>
+
+  <!-- Ventana Modal para Ver Reservas -->
+  <div id="viewReservationsModal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <div class="modal-header">Reservas Registradas</div>
+      <span class="close" onclick="closeModal('viewReservationsModal')">&times;</span>
+      <table id="reservationsTable">
+        <thead>
+          <tr>
+            <th>Propietario</th>
+            <th>Servicio</th>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Eliminar</th>
+          </tr>
+        </thead>
+        <tbody id="reservationsList">
+          <!-- Las filas de reservas se insertarán aquí -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <!--Ventana de favoritos-->
+  <div id="modal" class="favoritos">
+    <div class="favoritos-content">
+      <div class="modal-header">
+        Productos Favoritos
+        <button class="action-btn" aria-label="Search" id="toggleSearchBtn">
+          <ion-icon name="search-outline" aria-hidden="true"></ion-icon>
+        </button>
+        <button class="action-btn" aria-label="Filter" id="filterBtn">
+          <ion-icon name="filter-outline" aria-hidden="true"></ion-icon>
+        </button>
+      </div>
+      <div class="search-container" style="display: none;">
+        <input type="text" id="searchInput" class="search-input" placeholder="Buscar...">
+        <button class="action-btn" aria-label="Search" id="searchBtn">
+          <ion-icon name="search-outline" aria-hidden="true"></ion-icon>
+        </button>
+      </div>
+      <div class="filter-options" id="filterOptions">
+        <label>
+          <input type="checkbox" value="precio" id="precioCheckbox"> Costo
+          <select class="filter-select" id="precioSelect">
+            <option value="asc">De menor a mayor</option>
+            <option value="desc">De mayor a menor</option>
+          </select>
+        </label>
+        <label>
+          <input type="checkbox" value="nombre" id="nombreCheckbox"> Nombre
+          <select class="filter-select" id="nombreSelect">
+            <option value="asc">A-Z</option>
+            <option value="desc">Z-A</option>
+          </select>
+        </label>
+      </div>
+      <span class="close-btn" onclick="closeModal('modal')">&times;</span>
+      <div class="modal-body" id="favoritosBody"></div>
+    </div>
+  </div>
 
   <a href="#top" class="back-top-btn" aria-label="back to top" data-back-top-btn>
     <ion-icon name="chevron-up" aria-hidden="true"></ion-icon>
@@ -1271,7 +1114,6 @@
 
   <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
   <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
-
 </body>
 
 </html>
