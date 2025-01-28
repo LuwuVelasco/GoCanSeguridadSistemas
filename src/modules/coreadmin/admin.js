@@ -4,6 +4,7 @@ import { loadFuncionarios, initFuncionarioForm } from '../components/funcionario
 import { loadEspecialidades, loadRolesFuncionario } from '../components/loadSelects.js';
 import { initConfigPasswordForm } from '../components/configuracion_password.js';
 import { loadRoles } from '../components/roles.js';
+import { loadLogAplicacion } from '../components/log_aplicacion.js';
 
 document.addEventListener("DOMContentLoaded", () => {
     const url = 'http://localhost/GoCanSeguridadSistemas/src/modules/php/obtener_logs_usuarios.php';
@@ -20,7 +21,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Cargar los logs de usuarios al cargar la página
     loadLogUsuarios(url, tbodySelector);
-
+     // URL y selector para cargar el log de aplicación
+    const urlLogAplicacion = 'http://localhost/GoCanSeguridadSistemas/src/modules/php/obtener_log_aplicacion.php';
+    const tbodyLogAplicacionSelector = '#log-aplicacion-table tbody';
+     // Cargar el log de aplicación al cargar la página
+    loadLogAplicacion(urlLogAplicacion, tbodyLogAplicacionSelector);
     // Configuración de modales
     setupModalCloseOnOutsideClick();
 

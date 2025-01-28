@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 Swal.fire({
                     icon: 'error',
                     title: 'Acceso bloqueado',
-                    text: 'Contraseña incorrecta, demasiados intentos. Por favor, espere 30 segundos.'
+                    text: 'Contraseña incorrecta, demasiados intentos. Por favor, espere 5 minutos.'
                 });
             }
         });
@@ -210,7 +210,7 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(function() {
             bloqueado = false;
             intentosFallidos = 0;
-        }, 30000); // Bloquear durante 30 segundos
+        }, 300000); // Bloquear durante 5 minutos
     }
 });
 
