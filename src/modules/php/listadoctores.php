@@ -2,35 +2,26 @@
 header('Content-Type: application/json');
 
 // Incluir el archivo de conexión
-include('conexion.php'); // Asegúrate de que la ruta sea correcta
+include('conexion.php');
 
-// Consulta para obtener todos los doctores con sus especialidades
-$sql = "SELECT d.id_doctores, d.nombre, 
-        COALESCE(e.nombre_especialidad, 'Sin especialidad') AS especialidad
-        FROM doctores d
-        LEFT JOIN especialidad e ON d.id_especialidad = e.id_especialidad
-        ORDER BY d.id_doctores;";
+try {
+    // Consulta para obtener todos los funcionarios excepto clientes
+    $sql = "SELECT u.id_usuario, u.nombre, 
+            COALESCE(e.nombre_especialidad, '—') AS especialidad, 
+            r.nombre_rol 
+            FROM usuario u
+            LEFT JOIN doctores d ON u.id_doctores = d.id_doctores
+            LEFT JOIN especialidad e ON d.id_especialidad = e.id_especialidad
+            LEFT JOIN roles_y_permisos r ON u.rol_id = r.id_rol
+            WHERE u.rol_id != 3
+            ORDER BY u.id_usuario;";
 
-$result = pg_query($conexion, $sql);
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    $funcionarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Verificar si la consulta fue exitosa
-if (!$result) {
-    echo json_encode([
-        "estado" => "error",
-        "mensaje" => "Error al obtener los doctores: " . pg_last_error($conexion)
-    ]);
-    pg_close($conexion);
-    exit;
+    echo json_encode($funcionarios);
+} catch (Exception $e) {
+    echo json_encode(["error" => true, "message" => $e->getMessage()]);
 }
-
-$doctores = [];
-while ($row = pg_fetch_assoc($result)) {
-    $doctores[] = $row;
-}
-
-// Enviar el resultado como JSON
-echo json_encode($doctores);
-
-// Cerrar la conexión
-pg_close($conexion);
 ?>

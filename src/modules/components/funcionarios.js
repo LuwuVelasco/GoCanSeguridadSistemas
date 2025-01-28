@@ -22,35 +22,6 @@ export function eliminarDoctor(id_doctores) {
     }
 }
 
-// Función para cargar datos de doctores en la tabla
-export function loadData(url, tbodySelector) {
-    fetch(url)
-        .then(response => response.json())
-        .then(data => {
-            const tbody = document.querySelector(tbodySelector);
-            tbody.innerHTML = '';
-            data.forEach(item => {
-                const especialidad = item.especialidad || "Sin especialidad"; // Manejo de undefined
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${item.id_doctores}</td>
-                    <td>${item.nombre}</td>
-                    <td>${especialidad}</td>
-                    <td>
-                        <button class="delete-button" onclick="eliminarDoctor(${item.id_doctores})">
-                            <i class="ri-delete-bin-6-line"></i>
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-        })
-        .catch(error => {
-            console.error('Error al cargar los datos:', error);
-            alert('Error al cargar los datos. Verifica la consola para más detalles.');
-        });
-}
-
 // Función para enviar el correo con la contraseña generada
 function enviarCorreoPassword(email, password, nombre) {
     emailjs.init("ij9YfbRaftvgLVSFc"); // Inicializar EmailJS con la clave pública
@@ -216,3 +187,78 @@ function registrarFuncionario(url, data, form, email, password, nombre) {
         });
     });
 }
+
+export function loadFuncionarios(url, tableSelector) {
+    const tableElement = document.querySelector(tableSelector); // Quita `tbody` extra
+    if (!tableElement) {
+        console.error("El selector de la tabla no coincide con ningún elemento en el DOM:", tableSelector);
+        return;
+    }
+
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            tableElement.innerHTML = ''; // Limpiar tabla antes de cargar los datos
+
+            if (!Array.isArray(data) || data.length === 0) {
+                tableElement.innerHTML = '<tr><td colspan="4">No hay funcionarios registrados.</td></tr>';
+                return;
+            }
+
+            data.forEach(funcionario => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${funcionario.id_usuario || 'N/A'}</td>
+                    <td>${funcionario.nombre || 'N/A'}</td>
+                    <td>${funcionario.especialidad || '—'}</td>
+                    <td>
+                        <button type="eliminar" onclick="deleteFuncionario(${funcionario.id_usuario})">Eliminar</button>
+                    </td>
+                `;
+                tableElement.appendChild(row);
+            });
+        })
+        .catch(error => {
+            console.error('Error al cargar funcionarios:', error);
+            alert('Error al cargar funcionarios. Revisa la consola para más detalles.');
+        });
+}
+
+function deleteFuncionario(idFuncionario) {
+    if (!idFuncionario) {
+        alert('ID de funcionario no válido.');
+        return;
+    }
+
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: 'Esta acción no se puede deshacer.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/eliminar_funcionario.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `id_usuario=${encodeURIComponent(idFuncionario)}`,
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        Swal.fire('Eliminado', data.message, 'success');
+                        loadFuncionarios('http://localhost/GoCanSeguridadSistemas/src/modules/php/listadoctores.php', '#lista-veterinarios');
+                    } else {
+                        Swal.fire('Error', data.message, 'error');
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error al eliminar funcionario:', error);
+                    Swal.fire('Error', 'Hubo un error al intentar eliminar el funcionario.', 'error');
+                });
+        }
+    });
+}
+
+window.deleteFuncionario = deleteFuncionario;

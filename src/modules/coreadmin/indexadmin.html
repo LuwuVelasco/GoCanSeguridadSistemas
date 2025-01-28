@@ -96,20 +96,22 @@
                     </div>                      
                 </div>
 
-                <h3 class="separator">Lista de veterinarios</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Id Doctor</th>
-                            <th>Nombre</th>
-                            <th>Especialidad</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>                    
-                    <tbody id="lista-veterinarios">
-                        <!-- Las filas se añadirán aquí mediante JavaScript -->
-                    </tbody>
-                </table>
+                <h3 class="separator">Lista de funcionarios</h3>
+                <div style="max-height: 280px; overflow-y: auto; border: 1px solid #ddd; border-radius: 5px;">
+                    <table id="lista-veterinarios-table" style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr>
+                                <th>Id Funcionario</th>
+                                <th>Nombre</th>
+                                <th>Especialidad</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lista-veterinarios">
+                            <!-- Las filas se añadirán aquí mediante JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
 
                 <h3 class="separator">Registro de Usuarios en la Página</h3>
                 <div style="max-height: 280px; overflow-y: auto; border: 1px solid #ddd; border-radius: 5px;">

@@ -1,6 +1,6 @@
 import { openModal, closeModal, setupModalCloseOnOutsideClick } from '../components/modals.js';
 import { loadLogUsuarios } from '../components/log_usuarios.js';
-import { loadData, initFuncionarioForm } from '../components/funcionarios.js';
+import { loadFuncionarios, initFuncionarioForm } from '../components/funcionarios.js';
 import { loadEspecialidades, loadRolesFuncionario } from '../components/loadSelects.js';
 import { initConfigPasswordForm } from '../components/configuracion_password.js';
 import { loadRoles } from '../components/roles.js';
@@ -17,7 +17,6 @@ document.addEventListener("DOMContentLoaded", () => {
         loadNewRolePermissions('http://localhost/GoCanSeguridadSistemas/src/modules/php/obtener_todos_los_permisos.php');
         openModal('addRoleModal');
     });
-    
 
     // Cargar los logs de usuarios al cargar la página
     loadLogUsuarios(url, tbodySelector);
@@ -34,7 +33,8 @@ document.addEventListener("DOMContentLoaded", () => {
         "http://localhost/GoCanSeguridadSistemas/src/modules/php/cargar_especialidades.php"
     );
 
-    loadData('http://localhost/GoCanSeguridadSistemas/src/modules/php/listadoctores.php', '#lista-veterinarios');
+    const funcionariosUrl = "http://localhost/GoCanSeguridadSistemas/src/modules/php/listadoctores.php";
+    loadFuncionarios(funcionariosUrl, "#lista-veterinarios");
     
     const especialidadesUrl = "http://localhost/GoCanSeguridadSistemas/src/modules/php/citas.php";
     loadEspecialidades(especialidadesUrl, "#especialidad");
