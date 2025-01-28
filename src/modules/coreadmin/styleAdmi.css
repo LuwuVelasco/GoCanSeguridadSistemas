@@ -957,25 +957,6 @@ tr:hover {
     padding: 10px;
 }
 
-/* Estilo básico para la tabla */
-#permissionsTable {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-#permissionsTable th, #permissionsTable td {
-    padding: 10px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-}
-
-#permissionsTable th {
-    background-color: #f5f5f5;
-    position: sticky;
-    top: 0; /* Hace que el encabezado de la tabla sea fijo */
-    z-index: 1;
-}
-
 #addRoleButton {
     background-color: #4CAF50;
     color: white;

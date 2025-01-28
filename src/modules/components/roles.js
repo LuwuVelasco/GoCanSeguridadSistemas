@@ -18,6 +18,7 @@ export function loadRoles(url, tableSelector) {
 
                 const row = document.createElement('tr');
                 row.innerHTML = `
+                    <td>${idRol}</td>
                     <td>${nombreRol}</td>
                     <td><button type="editar" onclick="openEditPermissionsModal(${idRol})">Editar</button></td>
                     <td><button type="eliminar" onclick="deleteRole(${idRol})">Eliminar</button>                    </td>
@@ -38,6 +39,9 @@ function openEditPermissionsModal(roleId) {
         return;
     }
 
+    // Guardar el ID del rol en el formulario para poder usarlo después
+    document.querySelector('#permissionsForm').setAttribute('data-role-id', roleId);
+
     const url = `http://localhost/GoCanSeguridadSistemas/src/modules/php/obtener_permisos.php?id_rol=${roleId}`;
     const permissionsTable = document.querySelector('#permissionsTable tbody');
 
@@ -53,17 +57,19 @@ function openEditPermissionsModal(roleId) {
                 return;
             }
 
+            // Renderizar los permisos correctamente
             data.forEach(permission => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${permission.permiso}</td>
+                    <td>${permission.permiso.replace(/_/g, ' ')}</td>
                     <td>
-                        <input type="checkbox" data-permission-id="${permission.id_permiso}" ${permission.habilitado ? 'checked' : ''}>
+                        <input type="checkbox" data-permission-id="${permission.permiso}" ${permission.habilitado ? 'checked' : ''}>
                     </td>
                 `;
                 permissionsTable.appendChild(row);
             });
 
+            // Abrir el modal
             openModal('editPermissionsModal');
         })
         .catch(error => {
@@ -79,55 +85,89 @@ window.openEditPermissionsModal = openEditPermissionsModal;
 document.querySelector('#permissionsForm').addEventListener('submit', function (event) {
     event.preventDefault();
 
+    const roleId = document.querySelector('#permissionsForm').getAttribute('data-role-id'); // Obtener ID del rol
+    if (!roleId) {
+        alert('Error: No se encontró el ID del rol.');
+        return;
+    }
+
     const checkboxes = document.querySelectorAll('#permissionsTable tbody input[type="checkbox"]');
     const permissions = Array.from(checkboxes).map(checkbox => ({
-        id_permiso: checkbox.getAttribute('data-permission-id'),
-        habilitado: checkbox.checked,
+        permiso: checkbox.getAttribute('data-permission-id'),
+        habilitado: checkbox.checked
     }));
 
     const url = 'http://localhost/GoCanSeguridadSistemas/src/modules/php/actualizar_permisos.php';
+    
     fetch(url, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ permisos: permissions }),
+        body: JSON.stringify({ id_rol: roleId, permisos: permissions }) // Se incluye `id_rol`
     })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Permisos actualizados con éxito.');
-                closeModal('editPermissionsModal');
-            } else {
-                alert('Error al actualizar permisos.');
-            }
-        })
-        .catch(error => {
-            console.error('Error al actualizar permisos:', error);
-            alert('Error al actualizar permisos. Revisa la consola para más detalles.');
-        });
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Permisos actualizados con éxito.');
+            closeModal('editPermissionsModal');
+        } else {
+            alert('Error al actualizar permisos: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error al actualizar permisos:', error);
+        alert('Error al actualizar permisos. Revisa la consola para más detalles.');
+    });
 });
 
-// Eliminar un rol
+// Eliminar un rol con SweetAlert
 function deleteRole(roleId) {
-    const confirmDelete = confirm('¿Estás seguro de que quieres eliminar este rol?');
-    if (!confirmDelete) return;
+    if (!roleId) {
+        alert('ID de rol no válido.');
+        return;
+    }
 
-    const url = `http://localhost/GoCanSeguridadSistemas/src/modules/php/eliminar_rol.php?id_rol=${roleId}`;
-    fetch(url, { method: 'DELETE' })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Rol eliminado con éxito.');
-                loadRoles('http://localhost/GoCanSeguridadSistemas/src/modules/php/obtener_roles.php', '#rolesTable');
-            } else {
-                alert('Error al eliminar rol.');
-            }
-        })
-        .catch(error => {
-            console.error('Error al eliminar rol:', error);
-            alert('Error al eliminar rol. Revisa la consola para más detalles.');
-        });
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: "No podrás revertir esta acción.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const url = `http://localhost/GoCanSeguridadSistemas/src/modules/php/eliminar_rol.php?id_rol=${roleId}`;
+            fetch(url, { method: 'DELETE' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire(
+                            'Eliminado',
+                            'El rol ha sido eliminado exitosamente.',
+                            'success'
+                        );
+                        loadRoles('http://localhost/GoCanSeguridadSistemas/src/modules/php/obtener_roles.php', '#rolesTable');
+                    } else {
+                        Swal.fire(
+                            'Error',
+                            'Hubo un problema al intentar eliminar el rol.',
+                            'error'
+                        );
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al eliminar rol:', error);
+                    Swal.fire(
+                        'Error',
+                        'Ocurrió un error al eliminar el rol. Revisa la consola para más detalles.',
+                        'error'
+                    );
+                });
+        }
+    });
 }
 
 // Hacer disponible globalmente
