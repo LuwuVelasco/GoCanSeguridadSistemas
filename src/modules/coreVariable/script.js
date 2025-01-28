@@ -9,9 +9,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const urlLogAplicacion = "http://localhost/GoCanSeguridadSistemas/src/modules/php/obtener_log_aplicacion.php";
     loadLogAplicacion(urlLogAplicacion, "#log-aplicacion-table tbody");
 
-    const citasTableBody = "#citasTable tbody";
-    loadDoctorCitas(idDoctor, citasTableBody);
-
     loadLogUsuarios(urlLogUsuarios, tbodySelector);
     const idRol = localStorage.getItem("id_rol"); // Obtener el ID del rol del usuario
 
