@@ -1,75 +1,163 @@
-document.addEventListener('DOMContentLoaded', function() {
-    emailjs.init("qzlkC2mOywaQA8mot");
+document.addEventListener('DOMContentLoaded', function () {
+    emailjs.init("XhWMaSqNfASzICac5");
     document.getElementById('crearCuentaBtn').addEventListener('click', registrarUsuario);
-
-function registrarUsuario() {
-    let email = document.getElementById('email').value;
-    let nombre = document.getElementById('nombre').value;
-    let password = document.getElementById('password').value;
-    let token = generateToken();
-    let cargo = true;
-
-    // Validar que la contraseña cumpla con los requisitos
-    if (password.length < 8 || !/[A-Z]/.test(password)) {
-        alert('La contraseña debe tener al menos 8 caracteres y contener al menos una letra mayúscula.');
-        return; // Detener el proceso de registro si la contraseña no cumple los requisitos
+    
+    function validarEmail(email) {
+        const emailRegex = /^[^\s@]+@gmail\.com$/;
+        if (!emailRegex.test(email)) {
+            Swal.fire({
+                title: 'Correo electrónico no válido',
+                text: 'Por favor, ingrese un correo electrónico válido que contenga un "@" y un dominio correcto.',
+                icon: 'error'
+            });
+            return false;
+        }
+        return true;
     }
-
-    console.log("Datos capturados:", email, nombre, password, token, cargo);
-
-    emailjs.send("service_kck40bs", "template_1ntv7se", {
-        to_email: email,
-        nombre: nombre,
-        token: token
-    }).then(function(response) {
-        console.log('Correo electrónico enviado con éxito:', response);
-        promptForToken(token, email, nombre, password, cargo);
-    }, function(error) {
-        console.error('Error al enviar el correo electrónico:', error);
-        alert('Error al enviar el correo electrónico');
-    });
-}
-
-function promptForToken(sentToken, email, nombre, password, cargo) {
-    let userToken = prompt('Por favor, ingrese el token que ha sido enviado a su correo electrónico:');
-    console.log("Token enviado:", sentToken); // Log del token enviado
-    console.log("Token ingresado:", userToken); // Log del token ingresado
-
-    if (userToken.trim() === sentToken.toString().trim()) { 
-        fetch("http://localhost/GoCan/src/modules/php/registro.php", {
+    function verificarEmail(email) {
+        return fetch("http://localhost/GoCanSeguridadSistemas/src/modules/php/verificar_email.php", {
             method: "POST",
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                email: email,
-                nombre: nombre,
-                password: password,
-                token: sentToken,
-                cargo: cargo,
-                verified: true
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email: email })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.estado === "error") {
+                    Swal.fire({
+                        title: 'Correo en uso',
+                        text: data.mensaje,
+                        icon: 'error'
+                    });
+                    return false;
+                }
+                return true;
             })
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-            alert('Usuario registrado correctamente. ID de usuario: ' + data.id_usuario);
-            document.getElementById('email').value = '';
-            document.getElementById('nombre').value = '';
-            document.getElementById('password').value = '';
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Registro exitosamente');
-            document.getElementById('email').value = '';
-            document.getElementById('nombre').value = '';
-            document.getElementById('password').value = '';
-        });
-    } else {
-        alert('El token ingresado no es correcto. Intente nuevamente.');
+            .catch(error => {
+                console.error('Error al verificar el correo:', error);
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Hubo un problema al verificar el correo.',
+                    icon: 'error'
+                });
+                return false;
+            });
     }
-}
+    
 
-function generateToken() {
-    return Math.floor(Math.random() * 900000) + 100000;
-}
+    function registrarUsuario() {
+        let email = document.getElementById('email').value;
+        let nombre = document.getElementById('nombre').value;
+        let password = document.getElementById('password').value;
+        let token = generateToken();
+        // Validar el formato del email
+        if (!validarEmail(email)) {
+            return;
+        }
+        // Validar la contraseña
+        const validacionPassword = validarPassword(password);
+        if (!validacionPassword.isValid) {
+            Swal.fire({
+                title: 'Contraseña no válida',
+                html: 'La contraseña debe tener:<br>' + validacionPassword.requisitos.map(req => `- ${req}`).join('<br>'),
+                icon: 'error'
+            });
+            return;
+        }
+        // Verificar si el correo ya existe
+        verificarEmail(email).then(isUnique => {
+            if (!isUnique) {
+                return; // Detener si el correo ya existe
+            }
+            // Enviar el token al correo usando EmailJS
+            emailjs.send("service_nhpwkm8", "template_guvck1n", {
+                to_email: email,
+                nombre: nombre,
+                token: token
+            }).then(function () {
+                console.log('Correo electrónico enviado con éxito');
+                promptForToken(token, email, nombre, password);
+            }).catch(function (error) {
+                console.error('Error al enviar el correo electrónico:', error);
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al enviar el correo electrónico',
+                    icon: 'error'
+                });
+            });
+        });
+    }    
+
+    function promptForToken(sentToken, email, nombre, password) {
+        Swal.fire({
+            title: 'Verificación',
+            text: 'Por favor, ingrese el token que ha sido enviado a su correo electrónico:',
+            input: 'text',
+            showCancelButton: true,
+            confirmButtonText: 'Verificar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const userToken = result.value;
+                if (userToken.trim() === sentToken.toString().trim()) {
+                    fetch("http://localhost/GoCanSeguridadSistemas/src/modules/php/registro.php", {
+                        method: "POST",
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            email: email,
+                            nombre: nombre,
+                            password: password,
+                            verified: true
+                        })
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error! status: ${response.status}`);
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.estado === "success") {
+                                Swal.fire({
+                                    title: 'Éxito',
+                                    text: 'Usuario registrado correctamente. Inicie sesión para continuar.',
+                                    icon: 'success'
+                                }).then(() => {
+                                    document.getElementById('email').value = '';
+                                    document.getElementById('nombre').value = '';
+                                    document.getElementById('password').value = '';
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: 'Error',
+                                    text: data.mensaje || 'Error en el registro',
+                                    icon: 'error'
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error al procesar la solicitud:', error);
+                            Swal.fire({
+                                title: 'Error',
+                                text: 'Hubo un problema al conectar con el servidor. Verifique los datos enviados.',
+                                icon: 'error'
+                            });
+                        });
+                } else {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'El token ingresado no es correcto. Intente nuevamente.',
+                        icon: 'error'
+                    });
+                }
+            }
+        });
+    }
+
+    function generateToken() {
+        return Math.floor(Math.random() * 900000) + 100000;
+    }
 });
-

@@ -13,16 +13,29 @@ try {
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-        if (isset($_GET['especialidad_id'])) {
+        if (isset($_GET['especialidad_id']) && is_numeric($_GET['especialidad_id'])) {
+            // Obtener doctores según la especialidad
             $especialidadId = $_GET['especialidad_id'];
             $stmt = $conn->prepare("SELECT nombre FROM doctores WHERE id_especialidad = :especialidad_id");
-            $stmt->execute(['especialidad_id' => $especialidadId]);
+            $stmt->bindParam(':especialidad_id', $especialidadId, PDO::PARAM_INT);
+            $stmt->execute();
             $doctores = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            echo json_encode($doctores);
-        } else {
+    
+            echo json_encode($doctores ?: []); // Devolver un array vacío si no hay doctores
+            exit;
+        } elseif (!isset($_GET['especialidad_id'])) {
+            // Obtener todas las especialidades
             $stmt = $conn->query("SELECT id_especialidad, nombre_especialidad FROM especialidad");
             $especialidades = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            echo json_encode($especialidades);
+    
+            echo json_encode($especialidades ?: []); // Devolver un array vacío si no hay especialidades
+            exit;
+        } else {
+            echo json_encode([
+                "error" => true,
+                "mensaje" => "ID de especialidad inválido o no proporcionado."
+            ]);
+            exit;
         }
     } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $data = json_decode(file_get_contents("php://input"), true);

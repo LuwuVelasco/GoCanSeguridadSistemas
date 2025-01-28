@@ -654,9 +654,27 @@ main > article, .hero, .main {
   max-width: none; /* Elimina cualquier restricción de max-width que pudiera aplicarse */
 }
 
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    overflow-x: hidden !important; /* Evita el scroll horizontal */
+}
+
 .container {
-  max-width: 100%; /* Permite que los contenedores internos se expandan completamente */
-  padding: 0 20px; /* Ajusta el padding según necesario */
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0 20px; /* Ajusta el padding según sea necesario */
+}
+
+footer {
+    width: 100%;
+    position: relative;
+    overflow: hidden;
 }
 
 /* Ajustes adicionales para asegurar que la sección hero cubra todo el ancho y altura deseada */

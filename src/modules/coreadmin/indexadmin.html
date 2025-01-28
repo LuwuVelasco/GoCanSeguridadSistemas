@@ -9,7 +9,15 @@
     <link rel="stylesheet" href="../core/style.css">
     <link rel="stylesheet" href="styleAdmi.css">
     <link rel="stylesheet" href="modalStyle2.css">
-
+    <link rel="stylesheet" href="../../assets/css/dropdown.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script type="text/javascript">
+       (function(){
+          emailjs.init("ij9YfbRaftvgLVSFc"); // Reemplaza con tu clave pública
+       })();
+    </script>
+    <script src="../components/toggleDropdown.js"></script>
     <title>GoCan / Administrador</title>
     <style>
         textarea {
@@ -49,18 +57,16 @@
 </head>
 
 <body>
+    <script src="admin.js"></script>
     <header class="header" data-header>
         <div class="container">
             <a href="#" class="logo">GoCan</a>
             <div class="profile" onclick="toggleDropdown()">
-                <img src="../../assets/Images/user-md.png">
-                <div class="account">
-                    <h5>Bienvenido</h5>
-                </div>
+                <img src="../../assets/Images/user-md.png" alt="Perfil">
                 <div class="profile-dropdown" id="profileDropdown">
                     <ul>
-                        <li><a href="/src/modules/login/sesionindex.html">Cambiar de usuario</a></li>
-                        <li><a href="/src/modules/login/sesionindex.html">Cerrar sesión</a></li>
+                        <li><a href="http://localhost/GoCanSeguridadSistemas/src/modules/login/sesionindex.html">Cambiar de usuario</a></li>
+                        <li><a href="http://localhost/GoCanSeguridadSistemas/src/modules/core/index.html">Cerrar sesión</a></li>
                     </ul>
                 </div>
             </div>
@@ -76,77 +82,14 @@
             <div class="main">
                 <h3 class="separator">Opciones</h3>
                 <div class="quick-access">
-                    <div id="bt0" class="button" onclick="openPetModal()">
-                        <i class="fi fi-sr-paw-heart"></i>
-                        <h5>Registro mascotas</h5>
+                    <div id="bt0" class="button" onclick="openModal('passwordConfigModal')">
+                        <i class="fi fi-sr-customer-care"></i>
+                        <h5>Configuración contraseñas</h5>
                     </div>
-                    <div id="bt4" class="button" onclick="openEditModal()">
-                        <i class="fi fi-sr-pets"></i>
-                        <h5>Información Mascotas</h5>
-                    </div>
-                    <div id="bt1" class="button" onclick="openReportModal()">
-                        <i class="fi fi-sr-clipboard-list"></i>
-                        <h5>Registro reportes</h5>
-                    </div>
-                    <div id="bt2" class="button" onclick="openHistoryModal()">
-                        <i class="fi fi-sr-time-past"></i>
-                        <h5>Historial reportes</h5>
-                    </div>
-                    <div id="bt3" class="button" onclick="openModal()">
+                    <div id="bt1" class="button" onclick="openModal('doctorModal')">
                         <i class="fi fi-sr-stethoscope"></i>
-                        <h5>Registro veterinarios</h5>
-                    </div>
-                </div>
-
-                <div class="separator">
-                    <h3>Citas Próximas</h3>
-                    <button id="sortButton" onclick="sortCitas()">Ordenar por Fecha</button>
-                    <input type="text" id="searchInput" oninput="filtrarCitas()" placeholder="Buscar por propietario...">
-                </div>
-
-                <table>
-                    <tbody>
-                        <!-- Las filas de citas se agregarán aquí dinámicamente -->
-                    </tbody>
-                </table>
-
-                <!-- Rating Section -->
-                <div class="separator">
-                    <h3>Calificaciones</h3>
-                </div>
-                <div id="rating-section" class="rating-container">
-                    <div class="rating-average">
-                        <span id="average-rating">0.0</span>
-                        <span>★</span>
-                        <span id="rating-count">(0)</span>
-                    </div>
-                    <div class="rating-bars">
-                        <div class="rating-bar">
-                            <span>5</span>
-                            <div><span id="bar-5" style="width: 0;"></span></div>
-                            <span id="count-5" class="rating-count">0</span>
-                        </div>
-                        <div class="rating-bar">
-                            <span>4</span>
-                            <div><span id="bar-4" style="width: 0;"></span></div>
-                            <span id="count-4" class="rating-count">0</span>
-                        </div>
-                        <div class="rating-bar">
-                            <span>3</span>
-                            <div><span id="bar-3" style="width: 0;"></span></div>
-                            <span id="count-3" class="rating-count">0</span>
-                        </div>
-                        <div class="rating-bar">
-                            <span>2</span>
-                            <div><span id="bar-2" style="width: 0;"></span></div>
-                            <span id="count-2" class="rating-count">0</span>
-                        </div>
-                        <div class="rating-bar">
-                            <span>1</span>
-                            <div><span id="bar-1" style="width: 0;"></span></div>
-                            <span id="count-1" class="rating-count">0</span>
-                        </div>
-                    </div>
+                        <h5>Registro funcionarios</h5>
+                    </div>                    
                 </div>
 
                 <h3 class="separator">Lista de veterinarios</h3>
@@ -155,29 +98,32 @@
                         <tr>
                             <th>Id Doctor</th>
                             <th>Nombre</th>
-                            <th>Cargo</th>
                             <th>Especialidad</th>
-                            <th>Estado</th>
                             <th>Acciones</th>
                         </tr>
-                    </thead>
+                    </thead>                    
                     <tbody id="lista-veterinarios">
                         <!-- Las filas se añadirán aquí mediante JavaScript -->
                     </tbody>
                 </table>
 
-                <h3 class="separator">Registro de Actividades en la Página</h3>
-                <table id="actividades-table">
-                    <thead>
-                        <tr>
-                            <th>Hora de Ingreso</th>
-                            <th>Nombre del Usuario</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Las filas se añadirán aquí mediante JavaScript -->
-                    </tbody>
-                </table>
+                <h3 class="separator">Registro de Usuarios en la Página</h3>
+                <div style="max-height: 280px; overflow-y: auto; border: 1px solid #ddd; border-radius: 5px;">
+                    <table id="log-usuarios-table" style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>Fecha y Hora</th>
+                                <th>Nombre del Usuario</th>
+                                <th>Acción</th>
+                                <th>Descripción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Las filas se añadirán aquí mediante JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+
             </div>
 
             <div class="right-section">
@@ -187,223 +133,105 @@
                 </div>
             </div>
         </article>
-    </main>
-
-    <div id="reportModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeReportModal()">&times;</span>
-            <h2>Registrar Reporte</h2>
-            <form id="reportForm">
-                <label for="propietario">Propietario:</label>
-                <input type="text" id="propietario" name="propietario" required>
-
-                <label for="sintomas">Síntomas:</label>
-                <textarea id="sintomas" name="sintomas" required style="resize: vertical;"></textarea>
-
-                <label for="diagnostico">Diagnóstico:</label>
-                <textarea id="diagnostico" name="diagnostico" required style="resize: vertical;"></textarea>
-
-                <label for="receta">Receta:</label>
-                <textarea id="receta" name="receta" required style="resize: vertical;"></textarea>
-
-                <label for="fecha">Fecha:</label>
-                <input type="date" id="fecha" name="fecha" required>
-
-                <label for="nombre_mascota">Nombre de la Mascota:</label>
-                <input type="text" id="nombre_mascota" name="nombre_mascota" required>
-
-                <button type="submit">Registrar</button>
-                <button type="button" onclick="closeReportModal()">Cancelar</button>
-            </form>
-        </div>
-    </div>
-
-    <div id="historyModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeHistoryModal()">&times;</span>
-            <h2>Historial de Reportes</h2>
-            <input type="text" id="historySearchInput" class="search-input" placeholder="Buscar por propietario o mascota...">
-            <div id="reportHistory">
-                <!-- Los reportes se agregarán aquí dinámicamente -->
-            </div>
-        </div>
-    </div>
+    </main>  
 
     <!-- Sección del modal para registrar veterinarios -->
-    <div id="reserveModal" class="modal" style="display:none;">
+    <div id="doctorModal" class="modal" style="display:none;">
         <div class="modal-content">
-            <div class="modal-header">Registrar Veterinario</div>
-            <span class="close" onclick="closeModal()">&times;</span>
-            <form id="registroV">
-                <input type="text" id="nombre" name="nombre" placeholder="Nombre del Veterinario" required>
-                <input type="text" id="cargo" name="cargo" placeholder="Cargo del Veterinario" required>
-                <select id="estado" name="estado" required>
-                    <option value="">Seleccionar el estado del doctor/a:</option>
-                    <option value="activo">Activo</option>
-                    <option value="con_permiso">Con Permiso</option>
-                    <option value="inactivo">Inactivo</option>
-                </select>
-                <div class="especialidad-container">
+            <div class="modal-header">Registrar Funcionario</div>
+            <span class="close" onclick="closeModal('doctorModal')">&times;</span>
+            <form id="registroFuncionario" style=" align-items: center;">
+                <!-- Fila para el nombre -->
+                <div class="form-row" style="width: 100%;">
+                    <label for="nombre">Nombre Completo:</label>
+                    <input type="text" id="nombre" name="nombre" placeholder="Nombre y apellido" required>
+                </div>
+    
+                <!-- Fila para el correo -->
+                <div class="form-row" style="width: 100%;">
+                    <label for="correo">Correo Electrónico:</label>
+                    <input type="email" style="height: 30px; font-size:small;" id="correo" name="correo" placeholder="...@gmail.com" required>
+                </div>
+    
+                <!-- Fila para la contraseña -->
+                <div class="form-row" style="width: 100%;">
+                    <label for="password">Contraseña Autogenerada:</label>
+                    <input type="text" id="password" name="password" readonly>
+                </div>
+    
+                <!-- Advertencia de contraseña -->
+                <div class="form-row warning" style="width: 100%; background-color: rgb(224, 57, 57); color: #ffffff; border-radius: 8px; text-align: center;">
+                    <small>Nota: La contraseña debe cambiarse al primer inicio de sesión.</small>
+                </div>
+    
+                <!-- Fila para checkbox de veterinario -->
+                <div class="form-row" style="display: flex; align-items: center; gap: 10px; text-align: center;">
+                    <label for="esVeterinario">¿Es Veterinario?</label>
+                    <input type="checkbox" id="esVeterinario" name="esVeterinario">
+                </div>
+    
+                <!-- Fila para especialidad -->
+                <div class="form-row especialidad-container" style="display: none; width: 100%;">
                     <label for="especialidad">Especialidad:</label>
-                    <select id="especialidad" name="especialidad" required>
-                        <option value="1">Traumatología</option>
-                        <option value="2">Medicina General</option>
-                        <option value="3">Radiografías</option>
-                        <option value="4">Odontologia</option>
-                        <option value="5">Etóloga</option>
-                        <option value="6">Nutricionista</option>
-                        <option value="7">Dermatología</option>
-                        <option value="8">Oftalmólogo</option>
+                    <select id="especialidad" name="especialidad">
+                        <!-- Opciones cargadas dinámicamente -->
                     </select>
                 </div>
-                <div class="button-group">
+    
+                <!-- Fila para el rol -->
+                <div class="form-row" style="width: 100%;">
+                    <label for="rol">Rol:</label>
+                    <select id="rol" name="rol" required>
+                        <!-- Opciones cargadas dinámicamente -->
+                    </select>
+                </div>
+                
+                <!-- Fila para botones -->
+                <div class="form-row button-group" style="width: 100%; display: flex; align-items: center; gap: 10px;">
+                    <button type="button" onclick="closeModal('doctorModal')">Cancelar</button>
                     <button type="submit">Registrar</button>
-                    <button type="button" onclick="closeModal()">Cancelar</button>
                 </div>
             </form>
         </div>
-    </div>
-
-    <!-- Modal para registro de mascotas -->
-    <div id="petModal" class="modal">
+    </div>    
+    
+    <!-- Modal de Confirmación -->
+    <div id="confirmModal" class="modal" style="display: none;">
         <div class="modal-content">
-            <span class="close" onclick="closePetModal()">&times;</span>
-            <h2>Registrar Mascota</h2>
-            <form id="petForm">
-                <label for="nombre_mascota">Nombre de la Mascota:</label>
-                <input type="text" id="nombre_mascota" name="nombre_mascota" required>
-
-                <label for="edad">Edad:</label>
-                <div id="edad-div" style="display: flex; flex-direction: column; width: 100%;">
-                    <div style="display: flex;">
-                        <input type="number" id="edad" name="edad" required style="margin-right: 10px; flex: 1; width: 100%;">
-                        <select id="period" name="period" required style="flex: 1;">
-                            <option value="">Seleccionar periodo...</option>
-                            <option value="dia">Día/días</option>
-                            <option value="mes">Mes/meses</option>
-                            <option value="ano">Año/años</option>
-                        </select>
-                    </div>
-                </div>
-
-                <label for="tipo">Tipo:</label>
-                <select id="tipo" name="tipo" required>
-                    <option value="">Seleccionar tipo de animal...</option>
-                    <option value="Perro">Perro</option>
-                    <option value="Gato">Gato</option>
-                    <option value="Pájaro">Pájaro</option>
-                    <option value="Conejo">Conejo</option>
-                    <option value="Pez">Pez</option>
-                </select>
-
-                <label for="raza">Raza:</label>
-                <input type="text" id="raza" name="raza" required>
-                <label for="nombre_propietario">Nombre Propietario:</label>
-                <input type="text" id="nombre_propietario" name="nombre_propietario" required>
-
-                <button type="submit">Registrar</button>
-                <button type="button" onclick="closePetModal()">Cancelar</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal para editar mascotas -->
-    <div id="tablaModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeTablaModal()">&times;</span>
-            <h2>Editar Mascotas</h2>
-            <div class="table-container">
-                <table id="petTable">
-                    <thead>
-                        <tr>
-                            <th>Código</th>
-                            <th>Nombre</th>
-                            <th class="edad">Edad</th>
-                            <th>Tipo</th>
-                            <th>Raza</th>
-                            <th>Propietario</th>
-                            <th>Editar</th>
-                            <th>Eliminar</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Las filas de la tabla se agregarán dinámicamente aquí -->
-                    </tbody>
-                </table>
-            </div>
-            <button type="button" onclick="closeTablaModal()">Cancelar</button>
-        </div>
-    </div>
-
-    <!-- Modal de confirmación eliminación-->
-    <div id="confirmModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeConfirmModal()">&times;</span>
-            <h2>Confirmar Eliminación</h2>
-            <p>¿Estás seguro de que quieres eliminar esta mascota?</p>
-            <div class="button-container">
-                <button type="eliminar" id="confirmDelete">Eliminar</button>
-                <button type="button" onclick="closeConfirmModal()">Cancelar</button>
+            <h3>Confirmación</h3>
+            <p>Estás asignando el rol de <strong>Administrador</strong>. ¿Deseas continuar?</p>
+            <div class="button-group" style="display: flex; justify-content: space-around; gap: 10px;">
+                <button id="cancelConfirmation" type="button" style="background-color: #f44336; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer;">Cancelar</button>
+                <button id="confirmAction" type="button" style="background-color: #4caf50; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer;">Aceptar</button>
             </div>
         </div>
     </div>
-
-    <!-- Modal para editar mascota -->
-    <div id="editModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeEditModal()">&times;</span>
-            <h2>Editar Mascota</h2>
-            <form id="editForm">
-                <input type="hidden" id="edit_id_mascota" name="id_mascota">
-                <label for="nombre_mascota">Nombre de la Mascota:</label>
-                <input type="text" id="edit_nombre_mascota" name="nombre_mascota" required>
-
-                <label for="edad">Edad:</label>
-                <div id="edit_edad-div" style="display: flex; flex-direction: column; width: 100%;">
-                    <div style="display: flex;">
-                        <input type="number" id="edit_edad" name="edad" required style="margin-right: 10px; flex: 1; width: 100%;">
-                        <select id="edit_period" name="period" required style="flex: 1;">
-                            <option value="">Seleccionar periodo...</option>
-                            <option value="dia">Día/días</option>
-                            <option value="mes">Mes/meses</option>
-                            <option value="ano">Año/años</option>
-                        </select>
-                    </div>
-                </div>
-
-                <label for="tipo">Tipo:</label>
-                <select id="edit_tipo" name="tipo" required>
-                    <option value="">Seleccionar tipo de animal...</option>
-                    <option value="Perro">Perro</option>
-                    <option value="Gato">Gato</option>
-                    <option value="Pájaro">Pájaro</option>
-                    <option value="Conejo">Conejo</option>
-                    <option value="Pez">Pez</option>
-                </select>
-
-                <label for="raza">Raza:</label>
-                <input type="text" id="edit_raza" name="raza" required>
-                <label for="nombre_propietario">Nombre Propietario:</label>
-                <input type="text" id="edit_nombre_propietario" name="nombre_propietario" required>
-
-                <button type="submit">Editar</button>
-                <button type="button" onclick="closeEditModal()">Cancelar</button>
-            </form>
-        </div>
-    </div>
-
-    <div id="confirmEditModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeConfirmEditModal()">&times;</span>
-            <h2>Confirmar Edición</h2>
-            <p>¿Estás seguro de que quieres editar esta mascota?</p>
-            <div class="button-container">
-                <button type="editar" id="confirmEdit">Editar</button>
-                <button type="button" onclick="closeConfirmEditModal()">Cancelar</button>
+<!-- Modal para configuración de contraseñas -->
+<div id="passwordConfigModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('passwordConfigModal')">&times;</span>
+        <h3>Configuración de Contraseñas</h3>
+        <form id="passwordConfigForm">
+            <!-- Campo para tiempo de vida útil -->
+            <div class="form-row" style="width: 100%; margin-bottom: 15px;">
+                <label for="tiempoVidaUtil">Tiempo de vida útil (días):</label>
+                <input type="number" id="tiempoVidaUtil" name="tiempoVidaUtil" placeholder="Ejemplo: 90" required>
             </div>
-        </div>
-    </div>
 
-    <script src="admin.js"></script>
+            <!-- Campo para número histórico -->
+            <div class="form-row" style="width: 100%; margin-bottom: 15px;">
+                <label for="numeroHistorico">Número de contraseñas históricas:</label>
+                <input type="number" id="numeroHistorico" name="numeroHistorico" placeholder="Ejemplo: 2" required>
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="form-row button-group" style="width: 100%; display: flex; gap: 10px;">
+                <button type="button" onclick="closeModal('passwordConfigModal')">Cancelar</button>
+                <button type="submit">Guardar Configuración</button>
+            </div>
+        </form>
+    </div>
+</div>
+    <script type="module" src="admin.js"></script>
 </body>
 </html>

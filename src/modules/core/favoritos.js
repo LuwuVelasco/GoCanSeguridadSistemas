@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
   document.getElementById('nombreSelect').addEventListener('change', fetchFavoritos);
 
   function fetchFavoritos() {
-    fetch("http://localhost/GoCan/src/modules/php/favoritos.php", {
+    fetch("http://localhost/GoCanSeguridadSistemas/src/modules/php/favoritos.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -103,7 +103,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function eliminarProducto(id_producto, productoDiv) {
-    fetch("http://localhost/GoCan/src/modules/php/favoritos.php", {
+    fetch("http://localhost/GoCanSeguridadSistemas/src/modules/php/favoritos.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -123,7 +123,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function actualizarContador(idUsuario) {
-    fetch(`http://localhost/GoCan/src/modules/php/favoritos.php?id_usuario=${idUsuario}`)
+    fetch(`http://localhost/GoCanSeguridadSistemas/src/modules/php/favoritos.php?id_usuario=${idUsuario}`)
       .then(response => response.json())
       .then(data => {
         document.querySelector(".btn-badge").textContent = data.cantidad;
@@ -191,7 +191,7 @@ document.addEventListener("DOMContentLoaded", function () {
       fetchFavoritos(); // Si el campo está vacío, mostrar todos los productos
     } else {
       // Limpiar la búsqueda anterior y actualizar la lista
-      fetch("http://localhost/GoCan/src/modules/php/favoritos.php", {
+      fetch("http://localhost/GoCanSeguridadSistemas/src/modules/php/favoritos.php", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

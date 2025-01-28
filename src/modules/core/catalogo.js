@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
           imagen: imagen
         };
 
-          fetch('http://localhost/GoCan/src/modules/php/catalogo.php', {
+          fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/catalogo.php', {
               method: 'POST',
               headers: {
                   'Content-Type': 'application/json'

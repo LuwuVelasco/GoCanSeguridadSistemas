@@ -110,7 +110,7 @@ table td {
 }
 
 .modal-content button[type="eliminar"] {
-    background-color: red; /* Color rojo */
+    background-color: rgb(190, 77, 77); /* Color rojo */
     color: white; /* Color del texto blanco */
     padding: 10px 15px;
     border: none;
@@ -124,7 +124,7 @@ button[type="eliminar"]:hover {
 }
 
 .modal-content button[type="editar"] {
-    background-color: green; /* Color rojo */
+    background-color: rgb(25, 177, 25); /* Color rojo */
     color: white; /* Color del texto blanco */
     padding: 10px 15px;
     border: none;
