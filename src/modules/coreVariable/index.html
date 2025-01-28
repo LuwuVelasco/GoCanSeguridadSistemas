@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <script src="./script.js" defer></script>
+    <title>Panel Personalizado</title>
+</head>
+<body>
+    <header class="header" data-header>
+        <div class="container">
+            <a href="#" class="logo">GoCan</a>
+
+            <div class="profile" onclick="toggleDropdown()">
+                <img src="../../assets/Images/user-md.png" alt="Perfil">
+                <div class="profile-dropdown" id="profileDropdown">
+                    <ul>
+                        <li><a href="http://localhost/GoCanSeguridadSistemas/src/modules/login/sesionindex.html">Cambiar de usuario</a></li>
+                        <li><a href="http://localhost/GoCanSeguridadSistemas/src/modules/core/index.html">Cerrar sesión</a></li>
+                    </ul>
+                </div>
+            </div>            
+        </div>
+    </header>
+    <main>
+        <section id="home" aria-label="home" style="background-image: url('../../assets/Images/banner_InicioAd.png')">
+            <div class="container"></div>
+        </section>
+        <div id="contenido-dinamico">
+            <!-- El contenido se generará dinámicamente -->
+        </div>
+    </main>
+</body>
+</html>

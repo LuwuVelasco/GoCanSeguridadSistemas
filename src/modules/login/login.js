@@ -185,25 +185,48 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Función para redirigir al usuario según su rol
     function redirigirUsuario(data) {
-        if (data.rol === "Doctor") {
-            if (data.id_doctores) {
-                window.location.href = 'http://localhost/GoCanSeguridadSistemas/src/modules/coreDoctores/indexdoctores.html';
-            } else {
-                window.location.href = 'http://localhost/GoCanSeguridadSistemas/src/modules/citas/citas.html';
-            }
-        } else if (data.rol === "Administrador") {
-            window.location.href = 'http://localhost/GoCanSeguridadSistemas/src/modules/coreadmin/indexadmin.html';
-        } else if (data.rol === "Cliente") {
-            window.location.href = 'http://localhost/GoCanSeguridadSistemas/src/modules/citas/citas.html';
-        } else {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Rol no reconocido',
-                text: 'El rol proporcionado no es válido.'
-            });
-        }
-    }
+        // Guardar el ID del usuario en localStorage
+        localStorage.setItem('id_usuario', data.id_usuario);
     
+        // Obtener el rol del usuario
+        fetch('http://localhost/GoCanSeguridadSistemas/src/modules/php/obtener_rol_usuario.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `id_usuario=${encodeURIComponent(data.id_usuario)}`
+        })
+            .then(response => response.json())
+            .then(rolData => {
+                if (rolData.estado === "success") {
+                    localStorage.setItem('id_rol', rolData.id_rol);
+                    localStorage.setItem('nombre_rol', rolData.nombre_rol);
+    
+                    // Redirigir según el rol
+                    if (rolData.nombre_rol === "Doctor") {
+                        window.location.href = 'http://localhost/GoCanSeguridadSistemas/src/modules/coreDoctores/indexdoctores.html';
+                    } else if (rolData.nombre_rol === "Administrador") {
+                        window.location.href = 'http://localhost/GoCanSeguridadSistemas/src/modules/coreadmin/indexadmin.html';
+                    } else if (rolData.nombre_rol === "Cliente") {
+                        window.location.href = 'http://localhost/GoCanSeguridadSistemas/src/modules/citas/citas.html';
+                    } else {
+                        window.location.href = 'http://localhost/GoCanSeguridadSistemas/src/modules/coreVariable/index.html';
+                    }
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: rolData.mensaje
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error al obtener el rol del usuario.'
+                });
+            });
+    }    
 
     function bloquearBoton() {
         bloqueado = true;
