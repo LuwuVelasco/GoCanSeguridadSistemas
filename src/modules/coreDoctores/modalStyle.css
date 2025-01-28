@@ -144,3 +144,35 @@ button[type="editarr"]:hover {
     width: 70%;
     padding: 0 20px;
 }
+
+/* Estilos para el contenedor del modal */
+.modal-content {
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.permissions-table-container {
+    max-height: 300px; /* Altura máxima para el contenedor */
+    overflow-y: auto; /* Scroll solo en el eje Y */
+    overflow-x: hidden; /* Ocultar cualquier scroll horizontal */
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+#addRoleButton {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#addRoleButton:hover {
+    background-color: #45a049;
+}

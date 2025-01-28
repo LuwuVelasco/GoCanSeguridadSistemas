@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.3.0/uicons-solid-rounded/css/uicons-solid-rounded.css">
+    <link rel="stylesheet" href="../coreadmin/modalStyle2.css">
+    <link rel="stylesheet" href="../../assets/css/dropdown.css">
     <link rel="stylesheet" href="../../assets/css/main.css">
-    <script src="./script.js" defer></script>
+    <script type="module" src="./script.js" defer></script>
     <title>Panel Personalizado</title>
 </head>
 <body>
@@ -24,12 +27,19 @@
         </div>
     </header>
     <main>
-        <section id="home" aria-label="home" style="background-image: url('../../assets/Images/banner_InicioAd.png')">
-            <div class="container"></div>
-        </section>
-        <div id="contenido-dinamico">
-            <!-- El contenido se generará dinámicamente -->
-        </div>
+        <article>
+            <section id="home" aria-label="home" style="background-image: url('../../assets/Images/banner_InicioAd.png')">
+                <div class="container"></div>
+            </section>
+            <div id="main">
+                <h3 class="separator">Opciones</h3>
+                <div id="opciones" class="quick-access" style="width: 100%; display: flex; align-items: center; gap: 10%; justify-content: center;">
+                </div>
+            </div>     
+            <div id="secciones">
+                
+            </div>
+        </article>
     </main>
 </body>
 </html>
