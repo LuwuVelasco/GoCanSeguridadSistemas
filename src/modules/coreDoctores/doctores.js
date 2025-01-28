@@ -2,9 +2,12 @@ import { loadMascotasTable } from "../components/mascotasEdit.js";
 import { loadDoctorReports } from "../components/reportes.js";
 import { loadDoctorCitas, deleteDoctorCita } from "../components/citas.js";
 import { openModal, closeModal, setupModalCloseOnOutsideClick } from "../components/modals.js";
+import { loadClientes } from "../components/loadClientes.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     const id_doctor = localStorage.getItem("id_doctores");
+
+    loadClientes();
 
     // Configuración de modales
     setupModalCloseOnOutsideClick();

@@ -86,6 +86,10 @@
                         <i class="fi fi-sr-time-past"></i>
                         <h5>Historial reportes</h5>
                     </div>
+                    <div id="bt4" class="button" onclick="openModal('clientesModal')">
+                        <i class="fi fi-sr-target-audience"></i>
+                        <h5>Clientes registrados</h5>
+                    </div>
                 </div>
 
                 <div class="separator">
@@ -270,6 +274,28 @@
                 <button type="button" onclick="closeModal('confirmEditModal')">Cancelar</button>
                 <button type="editar" id="confirmEdit">Editar</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Modal para mostrar clientes -->
+    <div id="clientesModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('clientesModal')">&times;</span>
+            <h2>Clientes Registrados</h2>
+            <input type="text" id="clienteSearchInput" class="search-input" placeholder="Buscar por nombre...">
+            <table id="clientesTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Email</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Los clientes se agregarán aquí dinámicamente -->
+                </tbody>
+            </table>
+            <button type="button" onclick="closeModal('clientesModal')">Cerrar</button>
         </div>
     </div>
 
