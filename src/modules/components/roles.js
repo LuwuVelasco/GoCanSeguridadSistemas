@@ -19,10 +19,8 @@ export function loadRoles(url, tableSelector) {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${nombreRol}</td>
-                    <td>
-                        <button onclick="openEditPermissionsModal(${idRol})">Editar</button>
-                        <button onclick="deleteRole(${idRol})">Eliminar</button>
-                    </td>
+                    <td><button type="editar" onclick="openEditPermissionsModal(${idRol})">Editar</button></td>
+                    <td><button type="eliminar" onclick="deleteRole(${idRol})">Eliminar</button>                    </td>
                 `;
                 tableBody.appendChild(row);
             });
@@ -134,3 +132,44 @@ function deleteRole(roleId) {
 
 // Hacer disponible globalmente
 window.deleteRole = deleteRole;
+
+// Cargar permisos en el modal de Añadir Rol
+function loadNewRolePermissions(url) {
+    const permissionsTable = document.querySelector('#newRolePermissionsTable tbody');
+    permissionsTable.innerHTML = '<tr><td colspan="2">Cargando permisos...</td></tr>';
+
+    fetch(url)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Error en la solicitud: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Permisos recibidos:", data); // Depuración
+            permissionsTable.innerHTML = ''; // Limpiar tabla
+
+            if (!Array.isArray(data) || data.length === 0) {
+                permissionsTable.innerHTML = '<tr><td colspan="2">No hay permisos disponibles.</td></tr>';
+                return;
+            }
+
+            // Crear filas con permisos
+            data.forEach(permission => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${permission.permiso}</td>
+                    <td>
+                        <input type="checkbox" data-permission-id="${permission.permiso}">
+                    </td>
+                `;
+                permissionsTable.appendChild(row);
+            });
+        })
+        .catch(error => {
+            console.error('Error al cargar permisos:', error);
+            permissionsTable.innerHTML = '<tr><td colspan="2">Error al cargar permisos.</td></tr>';
+        });
+}
+
+window.loadNewRolePermissions = loadNewRolePermissions;

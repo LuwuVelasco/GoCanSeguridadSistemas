@@ -147,17 +147,23 @@
                 <span class="close" onclick="closeModal('rolesModal')">&times;</span>
             </div>
             <div class="modal-body">
-                <table id="rolesTable" style="width: 100%; border-collapse: collapse;">
-                    <thead>
-                        <tr>
-                            <th>Nombre del Rol</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Los roles serán cargados dinámicamente aquí -->
-                    </tbody>
-                </table>
+                <button id="addRoleButton" onclick="openModal('addRoleModal')" style="margin-bottom: 15px;">
+                    Añadir Rol
+                </button>
+                <div class="roles-table-container"></div>
+                    <table id="rolesTable" style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr>
+                                <th>Nombre del Rol</th>
+                                <th>Editar</th>
+                                <th>Eliminar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Los roles serán cargados dinámicamente aquí -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -171,20 +177,62 @@
             </div>
             <div class="modal-body">
                 <form id="permissionsForm">
-                    <table id="permissionsTable" style="width: 100%; border-collapse: collapse;">
-                        <thead>
-                            <tr>
-                                <th>Permiso</th>
-                                <th>Habilitado</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Los permisos serán cargados dinámicamente aquí -->
-                        </tbody>
-                    </table>
-                    <div style="margin-top: 15px; text-align: right;">
+                    <!-- Contenedor con scrollbar -->
+                    <div class="permissions-table-container">
+                        <table id="permissionsTable" style="width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th>Permiso</th>
+                                    <th>Habilitado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Los permisos serán cargados dinámicamente aquí -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="form-row button-group" style="width: 100%; display: flex; align-items: center; gap: 10px;">
                         <button type="button" onclick="closeModal('editPermissionsModal')">Cancelar</button>
                         <button type="submit">Guardar Cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>  
+
+    <!-- Modal para Añadir un Nuevo Rol -->
+    <div id="addRoleModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Añadir Nuevo Rol</h3>
+                <span class="close" onclick="closeModal('addRoleModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="addRoleForm" style="align-content: center;">
+                    <!-- Campo para el nombre del rol -->
+                    <div class="form-row" style="margin-bottom: 15px;">
+                        <label for="roleName">Nombre del Rol:</label>
+                        <input type="text" id="roleName" name="roleName" placeholder="Ejemplo: Administrador" required>
+                    </div>
+
+                    <!-- Tabla de permisos -->
+                    <div class="permissions-table-container" style="width: 100%;">
+                        <table id="newRolePermissionsTable" style="width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th>Permiso</th>
+                                    <th>Habilitado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Los permisos serán cargados dinámicamente aquí -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div style="margin: 5px; width: 100%; display: flex; align-items: center; gap: 10px;">
+                        <button type="button" onclick="closeModal('addRoleModal')">Cancelar</button>
+                        <button type="submit">Guardar Rol</button>
                     </div>
                 </form>
             </div>
