@@ -1,6 +1,14 @@
 <?php 
 session_start(); // Iniciar la sesión
 header('Content-Type: application/json');
+header('X-Frame-Options: DENY'); // Evita clickjacking
+header('X-Content-Type-Options: nosniff'); // Previene detección de MIME incorrecto
+header('Referrer-Policy: no-referrer'); // Evita que el navegador envíe referrer en solicitudes
+header('Permissions-Policy: geolocation=(), microphone=(), camera=()'); // Bloquea accesos no deseados
+header('Strict-Transport-Security: max-age=31536000; includeSubDomains; preload'); // Obliga HTTPS
+header('Access-Control-Allow-Origin: https://tudominio.com'); // Restringe CORS
+header('Access-Control-Allow-Methods: POST'); // Solo permite solicitudes POST
+header('Access-Control-Allow-Headers: Content-Type, Authorization'); // Controla los headers permitidos
 
 // Incluir el archivo de conexión (asegúrate de que devuelve `$pdo`)
 $pdo = include 'conexion.php';
@@ -11,30 +19,21 @@ if (empty($_POST['email']) || empty($_POST['password'])) {
     exit;
 }
 
-$email = $_POST['email'];
+// Sanitizar el email para evitar ataques
+$email = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
+if (!$email) {
+    echo json_encode(["estado" => "error", "mensaje" => "Formato de email inválido"]);
+    exit;
+}
+
 $password = $_POST['password'];
-$recaptchaResponse = $_POST['g-recaptcha-response'] ?? null;
-$secretKey = '6Ldn970qAAAAANB2ogY4Ml1jVCvjt203gjG0jamr';
 
-// Verificar el reCAPTCHA
-if (empty($recaptchaResponse)) {
-    registrarLog(null, 'captcha_fallido', 'Captcha no enviado');
-    echo json_encode(['estado' => 'error', 'mensaje' => 'Captcha no enviado']);
-    exit;
-}
-
-$verifyUrl = 'https://www.google.com/recaptcha/api/siteverify';
-$response = file_get_contents($verifyUrl . '?secret=' . $secretKey . '&response=' . $recaptchaResponse);
-$responseData = json_decode($response);
-
-if (!$responseData->success) {
-    registrarLog(null, 'captcha_fallido', 'Captcha inválido');
-    echo json_encode(['estado' => 'error', 'mensaje' => 'Captcha no válido']);
-    exit;
-}
+// Configurar PDO para evitar emulación de consultas preparadas
+$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 try {
-    // Consulta para buscar al usuario por email con PDO
+    // Consulta preparada con marcador de posición seguro
     $sql = "
         SELECT 
             u.id_usuario, 
@@ -72,20 +71,26 @@ try {
                 "estado" => "success",
                 "id_usuario" => $row['id_usuario'],
                 "rol" => $row['rol'], // Retorna el nombre del rol
-                "id_doctores" => $row['id_doctores']
+                "id_doctores" => $row['id_doctores'] ?? null
             ]);
+            exit;
         } else {
             // Contraseña incorrecta
             registrarLog(null, 'login_fallido', 'Contraseña incorrecta para el correo ' . $email);
             echo json_encode(["estado" => "error", "mensaje" => "El email o la contraseña son incorrectos"]);
+            exit;
         }
     } else {
         // Usuario no encontrado
         registrarLog(null, 'login_fallido', 'Intento de inicio de sesión con un correo inexistente: ' . $email);
         echo json_encode(["estado" => "error", "mensaje" => "El email o la contraseña son incorrectos"]);
+        exit;
     }
 } catch (PDOException $e) {
-    echo json_encode(["estado" => "error", "mensaje" => "Error en la consulta: " . $e->getMessage()]);
+    // NO mostrar errores detallados en producción
+    error_log("Error de base de datos: " . $e->getMessage());
+    echo json_encode(["estado" => "error", "mensaje" => "Error en la consulta"]);
+    exit;
 }
 
 //Función para registrar log de usuario
