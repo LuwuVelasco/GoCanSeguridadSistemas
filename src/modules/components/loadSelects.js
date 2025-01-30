@@ -1,29 +1,34 @@
 export async function loadEspecialidades(url, selectSelector) {
-  const select = document.querySelector(selectSelector);
-  select.innerHTML = '<option value="">Cargando servicios...</option>';
+    const select = document.querySelector(selectSelector);
+    select.innerHTML = '<option value="">Cargando servicios...</option>';
 
-  try {
-      const response = await fetch(url);
-      const especialidades = await response.json();
+    try {
+        const response = await fetch(url);
+        const responseText = await response.text(); // Obtenemos el texto sin analizar
 
-      console.log("Especialidades obtenidas:", especialidades); // Depuración
+        try {
+            const especialidades = JSON.parse(responseText); // Intentamos convertir a JSON
 
-      if (!especialidades || especialidades.length === 0) {
-          select.innerHTML = '<option value="">No hay servicios disponibles</option>';
-          return;
-      }
+            if (!Array.isArray(especialidades) || especialidades.length === 0) {
+                select.innerHTML = '<option value="">No hay servicios disponibles</option>';
+                return;
+            }
 
-      select.innerHTML = '<option value="">Seleccionar servicio...</option>';
-      especialidades.forEach(especialidad => {
-          const option = document.createElement("option");
-          option.value = especialidad.id_especialidad;
-          option.textContent = especialidad.nombre_especialidad;
-          select.appendChild(option);
-      });
-  } catch (error) {
-      console.error("Error al cargar especialidades:", error);
-      select.innerHTML = '<option value="">Error al cargar servicios</option>';
-  }
+            select.innerHTML = '<option value="">Seleccionar servicio...</option>';
+            especialidades.forEach(especialidad => {
+                const option = document.createElement("option");
+                option.value = especialidad.id_especialidad;
+                option.textContent = especialidad.nombre_especialidad;
+                select.appendChild(option);
+            });
+        } catch (jsonError) {
+            console.error("Error al analizar JSON:", responseText, jsonError);
+            select.innerHTML = '<option value="">Error al cargar servicios</option>';
+        }
+    } catch (error) {
+        console.error("Error al cargar especialidades:", error);
+        select.innerHTML = '<option value="">Error al cargar servicios</option>';
+    }
 }
 
 export async function loadDoctores(url, selectSelector) {
