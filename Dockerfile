@@ -1,9 +1,23 @@
 # Usar una imagen base con PHP y Apache
 FROM php:8.2-apache
 
-# Copiar el contenido de core y assets a /var/www/html/
+# Copiar la carpeta core (para index.html)
 COPY src/modules/core/ /var/www/html/
+
+# Copiar assets (para imágenes y CSS)
 COPY src/assets/ /var/www/html/assets/
+
+# Copiar la carpeta php (para archivos backend)
+COPY src/php/ /var/www/html/php/
+
+# Copiar la carpeta login (si el login usa archivos específicos)
+COPY src/login/ /var/www/html/login/
+
+# Copiar cualquier otra carpeta necesaria
+COPY src/coreadmin/ /var/www/html/coreadmin/
+COPY src/coreDoctores/ /var/www/html/coreDoctores/
+COPY src/coreVariable/ /var/www/html/coreVariable/
+COPY src/citas/ /var/www/html/citas/
 
 # Asegurar que Apache cargue index.html correctamente
 RUN echo "DirectoryIndex index.html" >> /etc/apache2/apache2.conf
