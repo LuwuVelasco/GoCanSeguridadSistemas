@@ -3,14 +3,8 @@ import { loadLogAplicacion } from "../components/log_aplicacion.js";
 import { loadDoctorCitas, deleteDoctorCita } from "../components/citas.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-    const urlLogUsuarios = 'http://localhost/GoCanSeguridadSistemas/src/modules/php/obtener_logs_usuarios.php';
-    const tbodySelector = '#log-usuarios-table tbody';
-
-    const urlLogAplicacion = "http://localhost/GoCanSeguridadSistemas/src/modules/php/obtener_log_aplicacion.php";
-    loadLogAplicacion(urlLogAplicacion, "#log-aplicacion-table tbody");
-
-    loadLogUsuarios(urlLogUsuarios, tbodySelector);
     const idRol = localStorage.getItem("id_rol"); // Obtener el ID del rol del usuario
+    const idDoctor = localStorage.getItem("id_doctores") || null;
 
     if (!idRol) {
         alert("No se encontró un rol asignado. Contacta al administrador.");
@@ -43,9 +37,8 @@ document.addEventListener("DOMContentLoaded", () => {
         .catch((error) => console.error("Error al obtener permisos del rol:", error));
 });
 
-function generarInterfaz(permisos, opciones, secciones) {
-    // Opciones rápidas
-    if (permisos.registro_mascotas) {
+function generarInterfaz(permisos, opciones, secciones, idDoctor) {
+    if (permisos.registro_mascotas) { //REGISTRO MASCOTAS
         opciones.innerHTML += `
             <div id="bt0" class="button" onclick="openModal('petModal')">
                 <i class="fi fi-sr-paw-heart"></i>
@@ -53,7 +46,7 @@ function generarInterfaz(permisos, opciones, secciones) {
             </div>`;
     }
 
-    if (permisos.ver_mascotas_registradas) {
+    if (permisos.ver_mascotas_registradas) { //VER MASCOTAS REGISTRADAS
         opciones.innerHTML += `
             <div id="bt1" class="button" onclick="openModal('tablaModal')">
                 <i class="fi fi-sr-pets"></i>
@@ -61,7 +54,7 @@ function generarInterfaz(permisos, opciones, secciones) {
             </div>`;
     }
 
-    if (permisos.registro_receta) {
+    if (permisos.registro_receta) { //REGISTRO RECETAS
         opciones.innerHTML += `
             <div id="bt2" class="button" onclick="openModal('reportModal')">
                 <i class="fi fi-sr-clipboard-list"></i>
@@ -69,7 +62,7 @@ function generarInterfaz(permisos, opciones, secciones) {
             </div>`;
     }
 
-    if (permisos.ver_reportes_recetas) {
+    if (permisos.ver_reportes_recetas) { //VER HISTORIAL DE RECETAS
         opciones.innerHTML += `
             <div id="bt3" class="button" onclick="openModal('historyModal')">
                 <i class="fi fi-sr-time-past"></i>
@@ -77,7 +70,7 @@ function generarInterfaz(permisos, opciones, secciones) {
             </div>`;
     }
 
-    if (permisos.ver_clientes_registrados) {
+    if (permisos.ver_clientes_registrados) { //VER CLIENTES REGISTRADOS
         opciones.innerHTML += `
             <div id="bt4" class="button" onclick="openModal('clientesModal')">
                 <i class="fi fi-sr-target-audience"></i>
@@ -85,7 +78,7 @@ function generarInterfaz(permisos, opciones, secciones) {
             </div>`;
     }
 
-    if (permisos.gestion_roles) {
+    if (permisos.gestion_roles) { //GESTION DE ROLES
         opciones.innerHTML += `
             <div id="bt5" class="button">
                 <i class="fi fi-sr-cogs"></i>
@@ -94,7 +87,7 @@ function generarInterfaz(permisos, opciones, secciones) {
             </div>`;
     }
 
-    if (permisos.editar_configuracion) {
+    if (permisos.editar_configuracion) { //EDITAR CONFIGURACION DE CONTRASEÑAS
         opciones.innerHTML += `
             <div id="bt6" class="button">
                 <i class="fi fi-sr-settings"></i>
@@ -103,8 +96,58 @@ function generarInterfaz(permisos, opciones, secciones) {
             </div>`;
     }
 
-    // Secciones dinámicas
-    if (permisos.vista_log_usuarios) {
+    if (permisos.registro_funcionarios) { //REGISTRO FUNCIONARIOS 
+        opciones.innerHTML += `
+            <div id="bt7" class="button" onclick="openModal('doctorModal')">
+                <i class="fi fi-sr-stethoscope"></i>
+                <h5>Registro funcionarios</h5>
+            </div>`;
+    }
+
+    if (permisos.administracion_mascota) { //ADMINISTRACION MASCOTAS
+        opciones.innerHTML += `
+            <div id="bt8" class="button" onclick="openModal('tablaModal')">
+                <i class="fi fi-sr-pets"></i>
+                <h5>Gestión Mascotas</h5>
+            </div>`;
+    }
+
+    if (permisos.registrar_citas) { //AGENTAR CITA
+        opciones.innerHTML += `
+            <div id="bt9" class="button" onclick="openModal('reserveModal')">
+                <i class="fi fi-sr-notebook-alt"></i>
+                <h5>Agendar Cita</h5>
+            </div>`;
+    }
+
+    if (idDoctor && permisos.ver_citas) { //VER CITAS DOCTORES
+        secciones.innerHTML += `
+            <div class="separator">
+                    <h3>Citas Próximas</h3>
+                    <button id="sortButton" onclick="sortCitas()">Ordenar por Fecha</button>
+                    <input type="text" id="searchInput" oninput="filtrarCitas()" placeholder="Buscar por propietario...">
+                </div>
+                
+                <table>
+                    <tbody>
+                        <!-- Las filas de citas se agregarán aquí dinámicamente -->
+                    </tbody>
+                </table>`;
+        const searchText = this.value.toLowerCase();
+        loadDoctorCitas(
+            `http://localhost/GoCanSeguridadSistemas/src/modules/php/doctores.php?id_doctor=${id_doctor}`,
+            "table tbody",
+            searchText
+        );
+    } else if (permisos.ver_citas) { //VER CITAS CLIENTES
+        opciones.innerHTML += `
+        <div id="bt10" class="button" onclick="openModal('viewReservationsModal');">
+            <i class="fi fi-sr-ballot"></i>
+            <h5>Reservas</h5>
+        </div>`;
+    }
+
+    if (permisos.vista_log_usuarios) { //VISTA LOG USUARIOS
         secciones.innerHTML += `
             <section>
                 <h3 class="separator">Registro de Usuarios en la Página</h3>
@@ -124,9 +167,11 @@ function generarInterfaz(permisos, opciones, secciones) {
                     </table>
                 </div>
             </section>`;
+            const urlLogUsuarios = 'http://localhost/GoCanSeguridadSistemas/src/modules/php/obtener_logs_usuarios.php';
+        loadLogUsuarios(urlLogUsuarios, "#log-usuarios-table tbody");
     }
 
-    if (permisos.vista_log_aplicacion) {
+    if (permisos.vista_log_aplicacion) { //VISTA LOG APLICACION
         secciones.innerHTML += `
             <section>
                 <h3 class="separator">Registro de Acciones en la Aplicación</h3>
@@ -149,22 +194,9 @@ function generarInterfaz(permisos, opciones, secciones) {
                     </table>
                 </div>
             </section>`;
-    }
 
-    // Sección de citas
-    if (permisos.registro_clientes || permisos.administracion_mascota) {
-        secciones.innerHTML += `
-            <section>
-                <h3 class="separator">Citas Próximas</h3>
-                <button id="sortButton" onclick="sortCitas()">Ordenar por Fecha</button>
-                <input type="text" id="searchInput" oninput="filtrarCitas()" placeholder="Buscar por propietario...">
-                
-                <table id="citasTable">
-                    <tbody>
-                        <!-- Las citas se cargarán aquí dinámicamente -->
-                    </tbody>
-                </table>
-            </section>`;
+        const urlLogAplicacion = "http://localhost/GoCanSeguridadSistemas/src/modules/php/obtener_log_aplicacion.php";
+        loadLogAplicacion(urlLogAplicacion, "#log-aplicacion-table tbody");
     }
 
     // Si no hay permisos, mostrar mensaje
@@ -186,10 +218,15 @@ function editarConfiguracion() {
     alert("Accediendo a Configuración...");
 }
 
+// Funciones de botones
 function sortCitas() {
     alert("Ordenando Citas...");
 }
 
 function filtrarCitas() {
-    alert("Filtrando Citas...");
+    const searchText = document.getElementById("searchInput").value.toLowerCase();
+    const idDoctor = localStorage.getItem("id_doctores");
+    if (idDoctor) {
+        loadDoctorCitas("http://localhost/GoCanSeguridadSistemas/src/modules/php/doctores.php", "#citasTable tbody", searchText);
+    }
 }
