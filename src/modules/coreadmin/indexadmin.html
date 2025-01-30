@@ -89,23 +89,29 @@
                     <div id="bt1" class="button" onclick="openModal('doctorModal')">
                         <i class="fi fi-sr-stethoscope"></i>
                         <h5>Registro funcionarios</h5>
-                    </div>                    
+                    </div>
+                    <div id="bt2" class="button" onclick="openModal('rolesModal')">
+                        <i class="fi fi-sr-dice-d6"></i>
+                        <h5>Administración de roles</h5>
+                    </div>                      
                 </div>
 
-                <h3 class="separator">Lista de veterinarios</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Id Doctor</th>
-                            <th>Nombre</th>
-                            <th>Especialidad</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>                    
-                    <tbody id="lista-veterinarios">
-                        <!-- Las filas se añadirán aquí mediante JavaScript -->
-                    </tbody>
-                </table>
+                <h3 class="separator">Lista de funcionarios</h3>
+                <div style="max-height: 280px; overflow-y: auto; border: 1px solid #ddd; border-radius: 5px;">
+                    <table id="lista-veterinarios-table" style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr>
+                                <th>Id Funcionario</th>
+                                <th>Nombre</th>
+                                <th>Especialidad</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lista-veterinarios">
+                            <!-- Las filas se añadirán aquí mediante JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
 
                 <h3 class="separator">Registro de Usuarios en la Página</h3>
                 <div style="max-height: 280px; overflow-y: auto; border: 1px solid #ddd; border-radius: 5px;">
@@ -116,6 +122,25 @@
                                 <th>Nombre del Usuario</th>
                                 <th>Acción</th>
                                 <th>Descripción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Las filas se añadirán aquí mediante JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                <h3 class="separator">Registro de Acciones en la Aplicación</h3>
+                <div style="max-height: 280px; overflow-y: auto; border: 1px solid #ddd; border-radius: 5px;">
+                    <table id="log-aplicacion-table" style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>Fecha y Hora</th>
+                                <th>Nombre del Usuario</th>
+                                <th>Acción</th>
+                                <th>Función Afectada</th>
+                                <th>Dato Modificado</th>
+                                <th>Descripción</th>
+                                <th>Valor Original</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -134,6 +159,107 @@
             </div>
         </article>
     </main>  
+
+    <!-- Modal para Administración de Roles -->
+    <div id="rolesModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Administración de Roles</h3>
+                <span class="close" onclick="closeModal('rolesModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <button id="addRoleButton" onclick="openModal('addRoleModal')" style="margin-bottom: 15px;">
+                    Añadir Rol
+                </button>
+                <div class="roles-table-container"></div>
+                    <table id="rolesTable" style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Nombre del Rol</th>
+                                <th>Editar</th>
+                                <th>Eliminar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Los roles serán cargados dinámicamente aquí -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Editar Permisos del Rol -->
+    <div id="editPermissionsModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Editar Permisos del Rol</h3>
+                <span class="close" onclick="closeModal('editPermissionsModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="permissionsForm">
+                    <!-- Contenedor con scrollbar -->
+                    <div class="permissions-table-container" style="width: 100%;">
+                        <table id="permissionsTable" style="width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th>Permiso</th>
+                                    <th>Habilitado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Los permisos serán cargados dinámicamente aquí -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="form-row button-group" style="width: 100%; display: flex; align-items: center; gap: 10px;">
+                        <button type="button" onclick="closeModal('editPermissionsModal')">Cancelar</button>
+                        <button type="submit">Guardar Cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>  
+
+    <!-- Modal para Añadir un Nuevo Rol -->
+    <div id="addRoleModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Añadir Nuevo Rol</h3>
+                <span class="close" onclick="closeModal('addRoleModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="addRoleForm" style="align-content: center;">
+                    <!-- Campo para el nombre del rol -->
+                    <div class="form-row" style="margin-bottom: 15px;">
+                        <label for="roleName">Nombre del Rol:</label>
+                        <input type="text" id="roleName" name="roleName" placeholder="Ejemplo: Administrador" required>
+                    </div>
+
+                    <!-- Tabla de permisos -->
+                    <div class="permissions-table-container" style="width: 100%;">
+                        <table id="newRolePermissionsTable" style="width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th>Permiso</th>
+                                    <th>Habilitado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Los permisos serán cargados dinámicamente aquí -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div style="margin: 5px; width: 100%; display: flex; align-items: center; gap: 10px;">
+                        <button type="button" onclick="closeModal('addRoleModal')">Cancelar</button>
+                        <button type="submit">Guardar Rol</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <!-- Sección del modal para registrar veterinarios -->
     <div id="doctorModal" class="modal" style="display:none;">

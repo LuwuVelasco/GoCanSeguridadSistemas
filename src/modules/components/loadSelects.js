@@ -103,12 +103,9 @@ export async function loadRolesFuncionario(url, selectSelector) {
             const roles = JSON.parse(responseText); // Intentamos convertir a JSON
             console.log("Roles obtenidos:", roles); // Depuración
 
-            if (!Array.isArray(roles)) {
-                throw new Error("El formato de la respuesta no es un array.");
-            }
-
-            // Filtrar roles para excluir "Cliente"
-            const rolesFiltrados = roles.filter(rol => rol.nombre.toLowerCase() !== "cliente");
+            const rolesFiltrados = roles.filter(
+                rol => rol.nombre_rol && typeof rol.nombre_rol === 'string' && rol.nombre_rol.toLowerCase() !== 'cliente'
+            );
 
             if (rolesFiltrados.length === 0) {
                 select.innerHTML = '<option value="">No hay roles disponibles</option>';
@@ -118,9 +115,9 @@ export async function loadRolesFuncionario(url, selectSelector) {
             select.innerHTML = '<option value="">Seleccionar rol...</option>';
             rolesFiltrados.forEach(rol => {
                 const option = document.createElement("option");
-                option.value = rol.id;
-                option.textContent = rol.nombre;
-                select.appendChild(option);
+                option.value = rol.id_rol;
+                option.textContent = rol.nombre_rol;
+                select.appendChild(option); 
             });
         } catch (jsonError) {
             console.error("Error al analizar JSON:", responseText, jsonError);

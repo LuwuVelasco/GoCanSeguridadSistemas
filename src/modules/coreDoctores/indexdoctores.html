@@ -80,11 +80,15 @@
                     </div>
                     <div id="bt1" class="button" onclick="openModal('reportModal')">
                         <i class="fi fi-sr-clipboard-list"></i>
-                        <h5>Registro reportes</h5>
+                        <h5>Registro consulta</h5>
                     </div>
                     <div id="bt2" class="button" onclick="openModal('historyModal')">
                         <i class="fi fi-sr-time-past"></i>
-                        <h5>Historial reportes</h5>
+                        <h5>Reportes consultas</h5>
+                    </div>
+                    <div id="bt4" class="button" onclick="openModal('clientesModal')">
+                        <i class="fi fi-sr-target-audience"></i>
+                        <h5>Clientes registrados</h5>
                     </div>
                 </div>
 
@@ -112,7 +116,7 @@
     <div id="reportModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('reportModal'); clearForm('reportForm')">&times;</span>
-            <h2>Registrar Reporte</h2>
+            <h2>Registrar Consulta</h2>
             <form id="reportForm">
                 <input type="hidden" id="id_reporte" name="id_reporte"> <!-- Campo oculto para el ID del reporte -->
                 <label for="propietario">Propietario:</label>
@@ -252,7 +256,7 @@
     <div id="historyModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('historyModal')">&times;</span>
-            <h2>Historial de Reportes</h2>
+            <h2>Reportes Consultas</h2>
             <input type="text" id="historySearchInput" class="search-input" placeholder="Buscar por propietario o mascota...">
             <div id="reportHistory">
                 <!-- Los reportes se agregarán aquí dinámicamente -->
@@ -270,6 +274,28 @@
                 <button type="button" onclick="closeModal('confirmEditModal')">Cancelar</button>
                 <button type="editar" id="confirmEdit">Editar</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Modal para mostrar clientes -->
+    <div id="clientesModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('clientesModal')">&times;</span>
+            <h2>Clientes Registrados</h2>
+            <input type="text" id="clienteSearchInput" class="search-input" placeholder="Buscar por nombre...">
+            <table id="clientesTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Email</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Los clientes se agregarán aquí dinámicamente -->
+                </tbody>
+            </table>
+            <button type="button" onclick="closeModal('clientesModal')">Cerrar</button>
         </div>
     </div>
 

@@ -2,7 +2,7 @@
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Headers: Content-Type');
-
+session_start(); // Para obtener $_SESSION del usuario logueado
 date_default_timezone_set('America/La_Paz');
 
 include 'conexion.php';
@@ -59,14 +59,69 @@ try {
     $stmtHistorial->bindValue(':estado', true, PDO::PARAM_BOOL); // Asignar estado = true
     $stmtHistorial->execute();
 
+    //obtener datos 
+    $idUsuarioActual    = $_SESSION['id_usuario'] ?? null;
+    $nombreUsuarioActual= $_SESSION['nombre_usuario'] ?? null;
+
+    $sqlRolNombre = "SELECT nombre_rol FROM roles_y_permisos WHERE id_rol = :rol";
+    $stmtRol = $pdo->prepare($sqlRolNombre);
+    $stmtRol->bindParam(':rol', $rol);
+    $stmtRol->execute();
+    $rowRol = $stmtRol->fetch(PDO::FETCH_ASSOC);
+
+    $nombreRolNuevoUsuario = $rowRol ? $rowRol['nombre_rol'] : 'Rol desconocido';
+
+    registrarLogAplicacion(
+        $idUsuarioActual, // QUIÉN lo hizo (la persona logueada)
+        $nombreUsuarioActual, // Nombre de quien lo hizo
+        'registro_usuario',   // Acción
+        "Se registró un nuevo usuario con ID $idUsuario y rol $nombreRolNuevoUsuario", // Descripción
+        'registrar_funcionario',  // Función afectada
+        'usuario',                // Dato modificado
+        "Registro de $nombreRolNuevoUsuario" // Valor original (texto descriptivo)
+    );
     // Si todo va bien, responde con éxito
     echo json_encode([
         "estado" => "success",
         "mensaje" => "Funcionario registrado exitosamente.",
-        "id_usuario" => $idUsuario,
+        "id_usuario"       => $idUsuario, // Usamos $idUsuario aquí
         "id_configuracion" => $idConfiguracion
     ]);
 } catch (PDOException $e) {
     echo json_encode(["estado" => "error", "mensaje" => "Error: " . $e->getMessage()]);
+}
+function registrarLogAplicacion(
+    $idUsuarioActual,
+    $nombreUsuarioActual,
+    $accion,
+    $descripcion,
+    $funcionAfectada,
+    $datoModificado,
+    $valorOriginal
+) {
+    $url = 'http://localhost/GoCanSeguridadSistemas/src/modules/php/registrar_log_aplicacion.php';
+
+    // Construir datos a enviar
+    $data = http_build_query([
+        'id_usuario'       => $idUsuarioActual,
+        'nombre_usuario'   => $nombreUsuarioActual,  // Este es el nombre de la persona logueada
+        'accion'           => $accion,
+        'descripcion'      => $descripcion,
+        'funcion_afectada' => $funcionAfectada,
+        'dato_modificado'  => $datoModificado,
+        'valor_original'   => $valorOriginal
+    ]);
+
+    $options = [
+        'http' => [
+            'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+            'method'  => 'POST',
+            'content' => $data,
+        ],
+    ];
+    $context = stream_context_create($options);
+
+    // Llamada al archivo que hace la inserción real en log_aplicacion
+    file_get_contents($url, false, $context);
 }
 ?>

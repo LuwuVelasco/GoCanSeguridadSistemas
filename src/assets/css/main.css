@@ -1901,7 +1901,7 @@ button[type="editarr"]:hover {
 }
 
 .form-row[style*="align-items: center;"] {
-    flex-direction: row; /* Alinea el contenido en fila */
+    flex-direction: row; /* Alinea el qo en fila */
     align-items: center; /* Centra verticalmente */
     gap: 10px; /* Espaciado entre el texto y el checkbox */
 }
@@ -2091,71 +2091,91 @@ body{
     color: #364670;
 }
 
+.main .separator{
+  margin: 35px 0 20px;
+  font-weight: 500;
+  color: #364670;
+}
+
 .main .quick-access{
-    display: flex;
-    justify-content: space-around;
-    cursor: pointer;
+  display: flex;
+  justify-content: space-around;
+  cursor: pointer;
 }
 
 .main .quick-access .item{
-    background: #fff;
-    width: 20%;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid transparent;
-    border-radius: 20px;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 6px rgba(136, 148, 171, 0.2), 0 24px 20px -24px rgba(71, 82, 107, 0.1);
+  background: #fff;
+  width: 20%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid transparent;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(136, 148, 171, 0.2), 0 24px 20px -24px rgba(71, 82, 107, 0.1);
 }
 
 .main .quick-access .item:hover{
-    box-shadow: none;
-    border-color: #999;
+  box-shadow: none;
+  border-color: #999;
 }
 
 .main .quick-access .item i{
-    font-size: 46px;
-    padding: 10px;
-    border-radius: 16px;
+  font-size: 46px;
+  padding: 10px;
+  border-radius: 16px;
 }
 
 .main .quick-access .item:nth-child(1) i,
 .main table tbody tr:nth-child(1) td.icon i{
-   color: #1976d2; 
-   background: #e6e4ec;
+ color: #1976d2; 
+ background: #e6e4ec;
 }
 
 .main .quick-access .item:nth-child(2) i,
 .main table tbody tr:nth-child(2) td.icon i{
-    color: #1d92f1; 
-    background: #ddeffd;
+  color: #1d92f1; 
+  background: #ddeffd;
 }
 
 .main .quick-access .item:nth-child(3) i,
 .main table tbody tr:nth-child(4) td.icon i{
-    color: #ffd12c; 
-    background: #fff8df;
+  color: #ffd12c; 
+  background: #fff8df;
 }
-
 .main .quick-access .item:nth-child(4) i,
+.main table tbody tr:nth-child(5) td.icon i{
+  color: #50afe6; 
+  background: #a7b1ea;
+}
+.main .quick-access .item:nth-child(5) i,
+.main table tbody tr:nth-child(6) td.icon i{
+  color: #a850e6; 
+  background: #d896df;
+}
+.main .quick-access .item:nth-child(6) i,
+.main table tbody tr:nth-child(7) td.icon i{
+  color: #df50e6; 
+  background: #f3c0ed;
+}
+.main .quick-access .item:nth-child(7) i,
 .main table tbody tr:nth-child(3) td.icon i{
-    color: #3bc963; 
-    background: #e2f7e8;
+  color: #3bc963; 
+  background: #e2f7e8;
 }
 
 .main .quick-access .item h5{
-    font-size: 18px;
-    font-weight: 500;
-    color: #364670;
-    margin: 15px 0 8px;
+  font-size: 18px;
+  font-weight: 500;
+  color: #364670;
+  margin: 15px 0 8px;
 }
 
 .main .quick-access .item p{
-    color: #999;
-    font-size: 14px;
+  color: #999;
+  font-size: 14px;
 }
 
 .main table{
