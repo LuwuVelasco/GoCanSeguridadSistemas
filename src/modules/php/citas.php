@@ -7,74 +7,84 @@ try {
         if (isset($_GET['especialidad_id']) && is_numeric($_GET['especialidad_id'])) {
             // Obtener doctores según la especialidad
             $especialidadId = $_GET['especialidad_id'];
-            $stmt = $conexion->prepare("SELECT nombre FROM doctores WHERE id_especialidad = :especialidad_id");
-            $stmt->bindParam(':especialidad_id', $especialidadId, PDO::PARAM_INT);
-            $stmt->execute();
-            $doctores = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-            echo json_encode($doctores ?: []); // Devolver un array vacío si no hay doctores
-            exit;
-        } elseif (!isset($_GET['especialidad_id'])) {
-            // Obtener todas las especialidades
-            $stmt = $conexion->query("SELECT id_especialidad, nombre_especialidad FROM especialidad");
-            $especialidades = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-            echo json_encode($especialidades ?: []); // Devolver un array vacío si no hay especialidades
+            $query = "SELECT nombre FROM doctores WHERE id_especialidad = $1";
+            $result = pg_prepare($conexion, "query_doctores", $query);
+            $result = pg_execute($conexion, "query_doctores", [$especialidadId]);
+
+            $doctores = [];
+            while ($row = pg_fetch_assoc($result)) {
+                $doctores[] = $row;
+            }
+
+            echo json_encode($doctores ?: []);
             exit;
         } else {
-            echo json_encode([
-                "error" => true,
-                "mensaje" => "ID de especialidad inválido o no proporcionado."
-            ]);
+            // Obtener todas las especialidades usando pg_query()
+            $query = "SELECT id_especialidad, nombre_especialidad FROM especialidad";
+            $result = pg_query($conexion, $query);
+
+            if (!$result) {
+                echo json_encode(['error' => true, 'mensaje' => 'Error al obtener especialidades']);
+                exit;
+            }
+
+            $especialidades = [];
+            while ($row = pg_fetch_assoc($result)) {
+                $especialidades[] = $row;
+            }
+
+            echo json_encode($especialidades ?: []);
             exit;
         }
     } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        // Obtener datos de la solicitud
         $data = json_decode(file_get_contents("php://input"), true);
 
         $propietario = $data['propietario'];
-        $especialidadId = $data['especialidadId'];
         $especialidadNombre = $data['especialidadNombre'];
         $doctor = $data['doctor'];
         $id_usuario = $data['id_usuario'];
         $fecha = $data['fecha'];
         $hora = $data['horario'];
 
-        $stmt = $conexion->prepare("SELECT id_doctores FROM doctores WHERE nombre = :nombre");
-        $stmt->bindParam(':nombre', $doctor);
-        $stmt->execute();
+        // Obtener ID del doctor
+        $query = "SELECT id_doctores FROM doctores WHERE nombre = $1";
+        $result = pg_prepare($conexion, "query_doctor", $query);
+        $result = pg_execute($conexion, "query_doctor", [$doctor]);
 
-        if ($stmt->rowCount() > 0) {
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (pg_num_rows($result) > 0) {
+            $row = pg_fetch_assoc($result);
             $id_doctor = $row['id_doctores'];
 
-            $stmt = $conexion->prepare("SELECT COUNT(*) as count FROM cita WHERE id_doctor = :id_doctor AND fecha = :fecha AND horario = :horario");
-            $stmt->bindParam(':id_doctor', $id_doctor);
-            $stmt->bindParam(':fecha', $fecha);
-            $stmt->bindParam(':horario', $hora);
-            $stmt->execute();
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            // Verificar si ya existe una cita en ese horario para el doctor
+            $query = "SELECT COUNT(*) as count FROM cita WHERE id_doctor = $1 AND fecha = $2 AND horario = $3";
+            $result = pg_prepare($conexion, "query_cita_existente", $query);
+            $result = pg_execute($conexion, "query_cita_existente", [$id_doctor, $fecha, $hora]);
+            $existingCita = pg_fetch_assoc($result);
 
-            if ($result['count'] > 0) {
+            if ($existingCita['count'] > 0) {
                 echo json_encode([
                     "error" => true,
                     "mensaje" => "El doctor ya tiene una cita en ese horario."
                 ]);
-            } else {
-                $stmt = $conexion->prepare("INSERT INTO cita (propietario, servicio, doctor, id_usuario, id_doctor, fecha,horario) VALUES (:propietario, :servicio, :doctor, :id_usuario, :id_doctor, :fecha, :horario)");
-                $stmt->bindParam(':propietario', $propietario);
-                $stmt->bindParam(':servicio', $especialidadNombre);
-                $stmt->bindParam(':doctor', $doctor);
-                $stmt->bindParam(':id_usuario', $id_usuario);
-                $stmt->bindParam(':id_doctor', $id_doctor);
-                $stmt->bindParam(':fecha', $fecha);
-                $stmt->bindParam(':horario', $hora);
+                exit;
+            }
 
-                $stmt->execute();
+            // Insertar nueva cita
+            $query = "INSERT INTO cita (propietario, servicio, doctor, id_usuario, id_doctor, fecha, horario) 
+                      VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id_cita";
+            $result = pg_prepare($conexion, "query_insert_cita", $query);
+            $result = pg_execute($conexion, "query_insert_cita", [$propietario, $especialidadNombre, $doctor, $id_usuario, $id_doctor, $fecha, $hora]);
 
-                $id_cita = $conexion->lastInsertId();
+            if ($row = pg_fetch_assoc($result)) {
                 echo json_encode([
-                    "id_cita" => $id_cita,
+                    "id_cita" => $row['id_cita'],
                     "mensaje" => "Cita registrada con éxito."
+                ]);
+            } else {
+                echo json_encode([
+                    "error" => true,
+                    "mensaje" => "No se pudo registrar la cita."
                 ]);
             }
         } else {
@@ -89,10 +99,10 @@ try {
             "mensaje" => "Método de solicitud no soportado."
         ]);
     }
-} catch (PDOException $e) {
+} catch (Exception $e) {
     echo json_encode([
         "error" => true,
-        "mensaje" => "Error de conexión: " . $e->getMessage()
+        "mensaje" => "Error del servidor: " . $e->getMessage()
     ]);
 }
 ?>

@@ -35,26 +35,27 @@ document.addEventListener('DOMContentLoaded', function() {
       });
   });
 
+
   // Evento para desplegar el modal de aviso de inicio de sesión para guardar a favoritos
-
-  document.querySelectorAll('.card-action-btn.favorito').forEach(button => {
-    button.addEventListener('click', function() {
-      // Mostrar la ventana modal
-      document.getElementById('loginModal').style.display = 'flex';
+  if (localStorage.getItem("id_rol") == 3){
+    document.querySelectorAll('.card-action-btn.favorito').forEach(button => {
+      button.addEventListener('click', function() {
+        // Mostrar la ventana modal
+        document.getElementById('loginModal').style.display = 'flex';
+      });
     });
-  });
 
-  // Cerrar la ventana modal
-  document.querySelector('.close-button').addEventListener('click', function() {
-      document.getElementById('loginModal').style.display = 'none';
-  });
+    // Cerrar la ventana modal
+    document.querySelector('.close-button').addEventListener('click', function() {
+        document.getElementById('loginModal').style.display = 'none';
+    });
 
-  // También puedes cerrar el modal si se hace clic fuera del contenido
-  window.onclick = function(event) {
-    let modal = document.getElementById('loginModal');
-    if (event.target === modal) {
-      modal.style.display = "none";
+    // También puedes cerrar el modal si se hace clic fuera del contenido
+    window.onclick = function(event) {
+      let modal = document.getElementById('loginModal');
+      if (event.target === modal) {
+        modal.style.display = "none";
+      }
     }
   }
-
 });

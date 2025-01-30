@@ -15,16 +15,17 @@
     <header class="header" data-header>
         <div class="container">
             <a href="#" class="logo">GoCan</a>
-
-            <div class="profile" onclick="toggleDropdown()">
-                <img src="../../assets/Images/user-md.png" alt="Perfil">
-                <div class="profile-dropdown" id="profileDropdown">
-                    <ul>
-                        <li><a href="http://localhost/GoCanSeguridadSistemas/src/modules/login/sesionindex.html">Cambiar de usuario</a></li>
-                        <li><a href="http://localhost/GoCanSeguridadSistemas/src/modules/core/index.html">Cerrar sesión</a></li>
-                    </ul>
+            <div>
+                <div class="profile" onclick="toggleDropdown()">
+                    <img src="../../assets/Images/user-md.png" alt="Perfil">
+                    <div class="profile-dropdown" id="profileDropdown">
+                        <ul>
+                            <li><a href="http://localhost/GoCanSeguridadSistemas/src/modules/login/sesionindex.html">Cambiar de usuario</a></li>
+                            <li><a href="http://localhost/GoCanSeguridadSistemas/src/modules/core/index.html">Cerrar sesión</a></li>
+                        </ul>
+                    </div>
                 </div>
-            </div>            
+            </div>           
         </div>
     </header>
     <main>
@@ -32,14 +33,16 @@
             <section id="home" aria-label="home" style="background-image: url('../../assets/Images/banner_InicioAd.png')">
                 <div class="container"></div>
             </section>
-            <div id="main">
-                <h3 class="separator">Opciones</h3>
-                <div id="opciones" class="quick-access" style="width: 100%; display: flex; align-items: center; gap: 10%; justify-content: center;">
+            <section style="padding: 30px;">
+                <div id="main"> 
+                    <h3 class="separator" style="color: var(--eerie-black);">Opciones</h3>
+                    <div id="opciones" class="quick-access" style="width: 100%; display: flex; align-items: center; gap: 10%; justify-content: center;">
+                    </div>
+                </div>     
+                <div id="secciones">
+                    
                 </div>
-            </div>     
-            <div id="secciones">
-                
-            </div>
+            </section>
         </article>
     </main>
 </body>
