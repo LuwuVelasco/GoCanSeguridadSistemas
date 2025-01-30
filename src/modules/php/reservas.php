@@ -1,14 +1,12 @@
 <?php
 header('Content-Type: application/json');
-include 'conexion.php';
-
-$data = json_decode(file_get_contents("php://input"), true);
+$pdo = include 'conexion.php'; // Asegúrate de que `conexion.php` devuelve `$pdo`
 
 try {
-    $data = json_decode(file_get_contents("php://input"));
+    $data = json_decode(file_get_contents("php://input"), true);
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if (isset($data['fecha']) && isset($data['horario'])) {
+        if (isset($data['fecha'], $data['horario'])) {
             // Registrar una nueva cita
             $fecha = $data['fecha'];
             $horario = $data['horario'];
@@ -33,17 +31,13 @@ try {
             $query = "
                 SELECT id_cita, propietario, servicio, fecha, horario 
                 FROM cita 
-                WHERE id_usuario = $1 AND 
-                (fecha > CURRENT_DATE OR 
-                (fecha = CURRENT_DATE AND horario > CURRENT_TIME))
+                WHERE id_usuario = :id_usuario 
+                AND (fecha > CURRENT_DATE OR (fecha = CURRENT_DATE AND horario > CURRENT_TIME))
             ";
-            $result = pg_prepare($conexion, "query_citas_usuario", $query);
-            $result = pg_execute($conexion, "query_citas_usuario", [$id_usuario]);
-
-            $citas = [];
-            while ($row = pg_fetch_assoc($result)) {
-                $citas[] = $row;
-            }
+            $stmt = $pdo->prepare($query);
+            $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+            $stmt->execute();
+            $citas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             echo json_encode($citas);
             exit;
@@ -61,11 +55,12 @@ try {
 
         $id_cita = $data['id_cita'];
 
-        $query = "DELETE FROM cita WHERE id_cita = $1";
-        $result = pg_prepare($conexion, "query_eliminar_cita", $query);
-        $result = pg_execute($conexion, "query_eliminar_cita", [$id_cita]);
+        $query = "DELETE FROM cita WHERE id_cita = :id_cita";
+        $stmt = $pdo->prepare($query);
+        $stmt->bindParam(':id_cita', $id_cita, PDO::PARAM_INT);
+        $stmt->execute();
 
-        if ($result) {
+        if ($stmt->rowCount() > 0) {
             echo json_encode(['mensaje' => 'Cita eliminada correctamente']);
         } else {
             echo json_encode(['error' => 'Error al eliminar la cita']);

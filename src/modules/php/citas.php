@@ -7,31 +7,19 @@ try {
         if (isset($_GET['especialidad_id']) && is_numeric($_GET['especialidad_id'])) {
             // Obtener doctores según la especialidad
             $especialidadId = $_GET['especialidad_id'];
-            $query = "SELECT nombre FROM doctores WHERE id_especialidad = $1";
-            $result = pg_prepare($conexion, "query_doctores", $query);
-            $result = pg_execute($conexion, "query_doctores", [$especialidadId]);
-
-            $doctores = [];
-            while ($row = pg_fetch_assoc($result)) {
-                $doctores[] = $row;
-            }
+            $query = "SELECT nombre FROM doctores WHERE id_especialidad = :especialidad_id";
+            $stmt = $pdo->prepare($query);
+            $stmt->bindParam(':especialidad_id', $especialidadId, PDO::PARAM_INT);
+            $stmt->execute();
+            $doctores = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             echo json_encode($doctores ?: []);
             exit;
         } else {
-            // Obtener todas las especialidades usando pg_query()
+            // Obtener todas las especialidades
             $query = "SELECT id_especialidad, nombre_especialidad FROM especialidad";
-            $result = pg_query($conexion, $query);
-
-            if (!$result) {
-                echo json_encode(['error' => true, 'mensaje' => 'Error al obtener especialidades']);
-                exit;
-            }
-
-            $especialidades = [];
-            while ($row = pg_fetch_assoc($result)) {
-                $especialidades[] = $row;
-            }
+            $stmt = $pdo->query($query);
+            $especialidades = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             echo json_encode($especialidades ?: []);
             exit;
@@ -53,19 +41,23 @@ try {
         $hora = $data['horario'];
 
         // Obtener ID del doctor
-        $query = "SELECT id_doctores FROM doctores WHERE nombre = $1";
-        $result = pg_prepare($conexion, "query_doctor", $query);
-        $result = pg_execute($conexion, "query_doctor", [$doctor]);
+        $query = "SELECT id_doctores FROM doctores WHERE nombre = :doctor";
+        $stmt = $pdo->prepare($query);
+        $stmt->bindParam(':doctor', $doctor, PDO::PARAM_STR);
+        $stmt->execute();
+        $doctorData = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if (pg_num_rows($result) > 0) {
-            $row = pg_fetch_assoc($result);
-            $id_doctor = $row['id_doctores'];
+        if ($doctorData) {
+            $id_doctor = $doctorData['id_doctores'];
 
             // Verificar si ya existe una cita en ese horario para el doctor
-            $query = "SELECT COUNT(*) as count FROM cita WHERE id_doctor = $1 AND fecha = $2 AND horario = $3";
-            $result = pg_prepare($conexion, "query_cita_existente", $query);
-            $result = pg_execute($conexion, "query_cita_existente", [$id_doctor, $fecha, $hora]);
-            $existingCita = pg_fetch_assoc($result);
+            $query = "SELECT COUNT(*) as count FROM cita WHERE id_doctor = :id_doctor AND fecha = :fecha AND horario = :horario";
+            $stmt = $pdo->prepare($query);
+            $stmt->bindParam(':id_doctor', $id_doctor, PDO::PARAM_INT);
+            $stmt->bindParam(':fecha', $fecha, PDO::PARAM_STR);
+            $stmt->bindParam(':horario', $hora, PDO::PARAM_STR);
+            $stmt->execute();
+            $existingCita = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($existingCita['count'] > 0) {
                 echo json_encode([
@@ -77,13 +69,21 @@ try {
 
             // Insertar nueva cita
             $query = "INSERT INTO cita (propietario, servicio, doctor, id_usuario, id_doctor, fecha, horario) 
-                      VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id_cita";
-            $result = pg_prepare($conexion, "query_insert_cita", $query);
-            $result = pg_execute($conexion, "query_insert_cita", [$propietario, $especialidadNombre, $doctor, $id_usuario, $id_doctor, $fecha, $hora]);
+                      VALUES (:propietario, :especialidadNombre, :doctor, :id_usuario, :id_doctor, :fecha, :horario) RETURNING id_cita";
+            $stmt = $pdo->prepare($query);
+            $stmt->bindParam(':propietario', $propietario, PDO::PARAM_STR);
+            $stmt->bindParam(':especialidadNombre', $especialidadNombre, PDO::PARAM_STR);
+            $stmt->bindParam(':doctor', $doctor, PDO::PARAM_STR);
+            $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+            $stmt->bindParam(':id_doctor', $id_doctor, PDO::PARAM_INT);
+            $stmt->bindParam(':fecha', $fecha, PDO::PARAM_STR);
+            $stmt->bindParam(':horario', $hora, PDO::PARAM_STR);
+            $stmt->execute();
+            $id_cita = $stmt->fetchColumn();
 
-            if ($row = pg_fetch_assoc($result)) {
+            if ($id_cita) {
                 echo json_encode([
-                    "id_cita" => $row['id_cita'],
+                    "id_cita" => $id_cita,
                     "mensaje" => "Cita registrada con éxito."
                 ]);
             } else {
