@@ -1,16 +1,16 @@
 # Usar una imagen base con PHP y Apache
 FROM php:8.2-apache
 
-# Copiar SOLO el contenido de 'src/core' a /var/www/html/
+# Copiar el contenido de src/core a /var/www/html/ (donde Apache lo espera)
 COPY src/core/ /var/www/html/
 
-# Asegurar que Apache cargue el archivo index.html correctamente
+# Asegurar que Apache cargue index.html correctamente
 RUN echo "DirectoryIndex index.html" >> /etc/apache2/apache2.conf
 
-# Establecer permisos correctos
+# Ajustar permisos de archivos
 RUN chmod -R 755 /var/www/html && chown -R www-data:www-data /var/www/html
 
-# Habilitar módulo de reescritura en Apache (si usas .htaccess)
+# Habilitar mod_rewrite (si usas .htaccess)
 RUN a2enmod rewrite
 
 # Exponer el puerto 80
