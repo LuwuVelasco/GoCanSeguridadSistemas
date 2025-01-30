@@ -2,19 +2,12 @@
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Headers: Content-Type');
-
+include 'conexion.php';
 $json = file_get_contents('php://input');
 $data = json_decode($json, true);
 
 if (isset($data['email'])) {
     $email = $data['email'];
-
-    // Conexión a la base de datos
-    $conexion = pg_connect("dbname=gocan user=postgres password=admin");
-    if (!$conexion) {
-        echo json_encode(["estado" => "error", "mensaje" => "Error de conexión a la base de datos"]);
-        exit();
-    }
 
     // Consulta para verificar si el correo ya existe
     $sql = "SELECT COUNT(*) AS total FROM usuario WHERE email = $1";

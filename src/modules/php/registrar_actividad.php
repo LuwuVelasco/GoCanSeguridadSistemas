@@ -2,13 +2,7 @@
 // Iniciar la sesión
 session_start();
 header('Content-Type: application/json');
-
-// Conectar a la base de datos
-$conexion = pg_connect("dbname=gocan user=postgres password=admin");
-if (!$conexion) {
-    echo json_encode(["estado" => "error", "mensaje" => "No se pudo conectar a la base de datos"]);
-    exit;
-}
+include 'conexion.php';
 
 // Asegurar que recibimos los parámetros necesarios
 if (isset($_POST['id_usuario']) && !empty($_POST['id_usuario']) && isset($_POST['nombre_usuario'])) {

@@ -2,6 +2,7 @@
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Headers: Content-Type');
+include 'conexion.php';
 
 $json = file_get_contents('php://input');
 $data = json_decode($json, true);
@@ -13,11 +14,6 @@ if (isset($data['verified']) && $data['verified'] == true) {
         $hashedPassword = password_hash($data['password'], PASSWORD_BCRYPT);
         $rol_id = 3; // Asignar un rol por defecto para los nuevos usuarios
         $fecha_registro = date('Y-m-d H:i:s'); // Obtener la fecha actual
-        $conexion = pg_connect("dbname=gocan user=postgres password=admin");
-        if (!$conexion) {
-            echo json_encode(["estado" => "error", "mensaje" => "Error de conexión a la base de datos"]);
-            exit();
-        }
         // Verificar si el correo ya está registrado
         $sql_verificar = "SELECT COUNT(*) AS total FROM usuario WHERE email = $1";
         $resultado_verificar = pg_query_params($conexion, $sql_verificar, array($email));

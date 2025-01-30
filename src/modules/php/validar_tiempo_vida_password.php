@@ -2,19 +2,12 @@
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Headers: Content-Type');
-
+include 'conexion.php';
 $json = file_get_contents('php://input');
 $data = json_decode($json, true);
 
 if (isset($data['id_usuario'])) {
     $id_usuario = $data['id_usuario'];
-
-    // Conexión a la base de datos
-    $conexion = pg_connect("dbname=gocan user=postgres password=admin");
-    if (!$conexion) {
-        echo json_encode(["estado" => "error", "mensaje" => "Error de conexión a la base de datos"]);
-        exit();
-    }
 
     // Obtener la configuración más reciente
     $sql_configuracion = "SELECT tiempo_vida_util FROM configuracion_passwords ORDER BY id_configuracion DESC LIMIT 1";

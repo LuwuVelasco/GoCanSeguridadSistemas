@@ -1,12 +1,6 @@
 <?php
 header('Content-Type: application/json');
-
-// Conectar a la base de datos
-$conexion = pg_connect("host=localhost dbname=gocan user=postgres password=admin");
-if (!$conexion) {
-    echo json_encode(["estado" => "error", "mensaje" => "No se pudo conectar a la base de datos"]);
-    exit;
-}
+include 'conexion.php';
 
 // Obtener los datos del reporte a eliminar
 $propietario = isset($_POST['propietario']) ? $_POST['propietario'] : '';

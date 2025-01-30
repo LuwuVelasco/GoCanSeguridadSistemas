@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json');
-
+include 'conexion.php';
 // Verificar sesión activa
 session_start();
 if (!isset($_SESSION['id_doctores'])) {
@@ -16,13 +16,6 @@ if (!isset($data['id_cita'])) {
 }
 
 $id_cita = $data['id_cita'];
-
-// Conectar a la base de datos
-$conexion = pg_connect("dbname=gocan user=postgres password=admin");
-if (!$conexion) {
-    echo json_encode(["estado" => "error", "mensaje" => "No se pudo conectar a la base de datos"]);
-    exit;
-}
 
 // Eliminar la cita
 $query = "DELETE FROM cita WHERE id_cita = $1";

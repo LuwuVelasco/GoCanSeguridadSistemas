@@ -1,22 +1,13 @@
 <?php
 header('Content-Type: application/json');
-
-$host = "localhost";
-$port = "5432";
-$dbname = "gocan";
-$username = "postgres";
-$password = "admin";
-$dsn = "pgsql:host=$host;port=$port;dbname=$dbname;user=$username;password=$password";
+include 'conexion.php';
 
 try {
-    $conn = new PDO($dsn);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
     if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         if (isset($_GET['especialidad_id']) && is_numeric($_GET['especialidad_id'])) {
             // Obtener doctores según la especialidad
             $especialidadId = $_GET['especialidad_id'];
-            $stmt = $conn->prepare("SELECT nombre FROM doctores WHERE id_especialidad = :especialidad_id");
+            $stmt = $conexion->prepare("SELECT nombre FROM doctores WHERE id_especialidad = :especialidad_id");
             $stmt->bindParam(':especialidad_id', $especialidadId, PDO::PARAM_INT);
             $stmt->execute();
             $doctores = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -25,7 +16,7 @@ try {
             exit;
         } elseif (!isset($_GET['especialidad_id'])) {
             // Obtener todas las especialidades
-            $stmt = $conn->query("SELECT id_especialidad, nombre_especialidad FROM especialidad");
+            $stmt = $conexion->query("SELECT id_especialidad, nombre_especialidad FROM especialidad");
             $especialidades = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
             echo json_encode($especialidades ?: []); // Devolver un array vacío si no hay especialidades
@@ -48,7 +39,7 @@ try {
         $fecha = $data['fecha'];
         $hora = $data['horario'];
 
-        $stmt = $conn->prepare("SELECT id_doctores FROM doctores WHERE nombre = :nombre");
+        $stmt = $conexion->prepare("SELECT id_doctores FROM doctores WHERE nombre = :nombre");
         $stmt->bindParam(':nombre', $doctor);
         $stmt->execute();
 
@@ -56,7 +47,7 @@ try {
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             $id_doctor = $row['id_doctores'];
 
-            $stmt = $conn->prepare("SELECT COUNT(*) as count FROM cita WHERE id_doctor = :id_doctor AND fecha = :fecha AND horario = :horario");
+            $stmt = $conexion->prepare("SELECT COUNT(*) as count FROM cita WHERE id_doctor = :id_doctor AND fecha = :fecha AND horario = :horario");
             $stmt->bindParam(':id_doctor', $id_doctor);
             $stmt->bindParam(':fecha', $fecha);
             $stmt->bindParam(':horario', $hora);
@@ -69,7 +60,7 @@ try {
                     "mensaje" => "El doctor ya tiene una cita en ese horario."
                 ]);
             } else {
-                $stmt = $conn->prepare("INSERT INTO cita (propietario, servicio, doctor, id_usuario, id_doctor, fecha,horario) VALUES (:propietario, :servicio, :doctor, :id_usuario, :id_doctor, :fecha, :horario)");
+                $stmt = $conexion->prepare("INSERT INTO cita (propietario, servicio, doctor, id_usuario, id_doctor, fecha,horario) VALUES (:propietario, :servicio, :doctor, :id_usuario, :id_doctor, :fecha, :horario)");
                 $stmt->bindParam(':propietario', $propietario);
                 $stmt->bindParam(':servicio', $especialidadNombre);
                 $stmt->bindParam(':doctor', $doctor);
@@ -80,7 +71,7 @@ try {
 
                 $stmt->execute();
 
-                $id_cita = $conn->lastInsertId();
+                $id_cita = $conexion->lastInsertId();
                 echo json_encode([
                     "id_cita" => $id_cita,
                     "mensaje" => "Cita registrada con éxito."

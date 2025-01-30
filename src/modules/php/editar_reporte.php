@@ -11,7 +11,7 @@ $fecha = $_POST['fecha'];
 
 // Actualizar usando el ID del reporte
 $sql = "UPDATE reporte SET propietario=?, nombre_mascota=?, sintomas=?, diagnostico=?, receta=?, fecha=? WHERE id_reporte=?";
-$stmt = $conn->prepare($sql);
+$stmt = $conexion->prepare($sql);
 $stmt->bind_param('ssssssi', $propietario, $nombre_mascota, $sintomas, $diagnostico, $receta, $fecha, $id_reporte);
 
 if ($stmt->execute()) {
@@ -21,4 +21,4 @@ if ($stmt->execute()) {
 }
 
 $stmt->close();
-$conn->close();
+$conexion->close();

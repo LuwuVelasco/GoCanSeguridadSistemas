@@ -1,7 +1,6 @@
 <?php
 header('Content-Type: application/json');
-
-include('conexion.php'); // Conexión a la base de datos
+include 'conexion.php';
 
 try {
     // Verificar que el ID del usuario fue enviado

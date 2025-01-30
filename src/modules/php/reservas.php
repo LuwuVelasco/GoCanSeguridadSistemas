@@ -1,18 +1,9 @@
 <?php
-$host = "localhost";
-$port = "5432";
-$dbname = "gocan";
-$username = "postgres";
-$password = "admin";
-$dsn = "pgsql:host=$host;port=$port;dbname=$dbname;user=$username;password=$password";
-
+include 'conexion.php';
 $data = json_decode(file_get_contents("php://input"));
 
 // Intentar crear conexión PDO
 try {
-    $conn = new PDO($dsn);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Validar si es una solicitud para registrar o cargar citas
         if (isset($data->fecha) && isset($data->horario)) {
@@ -36,7 +27,7 @@ try {
             $id_usuario = $data->id_usuario;
 
             // Consulta para obtener solo las citas futuras o citas de hoy con hora futura asociadas al id_usuario
-            $stmt = $conn->prepare("
+            $stmt = $conexion->prepare("
                 SELECT id_cita, propietario, servicio, fecha, horario 
                 FROM cita 
                 WHERE id_usuario = :id_usuario AND 
@@ -55,7 +46,7 @@ try {
         // Eliminar reserva
         $id_cita = $data->id_cita;
 
-        $stmt = $conn->prepare("DELETE FROM cita WHERE id_cita = :id_cita");
+        $stmt = $conexion->prepare("DELETE FROM cita WHERE id_cita = :id_cita");
         $stmt->bindParam(':id_cita', $id_cita, PDO::PARAM_INT);
         $stmt->execute();
 

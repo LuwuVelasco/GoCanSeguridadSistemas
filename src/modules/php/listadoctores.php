@@ -1,8 +1,6 @@
 <?php
 header('Content-Type: application/json');
-
-// Incluir el archivo de conexión
-include('conexion.php');
+include 'conexion.php';
 
 try {
     // Consulta para obtener todos los funcionarios excepto clientes

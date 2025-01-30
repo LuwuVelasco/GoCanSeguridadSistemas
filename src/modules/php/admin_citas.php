@@ -1,12 +1,7 @@
 <?php
 header('Content-Type: application/json');
 session_start();
-
-$conexion = pg_connect("dbname=gocan user=postgres password=admin");
-if (!$conexion) {
-    echo json_encode(["estado" => "error", "mensaje" => "No se pudo conectar a la base de datos"]);
-    exit;
-}
+include 'conexion.php';
 
 $query = "SELECT id_cita, propietario, horario, fecha FROM cita WHERE id_doctor = 1";
 $result = pg_query($conexion, $query);

@@ -2,21 +2,13 @@
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Headers: Content-Type');
-
+include 'conexion.php';
 // Recibir los datos del cliente
 $json = file_get_contents('php://input');
 $data = json_decode($json, true);
 
 if (isset($data['id_usuario'])) {
     $id_usuario = $data['id_usuario'];
-
-    // Conexión a la base de datos
-    $conexion = pg_connect("dbname=gocan user=postgres password=admin");
-    if (!$conexion) {
-        echo json_encode(["estado" => "error", "mensaje" => "Error de conexión a la base de datos"]);
-        exit();
-    }
-
     // 1. Verificar el rol del usuario
     $sqlRol = "
         SELECT u.rol_id, r.nombre_rol 
