@@ -2,85 +2,88 @@
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Headers: Content-Type');
-include 'conexion.php';
 
-$json = file_get_contents('php://input');
-$data = json_decode($json, true);
+include 'conexion.php'; // Debe devolver la variable $pdo (PDO)
+
 date_default_timezone_set('America/La_Paz');
-if (isset($data['verified']) && $data['verified'] == true) {
-    if (isset($data['email'], $data['nombre'], $data['password'])) {
-        $email = $data['email'];
-        $nombre = $data['nombre'];
-        $hashedPassword = password_hash($data['password'], PASSWORD_BCRYPT);
-        $rol_id = 3; // Asignar un rol por defecto para los nuevos usuarios
-        $fecha_registro = date('Y-m-d H:i:s'); // Obtener la fecha actual
-        // Verificar si el correo ya está registrado
-        $sql_verificar = "SELECT COUNT(*) AS total FROM usuario WHERE email = $1";
-        $resultado_verificar = pg_query_params($conexion, $sql_verificar, array($email));
-        if ($resultado_verificar) {
-            $row_verificar = pg_fetch_assoc($resultado_verificar);
-            if ($row_verificar['total'] > 0) {
-                echo json_encode(["estado" => "error", "mensaje" => "El correo ya está registrado"]);
-                exit();
-            }
-        }
-        // Insertar en la tabla usuario
-        $sql_usuario = "INSERT INTO usuario (email, nombre, password, fecha_registro, rol_id) VALUES ($1, $2, $3, $4, $5) RETURNING id_usuario";
-        $stmt = pg_prepare($conexion, "insert_usuario", $sql_usuario);
-        if ($stmt === false) {
-            echo json_encode(["estado" => "error", "mensaje" => "Error al preparar la consulta"]);
-            exit();
-        }
 
-        $resultado_usuario = pg_execute($conexion, "insert_usuario", array($email, $nombre, $hashedPassword, $fecha_registro, $rol_id));
-        if (!$resultado_usuario) {
-            $error = pg_last_error($conexion);
-            echo json_encode(["estado" => "error", "mensaje" => "Error al insertar usuario: " . $error]);
-            exit();
-        }
+try {
+    $json = file_get_contents('php://input');
+    $data = json_decode($json, true);
 
-        $row = pg_fetch_assoc($resultado_usuario);
-        $id_usuario = $row['id_usuario'];
+    if (!isset($data['verified']) || $data['verified'] !== true) {
+        echo json_encode(["estado" => "error", "mensaje" => "Token no verificado"]);
+        exit();
+    }
 
-        // Obtener id_configuracion más reciente para historial_passwords
-        $sql_configuracion = "SELECT id_configuracion FROM configuracion_passwords ORDER BY id_configuracion DESC LIMIT 1";
-        $resultado_configuracion = pg_query($conexion, $sql_configuracion);
-        if (!$resultado_configuracion) {
-            echo json_encode(["estado" => "error", "mensaje" => "Error al obtener configuración de contraseña"]);
-            exit();
-        }
-
-        $configuracion = pg_fetch_assoc($resultado_configuracion);
-        if (!$configuracion) {
-            echo json_encode(["estado" => "error", "mensaje" => "No se encontró configuración de contraseña"]);
-            exit();
-        }
-
-        $id_configuracion = $configuracion['id_configuracion'];
-
-        // Insertar en historial_passwords
-        $sql_historial = "INSERT INTO historial_passwords (id_usuario, password, fecha_creacion, id_configuracion, estado) VALUES ($1, $2, NOW(), $3, $4)";
-        $stmt_historial = pg_prepare($conexion, "insert_historial", $sql_historial);
-        if ($stmt_historial === false) {
-            echo json_encode(["estado" => "error", "mensaje" => "Error al preparar la consulta de historial"]);
-            exit();
-        }
-
-        $resultado_historial = pg_execute($conexion, "insert_historial", array($id_usuario, $hashedPassword, $id_configuracion, true));
-        if (!$resultado_historial) {
-            $error = pg_last_error($conexion);
-            echo json_encode(["estado" => "error", "mensaje" => "Error al insertar historial de contraseña: " . $error]);
-            exit();
-        }
-
-        echo json_encode(["estado" => "success", "mensaje" => "Usuario y contraseña registrados correctamente", "id_usuario" => $id_usuario]);
-        pg_close($conexion);
-    } else {
+    if (!isset($data['email'], $data['nombre'], $data['password'])) {
         echo json_encode(["estado" => "error", "mensaje" => "Faltan campos requeridos"]);
         exit();
     }
-} else {
-    echo json_encode(["estado" => "error", "mensaje" => "Token no verificado"]);
-    exit();
+
+    $email = $data['email'];
+    $nombre = $data['nombre'];
+    $hashedPassword = password_hash($data['password'], PASSWORD_BCRYPT);
+    $rol_id = 3; // Rol por defecto
+    $fecha_registro = date('Y-m-d H:i:s');
+
+    $pdo->beginTransaction(); // Iniciar transacción
+
+    // 1 Verificar si el email ya existe
+    $stmt = $pdo->prepare("SELECT COUNT(*) AS total FROM usuario WHERE email = :email");
+    $stmt->bindParam(':email', $email);
+    $stmt->execute();
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($row['total'] > 0) {
+        echo json_encode(["estado" => "error", "mensaje" => "El correo ya está registrado"]);
+        exit();
+    }
+
+    // 2 Insertar el usuario y obtener su ID
+    $stmt = $pdo->prepare("
+        INSERT INTO usuario (email, nombre, password, fecha_registro, rol_id) 
+        VALUES (:email, :nombre, :password, :fecha_registro, :rol_id) 
+        RETURNING id_usuario
+    ");
+    $stmt->bindParam(':email', $email);
+    $stmt->bindParam(':nombre', $nombre);
+    $stmt->bindParam(':password', $hashedPassword);
+    $stmt->bindParam(':fecha_registro', $fecha_registro);
+    $stmt->bindParam(':rol_id', $rol_id);
+    $stmt->execute();
+
+    $id_usuario = $stmt->fetchColumn();
+    if (!$id_usuario) {
+        throw new Exception("No se pudo obtener el ID del usuario registrado.");
+    }
+
+    // 3 Obtener la última configuración de contraseñas
+    $stmt = $pdo->query("SELECT id_configuracion FROM configuracion_passwords ORDER BY id_configuracion DESC LIMIT 1");
+    $config = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$config) {
+        throw new Exception("No se encontró configuración de contraseña.");
+    }
+    $id_configuracion = $config['id_configuracion'];
+
+    // 4 Insertar en historial_passwords
+    $stmt = $pdo->prepare("
+        INSERT INTO historial_passwords (id_usuario, password, fecha_creacion, id_configuracion, estado) 
+        VALUES (:id_usuario, :password, :fecha_creacion, :id_configuracion, true)
+    ");
+    $stmt->bindParam(':id_usuario', $id_usuario);
+    $stmt->bindParam(':password', $hashedPassword);
+    $stmt->bindParam(':fecha_creacion', $fecha_registro);
+    $stmt->bindParam(':id_configuracion', $id_configuracion);
+    $stmt->execute();
+
+    $pdo->commit(); // Confirmar la transacción
+
+    echo json_encode(["estado" => "success", "mensaje" => "Usuario y contraseña registrados correctamente", "id_usuario" => $id_usuario]);
+
+} catch (Exception $e) {
+    $pdo->rollBack(); // Revertir transacción en caso de error
+    echo json_encode(["estado" => "error", "mensaje" => "Error: " . $e->getMessage()]);
 }
 ?>

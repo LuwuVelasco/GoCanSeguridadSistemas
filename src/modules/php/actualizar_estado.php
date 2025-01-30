@@ -1,25 +1,29 @@
 <?php
 header('Content-Type: application/json');
-include 'conexion.php';
+$pdo = include 'conexion.php'; // Asegúrate de que `conexion.php` devuelve `$pdo`
 
-// Intenta conectar y ejecutar la actualización
 try {
-    // Asegúrate de que 'estado' y 'id' están definidos
+    // Verificar que 'estado' e 'id' están presentes en la solicitud
+    if (!isset($_POST['estado'], $_POST['id'])) {
+        throw new Exception("Faltan parámetros requeridos.");
+    }
+
     $estado = $_POST['estado'];
     $id = $_POST['id'];
 
-    // Preparar y ejecutar la consulta
-    $result = pg_query_params($conexion, "UPDATE docotores SET estado = $1 WHERE id = $2", array($estado, $id));
-    if ($result === false) {
+    // Preparar la consulta con PDO
+    $sql = "UPDATE doctores SET estado = :estado WHERE id = :id";
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindParam(':estado', $estado, PDO::PARAM_INT);
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+    
+    // Ejecutar la consulta
+    if ($stmt->execute()) {
+        echo json_encode(['success' => true]);
+    } else {
         throw new Exception("Error al ejecutar la actualización.");
     }
-
-    echo json_encode(['success' => true]);
 } catch (Exception $e) {
     echo json_encode(['success' => false, 'message' => $e->getMessage()]);
-} finally {
-    if (isset($conexion)) {
-        pg_close($conexion);
-    }
 }
 ?>

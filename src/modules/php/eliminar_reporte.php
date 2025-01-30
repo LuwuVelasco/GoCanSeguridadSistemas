@@ -1,26 +1,33 @@
 <?php
 header('Content-Type: application/json');
-include 'conexion.php';
+$pdo = include 'conexion.php'; // Asegúrate de que `conexion.php` devuelve `$pdo`
 
-// Obtener los datos del reporte a eliminar
-$propietario = isset($_POST['propietario']) ? $_POST['propietario'] : '';
-$nombre_mascota = isset($_POST['nombre_mascota']) ? $_POST['nombre_mascota'] : '';
+try {
+    // Obtener los datos del reporte a eliminar (soporte para JSON y x-www-form-urlencoded)
+    $data = $_POST ?: json_decode(file_get_contents("php://input"), true);
 
-if (empty($propietario) || empty($nombre_mascota)) {
-    echo json_encode(["estado" => "error", "mensaje" => "Datos de reporte inválidos: " . json_encode($_POST)]);
-    exit;
+    $propietario = $data['propietario'] ?? null;
+    $nombre_mascota = $data['nombre_mascota'] ?? null;
+
+    // Validar que los datos sean proporcionados
+    if (!$propietario || !$nombre_mascota) {
+        echo json_encode(["estado" => "error", "mensaje" => "Datos de reporte inválidos"]);
+        exit;
+    }
+
+    // Consulta para eliminar el reporte
+    $sql = "DELETE FROM public.reporte WHERE propietario = :propietario AND nombre_mascota = :nombre_mascota";
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindParam(':propietario', $propietario, PDO::PARAM_STR);
+    $stmt->bindParam(':nombre_mascota', $nombre_mascota, PDO::PARAM_STR);
+
+    // Ejecutar la consulta
+    if ($stmt->execute()) {
+        echo json_encode(["estado" => "success", "mensaje" => "Reporte eliminado exitosamente"]);
+    } else {
+        echo json_encode(["estado" => "error", "mensaje" => "No se pudo eliminar el reporte"]);
+    }
+} catch (PDOException $e) {
+    echo json_encode(["estado" => "error", "mensaje" => "Error en la base de datos: " . $e->getMessage()]);
 }
-
-// Consulta para eliminar el reporte
-$sql = "DELETE FROM public.reporte WHERE propietario = $1 AND nombre_mascota = $2";
-$result = pg_query_params($conexion, $sql, array($propietario, $nombre_mascota));
-
-if ($result) {
-    echo json_encode(["estado" => "success", "mensaje" => "Reporte eliminado exitosamente"]);
-} else {
-    $error = pg_last_error($conexion);
-    echo json_encode(["estado" => "error", "mensaje" => "No se pudo eliminar el reporte: $error"]);
-}
-
-pg_close($conexion);
 ?>

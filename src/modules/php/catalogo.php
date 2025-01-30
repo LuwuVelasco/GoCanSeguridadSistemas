@@ -1,25 +1,33 @@
 <?php
-include 'conexion.php';
+header('Content-Type: application/json');
+$pdo = include 'conexion.php'; // Asegúrate de que `conexion.php` devuelve `$pdo`
 
 try {
-    // Asumiendo que los datos del producto son enviados como JSON en el cuerpo de la solicitud POST
+    // Obtener los datos enviados en la solicitud POST
     $data = json_decode(file_get_contents("php://input"), true);
 
-    // Preparar la sentencia SQL
-    $stmt = $conexion->prepare("INSERT INTO producto (nombre, descripcion, precio, categoria, id_usuario,imagen) VALUES (:nombre, :descripcion, :precio, :categoria, :id_usuario,:imagen)");
+    if (!isset($data['nombre'], $data['descripcion'], $data['precio'], $data['categoria'], $data['id_usuario'], $data['imagen'])) {
+        echo json_encode(["error" => true, "message" => "Faltan datos requeridos"]);
+        exit;
+    }
 
-    // Vincular parámetros
-    $stmt->bindParam(':nombre', $data['nombre']);
-    $stmt->bindParam(':descripcion', $data['descripcion']);
-    $stmt->bindParam(':precio', $data['precio']);
-    $stmt->bindParam(':categoria', $data['categoria']);
-    $stmt->bindParam(':id_usuario', $data['id_usuario']);
-    $stmt->bindParam(':imagen', $data['imagen']);
-    // Ejecutar la sentencia
+    // Preparar la sentencia SQL con `PDO`
+    $stmt = $pdo->prepare("INSERT INTO producto (nombre, descripcion, precio, categoria, id_usuario, imagen) 
+                           VALUES (:nombre, :descripcion, :precio, :categoria, :id_usuario, :imagen)");
+
+    // Vincular parámetros de manera segura
+    $stmt->bindParam(':nombre', $data['nombre'], PDO::PARAM_STR);
+    $stmt->bindParam(':descripcion', $data['descripcion'], PDO::PARAM_STR);
+    $stmt->bindParam(':precio', $data['precio'], PDO::PARAM_STR);
+    $stmt->bindParam(':categoria', $data['categoria'], PDO::PARAM_STR);
+    $stmt->bindParam(':id_usuario', $data['id_usuario'], PDO::PARAM_INT);
+    $stmt->bindParam(':imagen', $data['imagen'], PDO::PARAM_STR);
+
+    // Ejecutar la consulta
     $stmt->execute();
 
-    echo "Producto registrado con éxito.";
+    echo json_encode(["success" => true, "message" => "Producto registrado con éxito."]);
 } catch (PDOException $e) {
-    die("Error de conexión: " . $e->getMessage());
+    echo json_encode(["error" => true, "message" => "Error en la base de datos: " . $e->getMessage()]);
 }
 ?>

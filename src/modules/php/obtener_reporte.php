@@ -1,18 +1,25 @@
 <?php
 header('Content-Type: application/json');
-include 'conexion.php';
+$pdo = include 'conexion.php'; // Asegúrate de que `conexion.php` devuelve `$pdo`
 
-// Consulta para obtener todos los reportes
-$sql = "SELECT propietario, sintomas, diagnostico, receta, fecha, nombre_mascota FROM public.reporte";
-$result = pg_query($conexion, $sql);
-
-if ($result) {
-    $reportes = pg_fetch_all($result);
-    echo json_encode(["estado" => "success", "reportes" => $reportes]);
-} else {
-    $error = pg_last_error($conexion);
-    echo json_encode(["estado" => "error", "mensaje" => "No se pudo obtener los reportes: $error"]);
+// Verificar conexión
+if (!$pdo) {
+    echo json_encode(["estado" => "error", "mensaje" => "Error de conexión a la base de datos"]);
+    exit;
 }
 
-pg_close($conexion);
+try {
+    // Consulta para obtener todos los reportes
+    $sql = "SELECT propietario, sintomas, diagnostico, receta, fecha, nombre_mascota FROM reporte";
+    $stmt = $pdo->query($sql);
+    $reportes = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: []; // Asegurar que no sea null
+
+    echo json_encode([
+        "estado" => "success",
+        "mensaje" => empty($reportes) ? "No hay reportes disponibles" : "Reportes obtenidos correctamente",
+        "reportes" => $reportes
+    ]);
+} catch (PDOException $e) {
+    echo json_encode(["estado" => "error", "mensaje" => "Error en la base de datos: " . $e->getMessage()]);
+}
 ?>

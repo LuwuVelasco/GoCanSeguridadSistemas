@@ -1,21 +1,23 @@
 <?php
 header('Content-Type: application/json');
-include 'conexion.php'; // Asegúrate de que la conexión esté configurada correctamente
-
-if (!isset($_POST['id_rol'])) {
-    echo json_encode(['success' => false, 'message' => 'ID de rol no especificado']);
-    exit;
-}
-
-$idRol = $_POST['id_rol'];
+$pdo = include 'conexion.php'; // Asegúrate de que `conexion.php` devuelve `$pdo`
 
 try {
-    // Consulta para obtener los permisos del rol
-    $query = "SELECT * FROM roles_y_permisos WHERE id_rol = $1";
-    $result = pg_prepare($conexion, "query_permisos", $query);
-    $result = pg_execute($conexion, "query_permisos", [$idRol]);
+    // Verificar que el ID del rol fue enviado
+    if (!isset($_POST['id_rol'])) {
+        echo json_encode(['success' => false, 'message' => 'ID de rol no especificado']);
+        exit;
+    }
 
-    if ($row = pg_fetch_assoc($result)) {
+    $idRol = $_POST['id_rol'];
+
+    // Consulta para obtener los permisos del rol con PDO
+    $query = "SELECT * FROM roles_y_permisos WHERE id_rol = :id_rol";
+    $stmt = $pdo->prepare($query);
+    $stmt->bindParam(':id_rol', $idRol, PDO::PARAM_INT);
+    $stmt->execute();
+
+    if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         // Filtrar solo los permisos (excluir ID y nombre del rol)
         $permisos = [];
         foreach ($row as $clave => $valor) {
@@ -28,6 +30,7 @@ try {
     } else {
         echo json_encode(['success' => false, 'message' => 'No se encontraron permisos para este rol']);
     }
-} catch (Exception $e) {
+} catch (PDOException $e) {
     echo json_encode(['success' => false, 'message' => 'Error al obtener los permisos: ' . $e->getMessage()]);
 }
+?>

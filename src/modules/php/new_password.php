@@ -1,139 +1,132 @@
 <?php
 header('Content-Type: application/json');
-include 'conexion.php';
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Headers: Content-Type');
 
-// Forzar la zona horaria a La Paz, Bolivia.
-pg_query($conexion, "SET TIME ZONE 'America/La_Paz'");
+$pdo = include 'conexion.php'; // Asegúrate de que `conexion.php` devuelve `$pdo`
+date_default_timezone_set('America/La_Paz');
 
-$email = $_POST['email'];
-$newPassword = $_POST['new_password'];
+try {
+    // Obtener los datos enviados (soporta JSON y x-www-form-urlencoded)
+    $data = $_POST ?: json_decode(file_get_contents("php://input"), true);
 
-// Verificar que los datos no estén vacíos
-if (empty($email) || empty($newPassword)) {
-    echo json_encode(["estado" => "error", "mensaje" => "Email o contraseña no pueden estar vacíos"]);
-    exit;
-}
-
-// Hashear la nueva contraseña
-$hashedPassword = password_hash($newPassword, PASSWORD_BCRYPT);
-if (!$hashedPassword) {
-    echo json_encode(["estado" => "error", "mensaje" => "Error al hashear la contraseña"]);
-    exit;
-}
-
-// Obtener el id_usuario a partir del email
-$sql_usuario = "SELECT id_usuario FROM usuario WHERE email = $1";
-$result_usuario = pg_prepare($conexion, "select_usuario", $sql_usuario);
-$result_usuario = pg_execute($conexion, "select_usuario", array($email));
-
-if (!$result_usuario || pg_num_rows($result_usuario) === 0) {
-    echo json_encode(["estado" => "error", "mensaje" => "Usuario no encontrado"]);
-    exit;
-}
-
-$user_data = pg_fetch_assoc($result_usuario);
-$id_usuario = $user_data['id_usuario'];
-
-// Validar que la nueva contraseña no esté en las últimas N contraseñas del historial
-$sql_configuracion = "SELECT numero_historico FROM configuracion_passwords ORDER BY id_configuracion DESC LIMIT 1";
-$result_configuracion = pg_query($conexion, $sql_configuracion);
-if (!$result_configuracion) {
-    echo json_encode(["estado" => "error", "mensaje" => "Error al obtener la configuración de contraseñas"]);
-    exit;
-}
-
-$configuracion = pg_fetch_assoc($result_configuracion);
-$numero_historico = (int)$configuracion['numero_historico'];
-
-$sql_historial = "
-    SELECT password 
-    FROM historial_passwords 
-    WHERE id_usuario = $1 
-    ORDER BY fecha_creacion DESC 
-    LIMIT $2
-";
-$result_historial = pg_prepare($conexion, "select_historial", $sql_historial);
-$result_historial = pg_execute($conexion, "select_historial", array($id_usuario, $numero_historico));
-
-if (!$result_historial) {
-    echo json_encode(["estado" => "error", "mensaje" => "Error al consultar el historial de contraseñas"]);
-    exit;
-}
-
-$contraseñas_previas = pg_fetch_all_columns($result_historial, 0);
-foreach ($contraseñas_previas as $password_anterior) {
-    if (password_verify($newPassword, $password_anterior)) {
-        echo json_encode([
-            "estado" => "error",
-            "mensaje" => "La nueva contraseña no puede ser igual a las últimas $numero_historico contraseñas"
-        ]);
+    if (!isset($data['email'], $data['new_password'])) {
+        echo json_encode(["estado" => "error", "mensaje" => "Email o contraseña no pueden estar vacíos"]);
         exit;
     }
-}
 
-// Actualizar la contraseña anterior a estado `false` en el historial
-$sql_update_historial = "
-    UPDATE historial_passwords 
-    SET estado = false 
-    WHERE id_usuario = $1 AND estado = true
-";
-$result_update_historial = pg_prepare($conexion, "update_historial", $sql_update_historial);
-$result_update_historial = pg_execute($conexion, "update_historial", array($id_usuario));
+    $email = $data['email'];
+    $newPassword = $data['new_password'];
+    $hashedPassword = password_hash($newPassword, PASSWORD_BCRYPT);
 
-if (!$result_update_historial) {
-    echo json_encode(["estado" => "error", "mensaje" => "Error al actualizar el estado del historial"]);
-    exit;
-}
+    if (!$hashedPassword) {
+        echo json_encode(["estado" => "error", "mensaje" => "Error al hashear la contraseña"]);
+        exit;
+    }
 
-// Guardar la nueva contraseña en el historial (fecha_creacion con NOW(), pero en zona horaria La Paz)
-$sql_guardar_historial = "
-    INSERT INTO historial_passwords (id_usuario, password, fecha_creacion, id_configuracion, estado) 
-    VALUES ($1, $2, NOW(), (SELECT id_configuracion FROM configuracion_passwords ORDER BY id_configuracion DESC LIMIT 1), true)
-";
-$result_guardar_historial = pg_prepare($conexion, "guardar_historial", $sql_guardar_historial);
-$result_guardar_historial = pg_execute($conexion, "guardar_historial", array($id_usuario, $hashedPassword));
+    // Obtener el id_usuario a partir del email
+    $sql_usuario = "SELECT id_usuario FROM usuario WHERE email = :email";
+    $stmt_usuario = $pdo->prepare($sql_usuario);
+    $stmt_usuario->bindParam(':email', $email, PDO::PARAM_STR);
+    $stmt_usuario->execute();
+    $user_data = $stmt_usuario->fetch(PDO::FETCH_ASSOC);
 
-if (!$result_guardar_historial) {
-    echo json_encode(["estado" => "error", "mensaje" => "Error al guardar la nueva contraseña en el historial"]);
-    exit;
-}
+    if (!$user_data) {
+        echo json_encode(["estado" => "error", "mensaje" => "Usuario no encontrado"]);
+        exit;
+    }
 
-// Comprobar si el historial supera el numero_historico y si es así, borrar la contraseña más antigua
-$sql_count_history = "SELECT COUNT(*) AS total FROM historial_passwords WHERE id_usuario = $1";
-$result_count_history = pg_prepare($conexion, "count_history", $sql_count_history);
-$result_count_history = pg_execute($conexion, "count_history", array($id_usuario));
-$count_data = pg_fetch_assoc($result_count_history);
+    $id_usuario = $user_data['id_usuario'];
 
-if ($count_data['total'] > $numero_historico) {
-    // Borramos la contraseña más antigua de este usuario
-    $sql_delete_oldest = "
-        DELETE FROM historial_passwords
-        WHERE id_password IN (
-            SELECT id_password
-            FROM historial_passwords
-            WHERE id_usuario = $1
-            ORDER BY fecha_creacion ASC
-            LIMIT 1
-        )
+    // Obtener la configuración de número histórico de contraseñas
+    $sql_configuracion = "SELECT numero_historico FROM configuracion_passwords ORDER BY id_configuracion DESC LIMIT 1";
+    $stmt_config = $pdo->prepare($sql_configuracion);
+    $stmt_config->execute();
+    $configuracion = $stmt_config->fetch(PDO::FETCH_ASSOC);
+
+    if (!$configuracion) {
+        echo json_encode(["estado" => "error", "mensaje" => "Error al obtener la configuración de contraseñas"]);
+        exit;
+    }
+
+    $numero_historico = (int) $configuracion['numero_historico'];
+
+    // Validar que la nueva contraseña no coincida con las últimas N contraseñas
+    $sql_historial = "
+        SELECT password 
+        FROM historial_passwords 
+        WHERE id_usuario = :id_usuario 
+        ORDER BY fecha_creacion DESC 
+        LIMIT :numero_historico
     ";
-    $result_delete_oldest = pg_prepare($conexion, "delete_oldest", $sql_delete_oldest);
-    $result_delete_oldest = pg_execute($conexion, "delete_oldest", array($id_usuario));
-    if (!$result_delete_oldest) {
-        echo json_encode(["estado" => "error", "mensaje" => "Error al eliminar la contraseña más antigua"]);
-        exit;
+    $stmt_historial = $pdo->prepare($sql_historial);
+    $stmt_historial->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+    $stmt_historial->bindParam(':numero_historico', $numero_historico, PDO::PARAM_INT);
+    $stmt_historial->execute();
+    $contraseñas_previas = $stmt_historial->fetchAll(PDO::FETCH_COLUMN);
+
+    foreach ($contraseñas_previas as $password_anterior) {
+        if (password_verify($newPassword, $password_anterior)) {
+            echo json_encode([
+                "estado" => "error",
+                "mensaje" => "La nueva contraseña no puede ser igual a las últimas $numero_historico contraseñas"
+            ]);
+            exit;
+        }
     }
-}
 
-// Actualizar la contraseña del usuario
-$sql_update = "UPDATE usuario SET password = $1 WHERE email = $2";
-$result_update = pg_prepare($conexion, "update_query", $sql_update);
-$result_update = pg_execute($conexion, "update_query", array($hashedPassword, $email));
+    // Desactivar las contraseñas anteriores del historial
+    $sql_update_historial = "
+        UPDATE historial_passwords 
+        SET estado = false 
+        WHERE id_usuario = :id_usuario AND estado = true
+    ";
+    $stmt_update_historial = $pdo->prepare($sql_update_historial);
+    $stmt_update_historial->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+    $stmt_update_historial->execute();
 
-if ($result_update) {
+    // Guardar la nueva contraseña en el historial
+    $sql_guardar_historial = "
+        INSERT INTO historial_passwords (id_usuario, password, fecha_creacion, id_configuracion, estado) 
+        VALUES (:id_usuario, :password, NOW(), (SELECT id_configuracion FROM configuracion_passwords ORDER BY id_configuracion DESC LIMIT 1), true)
+    ";
+    $stmt_guardar_historial = $pdo->prepare($sql_guardar_historial);
+    $stmt_guardar_historial->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+    $stmt_guardar_historial->bindParam(':password', $hashedPassword, PDO::PARAM_STR);
+    $stmt_guardar_historial->execute();
+
+    // Eliminar la contraseña más antigua si excede el historial permitido
+    $sql_count_history = "SELECT COUNT(*) AS total FROM historial_passwords WHERE id_usuario = :id_usuario";
+    $stmt_count_history = $pdo->prepare($sql_count_history);
+    $stmt_count_history->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+    $stmt_count_history->execute();
+    $count_data = $stmt_count_history->fetch(PDO::FETCH_ASSOC);
+
+    if ($count_data['total'] > $numero_historico) {
+        $sql_delete_oldest = "
+            DELETE FROM historial_passwords
+            WHERE id_password IN (
+                SELECT id_password
+                FROM historial_passwords
+                WHERE id_usuario = :id_usuario
+                ORDER BY fecha_creacion ASC
+                LIMIT 1
+            )
+        ";
+        $stmt_delete_oldest = $pdo->prepare($sql_delete_oldest);
+        $stmt_delete_oldest->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+        $stmt_delete_oldest->execute();
+    }
+
+    // Actualizar la contraseña del usuario
+    $sql_update = "UPDATE usuario SET password = :password WHERE email = :email";
+    $stmt_update = $pdo->prepare($sql_update);
+    $stmt_update->bindParam(':password', $hashedPassword, PDO::PARAM_STR);
+    $stmt_update->bindParam(':email', $email, PDO::PARAM_STR);
+    $stmt_update->execute();
+
     echo json_encode(["estado" => "success", "mensaje" => "Contraseña actualizada correctamente"]);
-} else {
-    echo json_encode(["estado" => "error", "mensaje" => "Error al actualizar la contraseña"]);
+} catch (PDOException $e) {
+    echo json_encode(["estado" => "error", "mensaje" => "Error en la base de datos: " . $e->getMessage()]);
 }
-
-pg_close($conexion);
 ?>

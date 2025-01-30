@@ -3,56 +3,71 @@ header('Content-Type: application/json');
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-include 'conexion.php';
+include 'conexion.php'; // Asegúrate de que $pdo está definido en conexion.php
 
-// Recibir los datos del formulario
-$propietario = trim($_POST['propietario'] ?? '');
-$sintomas = trim($_POST['sintomas'] ?? '');
-$diagnostico = trim($_POST['diagnostico'] ?? '');
-$receta = trim($_POST['receta'] ?? '');
-$fecha = trim($_POST['fecha'] ?? '');
-$nombre_mascota = trim($_POST['nombre_mascota'] ?? '');
+try {
+    // Recibir los datos del formulario
+    $propietario = trim($_POST['propietario'] ?? '');
+    $sintomas = trim($_POST['sintomas'] ?? '');
+    $diagnostico = trim($_POST['diagnostico'] ?? '');
+    $receta = trim($_POST['receta'] ?? '');
+    $fecha = trim($_POST['fecha'] ?? '');
+    $nombre_mascota = trim($_POST['nombre_mascota'] ?? '');
 
-// Validar que los campos no estén vacíos
-if (empty($propietario) || empty($sintomas) || empty($diagnostico) || empty($receta) || empty($fecha) || empty($nombre_mascota)) {
-    echo json_encode(["estado" => "error", "mensaje" => "Todos los campos son obligatorios"]);
-    exit;
-}
+    // Validar que los campos no estén vacíos
+    if (empty($propietario) || empty($sintomas) || empty($diagnostico) || empty($receta) || empty($fecha) || empty($nombre_mascota)) {
+        echo json_encode(["estado" => "error", "mensaje" => "Todos los campos son obligatorios"]);
+        exit;
+    }
 
-// Verificar que el propietario y la mascota existan
-$query_usuario = "SELECT id_usuario FROM usuario WHERE nombre = $1";
-$result_usuario = pg_query_params($conexion, $query_usuario, [$propietario]);
+    // Verificar que el propietario exista
+    $query_usuario = "SELECT id_usuario FROM usuario WHERE nombre = :nombre";
+    $stmt = $pdo->prepare($query_usuario);
+    $stmt->bindParam(':nombre', $propietario, PDO::PARAM_STR);
+    $stmt->execute();
+    $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
-if ($result_usuario && pg_num_rows($result_usuario) > 0) {
-    $usuario = pg_fetch_assoc($result_usuario);
+    if (!$usuario) {
+        echo json_encode(["estado" => "error", "mensaje" => "El propietario no existe"]);
+        exit;
+    }
+
     $id_usuario = $usuario['id_usuario'];
 
-    $query_mascota = "SELECT id_mascota FROM mascota WHERE nombre_mascota = $1 AND id_usuario = $2";
-    $result_mascota = pg_query_params($conexion, $query_mascota, [$nombre_mascota, $id_usuario]);
+    // Verificar que la mascota exista y pertenezca al propietario
+    $query_mascota = "SELECT id_mascota FROM mascota WHERE nombre_mascota = :nombre_mascota AND id_usuario = :id_usuario";
+    $stmt = $pdo->prepare($query_mascota);
+    $stmt->bindParam(':nombre_mascota', $nombre_mascota, PDO::PARAM_STR);
+    $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+    $stmt->execute();
+    $mascota = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if ($result_mascota && pg_num_rows($result_mascota) > 0) {
-        $mascota = pg_fetch_assoc($result_mascota);
-        $id_mascota = $mascota['id_mascota'];
-
-        // Insertar el reporte
-        $sql = "INSERT INTO reporte (propietario, sintomas, diagnostico, receta, fecha, nombre_mascota) 
-                VALUES ($1, $2, $3, $4, $5, $6) RETURNING id_reporte";
-        $params = [$propietario, $sintomas, $diagnostico, $receta, $fecha, $nombre_mascota];
-        $result = pg_query_params($conexion, $sql, $params);
-
-        if ($result) { // Aquí usamos $result
-            $reporte = pg_fetch_assoc($result);
-            echo json_encode(["estado" => "success", "id_reporte" => $reporte['id_reporte']]);
-            exit;
-        } else {
-            echo json_encode(["estado" => "error", "mensaje" => "Error al registrar el reporte"]);
-        }
-    } else {
+    if (!$mascota) {
         echo json_encode(["estado" => "error", "mensaje" => "La mascota no existe"]);
+        exit;
     }
-} else {
-    echo json_encode(["estado" => "error", "mensaje" => "El propietario no existe"]);
-}
 
-pg_close($conexion);
+    $id_mascota = $mascota['id_mascota'];
+
+    // Insertar el reporte
+    $sql = "INSERT INTO reporte (propietario, sintomas, diagnostico, receta, fecha, nombre_mascota) 
+            VALUES (:propietario, :sintomas, :diagnostico, :receta, :fecha, :nombre_mascota) RETURNING id_reporte";
+    
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindParam(':propietario', $propietario, PDO::PARAM_STR);
+    $stmt->bindParam(':sintomas', $sintomas, PDO::PARAM_STR);
+    $stmt->bindParam(':diagnostico', $diagnostico, PDO::PARAM_STR);
+    $stmt->bindParam(':receta', $receta, PDO::PARAM_STR);
+    $stmt->bindParam(':fecha', $fecha, PDO::PARAM_STR);
+    $stmt->bindParam(':nombre_mascota', $nombre_mascota, PDO::PARAM_STR);
+    $stmt->execute();
+
+    // Obtener el ID del reporte insertado
+    $id_reporte = $pdo->lastInsertId();
+
+    echo json_encode(["estado" => "success", "id_reporte" => $id_reporte]);
+
+} catch (PDOException $e) {
+    echo json_encode(["estado" => "error", "mensaje" => "Error en la base de datos: " . $e->getMessage()]);
+}
 ?>

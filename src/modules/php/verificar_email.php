@@ -2,41 +2,35 @@
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Headers: Content-Type');
-include 'conexion.php';
+
+include 'conexion.php'; // Asegúrate de que `conexion.php` devuelve `$pdo`
+
 $json = file_get_contents('php://input');
 $data = json_decode($json, true);
 
 if (isset($data['email'])) {
     $email = $data['email'];
 
-    // Consulta para verificar si el correo ya existe
-    $sql = "SELECT COUNT(*) AS total FROM usuario WHERE email = $1";
-    $stmt = pg_prepare($conexion, "verificar_email", $sql);
-    if ($stmt === false) {
-        echo json_encode(["estado" => "error", "mensaje" => "Error al preparar la consulta"]);
-        exit();
+    try {
+        // Consulta para verificar si el correo ya existe
+        $sql = "SELECT COUNT(*) AS total FROM usuario WHERE email = :email";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+        $stmt->execute();
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $total = $row['total'];
+
+        // Verificar si el correo ya está registrado
+        if ($total > 0) {
+            echo json_encode(["estado" => "error", "mensaje" => "El correo ya está registrado"]);
+        } else {
+            echo json_encode(["estado" => "success", "mensaje" => "El correo está disponible"]);
+        }
+    } catch (PDOException $e) {
+        echo json_encode(["estado" => "error", "mensaje" => "Error en la consulta: " . $e->getMessage()]);
     }
-
-    $resultado = pg_execute($conexion, "verificar_email", array($email));
-    if (!$resultado) {
-        $error = pg_last_error($conexion);
-        echo json_encode(["estado" => "error", "mensaje" => "Error al ejecutar la consulta: " . $error]);
-        exit();
-    }
-
-    $row = pg_fetch_assoc($resultado);
-    $total = $row['total'];
-
-    // Verificar si el correo ya está registrado
-    if ($total > 0) {
-        echo json_encode(["estado" => "error", "mensaje" => "El correo ya está registrado"]);
-    } else {
-        echo json_encode(["estado" => "success", "mensaje" => "El correo está disponible"]);
-    }
-
-    pg_close($conexion);
 } else {
     echo json_encode(["estado" => "error", "mensaje" => "Faltan campos requeridos"]);
-    exit();
 }
 ?>
