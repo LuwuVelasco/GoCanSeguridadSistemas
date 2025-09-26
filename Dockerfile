@@ -1,37 +1,31 @@
+# Dockerfile
 FROM php:8.2-apache
 
-# Copiar carpeta core al docroot
+# Instalar extensiones requeridas para PostgreSQL
+RUN apt-get update && apt-get install -y \
+    libpq-dev \
+ && docker-php-ext-install pdo pdo_pgsql pgsql \
+ && rm -rf /var/lib/apt/lists/*
+
+# Copiar código al docroot
 COPY src/modules/core/ /var/www/html/
-
-# Copiar carpeta assets
 COPY src/assets/ /var/www/html/assets/
-
-# Copiar carpeta php
 COPY src/modules/php/ /var/www/html/php/
-
-# Copiar carpeta login
 COPY src/modules/login/ /var/www/html/login/
-
-# Copiar carpeta coreadmin
 COPY src/modules/coreadmin/ /var/www/html/coreadmin/
-
-# Copiar carpeta coreDoctores
 COPY src/modules/coreDoctores/ /var/www/html/coreDoctores/
-
-# Copiar carpeta coreVariable
 COPY src/modules/coreVariable/ /var/www/html/coreVariable/
-
-# Copiar carpeta citas
 COPY src/modules/citas/ /var/www/html/citas/
 
-# Asegurar que Apache cargue index.html
+# Asegurar index.html como página por defecto
 RUN echo "DirectoryIndex index.html" >> /etc/apache2/apache2.conf
 
-# Ajustar permisos
-RUN chmod -R 755 /var/www/html && chown -R www-data:www-data /var/www/html
-
-# Activar mod_rewrite (si lo usas)
+# Activar mod_rewrite (si en algún momento lo usas)
 RUN a2enmod rewrite
 
+# Permisos
+RUN chown -R www-data:www-data /var/www/html && chmod -R 755 /var/www/html
+
+# Render mapea el puerto por ti; Apache escucha en 80
 EXPOSE 80
 CMD ["apache2-foreground"]

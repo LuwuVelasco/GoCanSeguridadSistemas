@@ -1,22 +1,22 @@
 <?php
-header("X-Frame-Options: ALLOW-FROM https://gocan.onrender.com/");
+// Cabeceras (ajústalas según tu front; si todo vive en el mismo dominio de Render, puedes simplificar)
+header("X-Frame-Options: SAMEORIGIN");
 header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'");
-// Parámetros de conexión a la base de datos
-$host = 'dpg-cudd7utds78s73e1spvg-a.oregon-postgres.render.com';
-$dbname = 'gocan';
-$user = 'admin';
-$password = 'oVRI7HAmMceeD1yJfmgrcykinmuc9aYz';
-$port = '5432';
+
+// Variables de entorno (configúralas en Render)
+$host = getenv('DB_HOST') ?: 'localhost';
+$dbname = getenv('DB_NAME') ?: 'postgres';
+$user = getenv('DB_USER') ?: 'postgres';
+$password = getenv('DB_PASSWORD') ?: '';
+$port = getenv('DB_PORT') ?: '5432';
 
 try {
-    // Crear la conexión con PDO
-    $pdo = new PDO("pgsql:host=$host;port=$port;dbname=$dbname", $user, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo = new PDO("pgsql:host=$host;port=$port;dbname=$dbname", $user, $password, [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+    ]);
+    return $pdo;
 } catch (PDOException $e) {
-    echo json_encode(["estado" => "error", "mensaje" => "No se pudo conectar a la base de datos: " . $e->getMessage()]);
+    http_response_code(500);
+    echo json_encode(["estado" => "error", "mensaje" => "No se pudo conectar a la base de datos"]);
     exit;
 }
-
-// Retornar la conexión para ser usada en otros scripts
-return $pdo;
-?>

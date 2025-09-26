@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/json');
 session_start();
-$pdo = include 'conexion.php'; // Asegúrate de que `conexion.php` devuelve `$pdo`
+$pdo = include 'conexion.php';
 
 try {
     // Verificar si la sesión del doctor está establecida

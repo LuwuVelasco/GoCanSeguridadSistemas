@@ -1,0 +1,32 @@
+# .render.yaml
+services:
+  - type: web
+    name: gocan-web
+    env: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /
+    envVars:
+      - key: DB_HOST
+        fromDatabase:
+          name: gocan-db
+          property: host
+      - key: DB_NAME
+        fromDatabase:
+          name: gocan-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: gocan-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: gocan-db
+          property: password
+      - key: DB_PORT
+        value: "5432"
+
+databases:
+  - name: gocan-db
+    databaseName: gocan
+    plan: free
