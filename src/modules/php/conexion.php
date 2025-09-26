@@ -1,6 +1,5 @@
 <?php
-// Cabeceras (ajústalas según tu front; si todo vive en el mismo dominio de Render, puedes simplificar)
-header("X-Frame-Options: SAMEORIGIN");
+header("X-Frame-Options: ALLOW-FROM https://gocan.onrender.com/");
 header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'");
 
 // Variables de entorno (configúralas en Render)
