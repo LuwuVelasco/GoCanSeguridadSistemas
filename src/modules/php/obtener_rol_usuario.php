@@ -1,44 +1,46 @@
 <?php
-header('Content-Type: application/json');
-include 'conexion.php'; // Asegúrate de que este archivo configura correctamente la conexión
+// C:\xampp\htdocs\GoCanSeguridadSistemas\src\modules\php\obtener_rol_usuario.php
+declare(strict_types=1);
+session_start();
+header('Content-Type: application/json; charset=UTF-8');
 
-// Validar que se haya enviado el ID del usuario
-if (!isset($_POST['id_usuario'])) {
-    echo json_encode(["estado" => "error", "mensaje" => "ID del usuario no proporcionado"]);
-    exit;
+// Conexión (retorna $pdo)
+$pdo = require __DIR__ . '/conexion.php';
+
+try {
+    // Aceptar x-www-form-urlencoded o JSON
+    $data = $_POST;
+    if (!$data) {
+        $raw = file_get_contents('php://input');
+        if ($raw) $data = json_decode($raw, true) ?: [];
+    }
+
+    $idUsuario = isset($data['id_usuario']) ? (int)$data['id_usuario'] : 0;
+    if ($idUsuario <= 0) {
+        echo json_encode(['estado' => 'error', 'mensaje' => 'Falta el ID de usuario']);
+        exit;
+    }
+
+    $stmt = $pdo->prepare(
+        "SELECT u.rol_id, r.nombre_rol
+         FROM usuario u
+         JOIN roles_y_permisos r ON r.id_rol = u.rol_id
+         WHERE u.id_usuario = :id
+         LIMIT 1"
+    );
+    $stmt->execute([':id' => $idUsuario]);
+    $row = $stmt->fetch();
+
+    if ($row) {
+        echo json_encode([
+            'estado'      => 'success',
+            'id_rol'      => (int)$row['rol_id'],
+            'nombre_rol'  => (string)$row['nombre_rol'],
+        ]);
+    } else {
+        echo json_encode(['estado' => 'error', 'mensaje' => 'Usuario no encontrado']);
+    }
+} catch (Throwable $e) {
+    error_log('obtener_rol_usuario error: '.$e->getMessage());
+    echo json_encode(['estado' => 'error', 'mensaje' => 'Error en la consulta']);
 }
-
-$id_usuario = $_POST['id_usuario'];
-
-// Consulta para obtener el rol del usuario
-$sql = "
-    SELECT 
-        u.id_usuario, 
-        r.id_rol, 
-        r.nombre_rol
-    FROM usuario u
-    INNER JOIN roles_y_permisos r ON u.rol_id = r.id_rol
-    WHERE u.id_usuario = $1
-";
-
-$result = pg_prepare($conexion, "query_rol_usuario", $sql);
-$result = pg_execute($conexion, "query_rol_usuario", array($id_usuario));
-
-if ($row = pg_fetch_assoc($result)) {
-    // Rol encontrado, devolver información
-    echo json_encode([
-        "estado" => "success",
-        "id_rol" => $row['id_rol'],
-        "nombre_rol" => $row['nombre_rol']
-    ]);
-} else {
-    // Rol no encontrado
-    echo json_encode([
-        "estado" => "error",
-        "mensaje" => "Rol no encontrado para el usuario especificado"
-    ]);
-}
-
-// Cerrar la conexión
-pg_close($conexion);
-?>
