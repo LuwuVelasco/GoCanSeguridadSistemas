@@ -1,28 +1,53 @@
 <?php
-// Iniciar la sesión
+declare(strict_types=1);
+
 session_start();
-header('Content-Type: application/json');
-include 'conexion.php';
+header('Content-Type: application/json; charset=UTF-8');
 
-// Asegurar que recibimos los parámetros necesarios
-if (isset($_POST['id_usuario']) && !empty($_POST['id_usuario']) && isset($_POST['nombre_usuario'])) {
-    $id_usuario = $_POST['id_usuario'];
-    $nombre_usuario = $_POST['nombre_usuario'];  // Recuperar el nombre del usuario desde POST
-    $hora_ingreso = date('Y-m-d H:i:s'); // Obtener el timestamp actual
+try {
+  /** @var PDO $pdo */
+  $pdo = require __DIR__ . '/conexion.php';
+  $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+  $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
-    // Preparar y ejecutar la consulta SQL
-    $sql = "INSERT INTO actividades (id_usuario, nombre_usuario, hora_ingreso) VALUES ($1, $2, $3)";
-    $result = pg_prepare($conexion, "insert_actividad", $sql);
-    $result = pg_execute($conexion, "insert_actividad", array($id_usuario, $nombre_usuario, $hora_ingreso));
+  // Zona horaria (opcional)
+  try { $pdo->exec("SET TIME ZONE 'America/La_Paz'"); } catch (Throwable $e) {}
 
-    if ($result) {
-        echo json_encode(["estado" => "success"]);
-    } else {
-        echo json_encode(["estado" => "error", "mensaje" => "No se pudo registrar la actividad"]);
-    }
-} else {
-    echo json_encode(["estado" => "error", "mensaje" => "Datos incompletos"]);
+  // Acepta JSON o x-www-form-urlencoded
+  $raw  = file_get_contents('php://input') ?: '';
+  $json = json_decode($raw, true);
+  $id_usuario     = $json['id_usuario']    ?? ($_POST['id_usuario']    ?? null);
+  $nombre_usuario = $json['nombre_usuario']?? ($_POST['nombre_usuario']?? null);
+
+  // Validación
+  if ($id_usuario === null || !is_numeric($id_usuario)) {
+    http_response_code(400);
+    echo json_encode(['estado' => 'error', 'mensaje' => 'ID de usuario inválido']);
+    exit;
+  }
+  $id_usuario = (int)$id_usuario;
+
+  $nombre_usuario = is_string($nombre_usuario) ? trim($nombre_usuario) : '';
+  if ($nombre_usuario === '') {
+    http_response_code(400);
+    echo json_encode(['estado' => 'error', 'mensaje' => 'Nombre de usuario requerido']);
+    exit;
+  }
+
+  // Inserción (hora en DB con NOW())
+  $stmt = $pdo->prepare(
+    "INSERT INTO actividades (id_usuario, nombre_usuario, hora_ingreso)
+     VALUES (:id_usuario, :nombre_usuario, NOW())"
+  );
+  $stmt->execute([
+    ':id_usuario'     => $id_usuario,
+    ':nombre_usuario' => $nombre_usuario,
+  ]);
+
+  echo json_encode(['estado' => 'success']);
+
+} catch (Throwable $e) {
+  error_log('registrar_actividad.php error: ' . $e->getMessage());
+  http_response_code(500);
+  echo json_encode(['estado' => 'error', 'mensaje' => 'No se pudo registrar la actividad']);
 }
-
-pg_close($conexion);
-?>

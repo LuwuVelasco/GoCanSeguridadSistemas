@@ -1,127 +1,112 @@
 <?php
-header('Content-Type: application/json');
+declare(strict_types=1);
+
+header('Content-Type: application/json; charset=UTF-8');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Headers: Content-Type');
-include 'conexion.php';
-// Recibir los datos del cliente
-$json = file_get_contents('php://input');
-$data = json_decode($json, true);
+header('Access-Control-Allow-Methods: POST, OPTIONS');
 
-if (isset($data['id_usuario'])) {
-    $id_usuario = $data['id_usuario'];
-    // 1. Verificar el rol del usuario
-    $sqlRol = "
-        SELECT u.rol_id, r.nombre_rol 
-        FROM usuario u
-        INNER JOIN roles_y_permisos r ON u.rol_id = r.id_rol
-        WHERE u.id_usuario = $1
-    ";
-    $prepRol = pg_prepare($conexion, "rol_query", $sqlRol);
-    $execRol = pg_execute($conexion, "rol_query", [$id_usuario]);
-    if (!$execRol) {
-        echo json_encode(["estado" => "error", "mensaje" => "Error al obtener el rol del usuario"]);
-        exit();
-    }
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+  http_response_code(204);
+  exit;
+}
 
-    $rowRol = pg_fetch_assoc($execRol);
-    if (!$rowRol) {
-        echo json_encode(["estado" => "error", "mensaje" => "Usuario no encontrado"]);
-        exit();
-    }
+date_default_timezone_set('America/La_Paz');
 
-    $nombreRol = $rowRol['nombre_rol'];
+try {
+  /** @var PDO $pdo */
+  $pdo = require __DIR__ . '/conexion.php';
+  $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+  $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
-    // 2. Obtener la configuración de contraseñas más reciente
-    $sql_configuracion = "SELECT * FROM configuracion_passwords ORDER BY id_configuracion DESC LIMIT 1";
-    $resultado_configuracion = pg_query($conexion, $sql_configuracion);
-    if (!$resultado_configuracion) {
-        echo json_encode(["estado" => "error", "mensaje" => "Error al obtener configuración de contraseña"]);
-        exit();
-    }
+  // Acepta JSON o x-www-form-urlencoded
+  $raw  = file_get_contents('php://input') ?: '';
+  $data = json_decode($raw, true);
+  if (!is_array($data)) { $data = $_POST; }
 
-    $configuracion = pg_fetch_assoc($resultado_configuracion);
-    if (!$configuracion) {
-        echo json_encode(["estado" => "error", "mensaje" => "No se encontró configuración de contraseña"]);
-        exit();
-    }
+  if (!isset($data['id_usuario'])) {
+    echo json_encode(["estado" => "error", "mensaje" => "Falta el ID de usuario"], JSON_UNESCAPED_UNICODE);
+    exit;
+  }
+  $id_usuario = (int)$data['id_usuario'];
 
-    $tiempo_vida_util = $configuracion['tiempo_vida_util'];
-    $id_configuracion = $configuracion['id_configuracion'];
+  // 1) Rol del usuario
+  $stmtRol = $pdo->prepare(
+    "SELECT u.rol_id, r.nombre_rol
+       FROM usuario u
+       INNER JOIN roles_y_permisos r ON u.rol_id = r.id_rol
+      WHERE u.id_usuario = :id"
+  );
+  $stmtRol->execute([':id' => $id_usuario]);
+  $rowRol = $stmtRol->fetch(PDO::FETCH_ASSOC);
 
-    // 3. Obtener la contraseña vigente del usuario
-    $sql_historial = "
-        SELECT * 
-        FROM historial_passwords 
-        WHERE id_usuario = $1 
-        AND estado = true 
-        AND id_configuracion = $2 
-        ORDER BY fecha_creacion DESC 
-        LIMIT 1
-    ";
-    $stmt_historial = pg_prepare($conexion, "select_historial", $sql_historial);
-    $resultado_historial = pg_execute($conexion, "select_historial", [$id_usuario, $id_configuracion]);
+  if (!$rowRol) {
+    echo json_encode(["estado" => "error", "mensaje" => "Usuario no encontrado"], JSON_UNESCAPED_UNICODE);
+    exit;
+  }
+  $nombreRol = (string)$rowRol['nombre_rol'];
 
-    if (!$resultado_historial) {
-        echo json_encode(["estado" => "error", "mensaje" => "Error al obtener el historial de contraseñas"]);
-        exit();
-    }
+  // 2) Configuración de contraseñas más reciente
+  $cfg = $pdo->query("SELECT id_configuracion, tiempo_vida_util
+                        FROM configuracion_passwords
+                       ORDER BY id_configuracion DESC
+                       LIMIT 1")->fetch(PDO::FETCH_ASSOC);
+  if (!$cfg) {
+    echo json_encode(["estado" => "error", "mensaje" => "No se encontró configuración de contraseña"], JSON_UNESCAPED_UNICODE);
+    exit;
+  }
+  $id_configuracion = (int)$cfg['id_configuracion'];
+  $tiempo_vida_util = (int)$cfg['tiempo_vida_util']; // en días
 
-    $historial = pg_fetch_assoc($resultado_historial);
-    if (!$historial) {
-        echo json_encode(["estado" => "error", "mensaje" => "No se encontró contraseña vigente para el usuario"]);
-        exit();
-    }
+  // 3) Contraseña vigente del usuario (última activa con esa configuración)
+  $stmtHist = $pdo->prepare(
+    "SELECT fecha_creacion
+       FROM historial_passwords
+      WHERE id_usuario = :id
+        AND estado = TRUE
+        AND id_configuracion = :cfg
+      ORDER BY fecha_creacion DESC
+      LIMIT 1"
+  );
+  $stmtHist->execute([':id' => $id_usuario, ':cfg' => $id_configuracion]);
+  $hist = $stmtHist->fetch(PDO::FETCH_ASSOC);
 
-    // 4. Revisar si la contraseña está expirada
-    $fecha_creacion = new DateTime($historial['fecha_creacion']);
-    $fecha_actual = new DateTime();
-    $dias_diferencia = $fecha_creacion->diff($fecha_actual)->days;
+  if (!$hist || empty($hist['fecha_creacion'])) {
+    echo json_encode(["estado" => "error", "mensaje" => "No se encontró contraseña vigente para el usuario"], JSON_UNESCAPED_UNICODE);
+    exit;
+  }
 
-    if ($dias_diferencia > $tiempo_vida_util) {
-        // Contraseña expirada
-        echo json_encode([
-            "estado" => "expired",
-            "mensaje" => "Tu contraseña ha expirado. Por favor, cámbiala para continuar.",
-            "id_usuario" => $id_usuario
-        ]);
-        pg_close($conexion);
-        exit();
-    }
+  // 4) Revisar expiración
+  $fecha_creacion   = new DateTime($hist['fecha_creacion']);
+  $fecha_expiracion = (clone $fecha_creacion)->add(new DateInterval("P{$tiempo_vida_util}D"));
+  $ahora            = new DateTime();
 
-    // 5. Verificar si el usuario no es 'Cliente' y tiene sólo 1 contraseña en historial
+  if ($ahora > $fecha_expiracion) {
+    echo json_encode([
+      "estado"     => "expired",
+      "mensaje"    => "Tu contraseña ha expirado. Por favor, cámbiala para continuar.",
+      "id_usuario" => $id_usuario
+    ], JSON_UNESCAPED_UNICODE);
+    exit;
+  }
 
-    $sqlTotal = "
-        SELECT COUNT(*) AS total
-        FROM historial_passwords
-        WHERE id_usuario = $1
-    ";
-    $prepTotal = pg_prepare($conexion, "total_pw", $sqlTotal);
-    $execTotal = pg_execute($conexion, "total_pw", [$id_usuario]);
+  // 5) Si NO es Cliente y solo tiene 1 registro en historial => forzar cambio
+  $stmtTotal = $pdo->prepare("SELECT COUNT(*) AS total FROM historial_passwords WHERE id_usuario = :id");
+  $stmtTotal->execute([':id' => $id_usuario]);
+  $totalPasswords = (int)$stmtTotal->fetchColumn();
 
-    if (!$execTotal) {
-        echo json_encode(["estado" => "error", "mensaje" => "Error al contar contraseñas en historial"]);
-        exit();
-    }
+  if ($nombreRol !== 'Cliente' && $totalPasswords === 1) {
+    echo json_encode([
+      "estado"     => "change_required",
+      "mensaje"    => "Debes cambiar tu contraseña generada automáticamente.",
+      "id_usuario" => $id_usuario
+    ], JSON_UNESCAPED_UNICODE);
+    exit;
+  }
 
-    $rowTotal = pg_fetch_assoc($execTotal);
-    $totalPasswords = (int)$rowTotal['total'];
-
-    // Si rol no es 'Cliente' y total de contraseñas = 1 => forzar cambio
-    if ($nombreRol !== 'Cliente' && $totalPasswords === 1) {
-        echo json_encode([
-            "estado" => "change_required",
-            "mensaje" => "Debes cambiar tu contraseña generada automáticamente.",
-            "id_usuario" => $id_usuario
-        ]);
-        pg_close($conexion);
-        exit();
-    }
-
-    echo json_encode(["estado" => "success", "mensaje" => "Contraseña vigente"]);
-    pg_close($conexion);
-    exit();
-    
-} else {
-    echo json_encode(["estado" => "error", "mensaje" => "Falta el ID de usuario"]);
-    exit();
+  // OK
+  echo json_encode(["estado" => "success", "mensaje" => "Contraseña vigente"], JSON_UNESCAPED_UNICODE);
+} catch (Throwable $e) {
+  error_log('verificar_password error: ' . $e->getMessage());
+  echo json_encode(["estado" => "error", "mensaje" => "Error del servidor"], JSON_UNESCAPED_UNICODE);
 }

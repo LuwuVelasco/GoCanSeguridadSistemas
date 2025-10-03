@@ -1,76 +1,104 @@
 <?php
-header('Content-Type: application/json');
-include 'conexion.php';
+declare(strict_types=1);
 
-$data = json_decode(file_get_contents("php://input"), true);
+header('Content-Type: application/json; charset=UTF-8');
 
 try {
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if (isset($data['fecha']) && isset($data['horario'])) {
-            // Registrar una nueva cita
-            $fecha = $data['fecha'];
-            $horario = $data['horario'];
+  /** @var PDO $pdo */
+  $pdo = require __DIR__ . '/conexion.php';
+  $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+  $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
-            // Validar la fecha y hora
-            $fechaHoraIngresada = new DateTime("$fecha $horario");
-            $now = new DateTime();
+  // Aseguramos zona horaria en la DB para NOW()/CURRENT_*
+  try { $pdo->exec("SET TIME ZONE 'America/La_Paz'"); } catch (Throwable $e) {}
 
-            if ($fechaHoraIngresada <= $now) {
-                echo json_encode(['error' => 'No puedes registrar una cita en una fecha u hora pasada.']);
-                exit;
-            }
+  $raw  = file_get_contents("php://input") ?: '';
+  $data = json_decode($raw, true);
+  if (!is_array($data)) { $data = []; }
 
-            echo json_encode(['mensaje' => 'Cita registrada correctamente']);
-            exit;
+  if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-        } elseif (isset($data['id_usuario'])) {
-            // Cargar citas del usuario
-            $id_usuario = $data['id_usuario'];
+    // 1) Validar fecha/horario futuros (no inserta en DB, solo valida y responde)
+    if (isset($data['fecha'], $data['horario'])) {
+      $fecha   = trim((string)$data['fecha']);
+      $horario = trim((string)$data['horario']);
 
-            // Consulta para obtener citas futuras
-            $query = "
-                SELECT id_cita, propietario, servicio, fecha, horario 
-                FROM cita 
-                WHERE id_usuario = $1 AND 
-                (fecha > CURRENT_DATE OR 
-                (fecha = CURRENT_DATE AND horario > CURRENT_TIME))
-            ";
-            $result = pg_prepare($conexion, "query_citas_usuario", $query);
-            $result = pg_execute($conexion, "query_citas_usuario", [$id_usuario]);
+      if ($fecha === '' || $horario === '') {
+        echo json_encode(['error' => 'Fecha u horario no válidos']);
+        exit;
+      }
 
-            $citas = [];
-            while ($row = pg_fetch_assoc($result)) {
-                $citas[] = $row;
-            }
+      // Validación de fecha/hora futura
+      $tz    = new DateTimeZone('America/La_Paz');
+      $now   = new DateTime('now', $tz);
+      $input = DateTime::createFromFormat('Y-m-d H:i', "$fecha $horario", $tz);
+      if (!$input) {
+        // Intento alterno con segundos
+        $input = DateTime::createFromFormat('Y-m-d H:i:s', "$fecha $horario", $tz);
+      }
 
-            echo json_encode($citas);
-            exit;
-        } else {
-            echo json_encode(['error' => 'Datos insuficientes proporcionados']);
-            exit;
-        }
-    } elseif ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
-        // Eliminar una cita
-        if (!isset($data['id_cita']) || !is_numeric($data['id_cita'])) {
-            echo json_encode(['error' => 'ID de cita no válido']);
-            exit;
-        }
+      if (!$input) {
+        echo json_encode(['error' => 'Formato de fecha u hora inválido']);
+        exit;
+      }
 
-        $id_cita = $data['id_cita'];
+      if ($input <= $now) {
+        echo json_encode(['error' => 'No puedes registrar una cita en una fecha u hora pasada.']);
+        exit;
+      }
 
-        $query = "DELETE FROM cita WHERE id_cita = $1";
-        $result = pg_prepare($conexion, "query_eliminar_cita", $query);
-        $result = pg_execute($conexion, "query_eliminar_cita", [$id_cita]);
-
-        if ($result) {
-            echo json_encode(['mensaje' => 'Cita eliminada correctamente']);
-        } else {
-            echo json_encode(['error' => 'Error al eliminar la cita']);
-        }
-    } else {
-        echo json_encode(['error' => 'Método no soportado']);
+      echo json_encode(['mensaje' => 'Cita registrada correctamente']);
+      exit;
     }
-} catch (Exception $e) {
-    echo json_encode(['error' => 'Error del servidor: ' . $e->getMessage()]);
+
+    // 2) Listar citas futuras por usuario
+    if (isset($data['id_usuario'])) {
+      $id_usuario = (int)$data['id_usuario'];
+
+      $sql = "
+        SELECT id_cita, propietario, servicio, fecha, horario
+        FROM cita
+        WHERE id_usuario = :id_usuario
+          AND (
+            fecha > CURRENT_DATE
+            OR (fecha = CURRENT_DATE AND horario > CURRENT_TIME)
+          )
+        ORDER BY fecha ASC, horario ASC
+      ";
+      $stmt = $pdo->prepare($sql);
+      $stmt->execute([':id_usuario' => $id_usuario]);
+      $citas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+      // Mantiene el contrato anterior: devuelve arreglo plano
+      echo json_encode($citas ?: []);
+      exit;
+    }
+
+    echo json_encode(['error' => 'Datos insuficientes proporcionados']);
+    exit;
+  }
+
+  if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
+    // Eliminar una cita por id
+    if (!isset($data['id_cita']) || !is_numeric($data['id_cita'])) {
+      echo json_encode(['error' => 'ID de cita no válido']);
+      exit;
+    }
+
+    $id_cita = (int)$data['id_cita'];
+    $stmt = $pdo->prepare("DELETE FROM cita WHERE id_cita = :id_cita");
+    $ok = $stmt->execute([':id_cita' => $id_cita]);
+
+    if ($ok && $stmt->rowCount() > 0) {
+      echo json_encode(['mensaje' => 'Cita eliminada correctamente']);
+    } else {
+      echo json_encode(['error' => 'Error al eliminar la cita']);
+    }
+    exit;
+  }
+
+  echo json_encode(['error' => 'Método no soportado']);
+} catch (Throwable $e) {
+  error_log('reservas.php error: ' . $e->getMessage());
+  echo json_encode(['error' => 'Error del servidor: ' . $e->getMessage()]);
 }
-?>

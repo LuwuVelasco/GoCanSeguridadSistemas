@@ -1,58 +1,103 @@
 <?php
-header('Content-Type: application/json');
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-include 'conexion.php';
+declare(strict_types=1);
 
-// Recibir los datos del formulario
-$propietario = trim($_POST['propietario'] ?? '');
-$sintomas = trim($_POST['sintomas'] ?? '');
-$diagnostico = trim($_POST['diagnostico'] ?? '');
-$receta = trim($_POST['receta'] ?? '');
-$fecha = trim($_POST['fecha'] ?? '');
-$nombre_mascota = trim($_POST['nombre_mascota'] ?? '');
+header('Content-Type: application/json; charset=UTF-8');
 
-// Validar que los campos no estén vacíos
-if (empty($propietario) || empty($sintomas) || empty($diagnostico) || empty($receta) || empty($fecha) || empty($nombre_mascota)) {
-    echo json_encode(["estado" => "error", "mensaje" => "Todos los campos son obligatorios"]);
+try {
+  /** @var PDO $pdo */
+  $pdo = require __DIR__ . '/conexion.php';
+  $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+  $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+  try { $pdo->exec("SET TIME ZONE 'America/La_Paz'"); } catch (Throwable $e) {}
+
+  // Soporta x-www-form-urlencoded y JSON
+  $input = $_POST;
+  if (empty($input)) {
+    $raw = file_get_contents('php://input') ?: '';
+    $json = json_decode($raw, true);
+    if (is_array($json)) $input = $json;
+  }
+
+  $propietario    = trim($input['propietario']    ?? '');
+  $sintomas       = trim($input['sintomas']       ?? '');
+  $diagnostico    = trim($input['diagnostico']    ?? '');
+  $receta         = trim($input['receta']         ?? '');
+  $fecha          = trim($input['fecha']          ?? '');
+  $nombreMascota  = trim($input['nombre_mascota'] ?? '');
+
+  // Validaciones
+  if ($propietario === '' || $sintomas === '' || $diagnostico === '' || $receta === '' || $fecha === '' || $nombreMascota === '') {
+    http_response_code(400);
+    echo json_encode(['estado'=>'error','mensaje'=>'Todos los campos son obligatorios']);
     exit;
+  }
+
+  $dt = DateTime::createFromFormat('Y-m-d', $fecha);
+  $errors = DateTime::getLastErrors();
+  if (!$dt || $errors['warning_count'] > 0 || $errors['error_count'] > 0) {
+    http_response_code(400);
+    echo json_encode(['estado'=>'error','mensaje'=>'La fecha debe tener formato YYYY-MM-DD']);
+    exit;
+  }
+  $fecha = $dt->format('Y-m-d');
+
+  // 1) Verificar propietario por NOMBRE
+  $stmt = $pdo->prepare("SELECT id_usuario FROM usuario WHERE nombre = :nombre LIMIT 1");
+  $stmt->execute([':nombre' => $propietario]);
+  $owner = $stmt->fetch(PDO::FETCH_ASSOC);
+  if (!$owner) {
+    http_response_code(404);
+    echo json_encode(['estado'=>'error','mensaje'=>'El propietario no existe']);
+    exit;
+  }
+  $idUsuario = (int)$owner['id_usuario'];
+
+  // 2) Verificar mascota por NOMBRE para ese propietario
+  $stmt = $pdo->prepare("
+    SELECT id_mascota
+    FROM mascota
+    WHERE nombre_mascota = :nombre_mascota AND id_usuario = :id_usuario
+    LIMIT 1
+  ");
+  $stmt->execute([
+    ':nombre_mascota' => $nombreMascota,
+    ':id_usuario'     => $idUsuario,
+  ]);
+  $pet = $stmt->fetch(PDO::FETCH_ASSOC);
+  if (!$pet) {
+    http_response_code(404);
+    echo json_encode(['estado'=>'error','mensaje'=>'La mascota no existe para ese propietario']);
+    exit;
+  }
+
+  // 3) Insertar el reporte (sin id_cita)
+  $stmt = $pdo->prepare("
+    INSERT INTO reporte (propietario, sintomas, diagnostico, receta, fecha, nombre_mascota)
+    VALUES (:propietario, :sintomas, :diagnostico, :receta, :fecha, :nombre_mascota)
+    RETURNING id_reporte
+  ");
+  $stmt->execute([
+    ':propietario'    => $propietario,
+    ':sintomas'       => $sintomas,
+    ':diagnostico'    => $diagnostico,
+    ':receta'         => $receta,
+    ':fecha'          => $fecha,
+    ':nombre_mascota' => $nombreMascota,
+  ]);
+
+  $newId = $stmt->fetchColumn();
+  if ($newId === false) {
+    throw new RuntimeException('No se pudo obtener el ID del reporte creado.');
+  }
+
+  echo json_encode([
+    'estado'     => 'success',
+    'id_reporte' => (int)$newId,
+    'mensaje'    => 'Reporte registrado correctamente'
+  ]);
+
+} catch (Throwable $e) {
+  error_log('registrar_reporte.php: '.$e->getMessage());
+  http_response_code(500);
+  echo json_encode(['estado'=>'error','mensaje'=>'Error al registrar el reporte']);
 }
-
-// Verificar que el propietario y la mascota existan
-$query_usuario = "SELECT id_usuario FROM usuario WHERE nombre = $1";
-$result_usuario = pg_query_params($conexion, $query_usuario, [$propietario]);
-
-if ($result_usuario && pg_num_rows($result_usuario) > 0) {
-    $usuario = pg_fetch_assoc($result_usuario);
-    $id_usuario = $usuario['id_usuario'];
-
-    $query_mascota = "SELECT id_mascota FROM mascota WHERE nombre_mascota = $1 AND id_usuario = $2";
-    $result_mascota = pg_query_params($conexion, $query_mascota, [$nombre_mascota, $id_usuario]);
-
-    if ($result_mascota && pg_num_rows($result_mascota) > 0) {
-        $mascota = pg_fetch_assoc($result_mascota);
-        $id_mascota = $mascota['id_mascota'];
-
-        // Insertar el reporte
-        $sql = "INSERT INTO reporte (propietario, sintomas, diagnostico, receta, fecha, nombre_mascota) 
-                VALUES ($1, $2, $3, $4, $5, $6) RETURNING id_reporte";
-        $params = [$propietario, $sintomas, $diagnostico, $receta, $fecha, $nombre_mascota];
-        $result = pg_query_params($conexion, $sql, $params);
-
-        if ($result) { // Aquí usamos $result
-            $reporte = pg_fetch_assoc($result);
-            echo json_encode(["estado" => "success", "id_reporte" => $reporte['id_reporte']]);
-            exit;
-        } else {
-            echo json_encode(["estado" => "error", "mensaje" => "Error al registrar el reporte"]);
-        }
-    } else {
-        echo json_encode(["estado" => "error", "mensaje" => "La mascota no existe"]);
-    }
-} else {
-    echo json_encode(["estado" => "error", "mensaje" => "El propietario no existe"]);
-}
-
-pg_close($conexion);
-?>
