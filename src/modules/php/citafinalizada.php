@@ -1,20 +1,43 @@
 <?php
-header('Content-Type: application/json');
-include 'conexion.php';
-// Obtener el id_cita de la solicitud
-$id_cita = $_POST['id_cita'];
+declare(strict_types=1);
+header('Content-Type: application/json; charset=UTF-8');
 
-// Eliminar la cita
-$query = "DELETE FROM cita WHERE id_cita = $1";
-$result = pg_query_params($conexion, $query, array($id_cita));
+$pdo = require __DIR__ . '/conexion.php'; // Debe devolver un PDO
 
-if (!$result) {
-    echo json_encode(["estado" => "error", "mensaje" => "Error al eliminar la cita"]);
-    exit;
+$idCita = $_POST['id_cita'] ?? null;
+if ($idCita === null) {
+  $raw = file_get_contents('php://input');
+  if ($raw) {
+    $json = json_decode($raw, true);
+    if (json_last_error() === JSON_ERROR_NONE && isset($json['id_cita'])) {
+      $idCita = $json['id_cita'];
+    }
+  }
 }
 
-echo json_encode(["estado" => "success", "mensaje" => "Cita eliminada correctamente"]);
+// Validación básica
+$idCita = filter_var($idCita, FILTER_VALIDATE_INT);
+if (!$idCita || $idCita <= 0) {
+  http_response_code(400);
+  echo json_encode(['estado' => 'error', 'mensaje' => 'id_cita inválido']);
+  exit;
+}
 
-pg_close($conexion);
-?>
-s
+try {
+  // Eliminar la cita
+  $stmt = $pdo->prepare('DELETE FROM cita WHERE id_cita = :id');
+  $stmt->execute([':id' => $idCita]);
+
+  if ($stmt->rowCount() === 0) {
+    // No existía o ya fue eliminada
+    echo json_encode(['estado' => 'error', 'mensaje' => 'La cita no existe']);
+    exit;
+  }
+
+  echo json_encode(['estado' => 'success', 'mensaje' => 'Cita eliminada correctamente']);
+
+} catch (Throwable $e) {
+  error_log('citafinalizada.php: ' . $e->getMessage());
+  http_response_code(500);
+  echo json_encode(['estado' => 'error', 'mensaje' => 'Error al eliminar la cita']);
+}

@@ -1,108 +1,149 @@
 <?php
-header('Content-Type: application/json');
-include 'conexion.php';
+declare(strict_types=1);
+header('Content-Type: application/json; charset=UTF-8');
+
+$pdo = require __DIR__ . '/conexion.php'; // Debe devolver un PDO
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
 try {
-    if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-        if (isset($_GET['especialidad_id']) && is_numeric($_GET['especialidad_id'])) {
-            // Obtener doctores según la especialidad
-            $especialidadId = $_GET['especialidad_id'];
-            $query = "SELECT nombre FROM doctores WHERE id_especialidad = $1";
-            $result = pg_prepare($conexion, "query_doctores", $query);
-            $result = pg_execute($conexion, "query_doctores", [$especialidadId]);
+  if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
-            $doctores = [];
-            while ($row = pg_fetch_assoc($result)) {
-                $doctores[] = $row;
-            }
+    // ?especialidad_id=#
+    if (isset($_GET['especialidad_id']) && is_numeric($_GET['especialidad_id'])) {
+      $especialidadId = (int) $_GET['especialidad_id'];
 
-            echo json_encode($doctores ?: []);
-            exit;
-        } else {
-            // Obtener todas las especialidades usando pg_query()
-            $query = "SELECT id_especialidad, nombre_especialidad FROM especialidad";
-            $result = pg_query($conexion, $query);
+      $stmt = $pdo->prepare(
+        'SELECT id_doctores, nombre
+           FROM doctores
+          WHERE id_especialidad = :id
+          ORDER BY nombre'
+      );
+      $stmt->execute([':id' => $especialidadId]);
+      $doctores = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            if (!$result) {
-                echo json_encode(['error' => true, 'mensaje' => 'Error al obtener especialidades']);
-                exit;
-            }
-
-            $especialidades = [];
-            while ($row = pg_fetch_assoc($result)) {
-                $especialidades[] = $row;
-            }
-
-            echo json_encode($especialidades ?: []);
-            exit;
-        }
-    } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        // Obtener datos de la solicitud
-        $data = json_decode(file_get_contents("php://input"), true);
-
-        $propietario = $data['propietario'];
-        $especialidadNombre = $data['especialidadNombre'];
-        $doctor = $data['doctor'];
-        $id_usuario = $data['id_usuario'];
-        $fecha = $data['fecha'];
-        $hora = $data['horario'];
-
-        // Obtener ID del doctor
-        $query = "SELECT id_doctores FROM doctores WHERE nombre = $1";
-        $result = pg_prepare($conexion, "query_doctor", $query);
-        $result = pg_execute($conexion, "query_doctor", [$doctor]);
-
-        if (pg_num_rows($result) > 0) {
-            $row = pg_fetch_assoc($result);
-            $id_doctor = $row['id_doctores'];
-
-            // Verificar si ya existe una cita en ese horario para el doctor
-            $query = "SELECT COUNT(*) as count FROM cita WHERE id_doctor = $1 AND fecha = $2 AND horario = $3";
-            $result = pg_prepare($conexion, "query_cita_existente", $query);
-            $result = pg_execute($conexion, "query_cita_existente", [$id_doctor, $fecha, $hora]);
-            $existingCita = pg_fetch_assoc($result);
-
-            if ($existingCita['count'] > 0) {
-                echo json_encode([
-                    "error" => true,
-                    "mensaje" => "El doctor ya tiene una cita en ese horario."
-                ]);
-                exit;
-            }
-
-            // Insertar nueva cita
-            $query = "INSERT INTO cita (propietario, servicio, doctor, id_usuario, id_doctor, fecha, horario) 
-                      VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id_cita";
-            $result = pg_prepare($conexion, "query_insert_cita", $query);
-            $result = pg_execute($conexion, "query_insert_cita", [$propietario, $especialidadNombre, $doctor, $id_usuario, $id_doctor, $fecha, $hora]);
-
-            if ($row = pg_fetch_assoc($result)) {
-                echo json_encode([
-                    "id_cita" => $row['id_cita'],
-                    "mensaje" => "Cita registrada con éxito."
-                ]);
-            } else {
-                echo json_encode([
-                    "error" => true,
-                    "mensaje" => "No se pudo registrar la cita."
-                ]);
-            }
-        } else {
-            echo json_encode([
-                "error" => true,
-                "mensaje" => "Doctor no encontrado."
-            ]);
-        }
-    } else {
-        echo json_encode([
-            "error" => true,
-            "mensaje" => "Método de solicitud no soportado."
-        ]);
+      echo json_encode($doctores ?: []);
+      exit;
     }
-} catch (Exception $e) {
-    echo json_encode([
-        "error" => true,
-        "mensaje" => "Error del servidor: " . $e->getMessage()
+
+    // Todas las especialidades
+    $stmt = $pdo->query(
+      'SELECT id_especialidad, nombre_especialidad
+         FROM especialidad
+         ORDER BY nombre_especialidad'
+    );
+    $especialidades = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    echo json_encode($especialidades ?: []);
+    exit;
+  }
+
+  if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Acepta JSON o x-www-form-urlencoded
+    $data = null;
+    $ct = $_SERVER['CONTENT_TYPE'] ?? '';
+    if (stripos($ct, 'application/json') !== false) {
+      $raw = file_get_contents('php://input');
+      $data = json_decode($raw, true);
+    } else {
+      // Normalizar a arreglo similar a JSON esperado por el front
+      $data = [
+        'propietario'        => $_POST['propietario']        ?? null,
+        'especialidadNombre' => $_POST['especialidadNombre'] ?? null,
+        'doctor'             => $_POST['doctor']             ?? null,
+        'id_usuario'         => $_POST['id_usuario']         ?? null,
+        'fecha'              => $_POST['fecha']              ?? null,
+        'horario'            => $_POST['horario']            ?? null,
+      ];
+    }
+
+    // Validaciones básicas
+    $propietario        = trim((string)($data['propietario'] ?? ''));
+    $especialidadNombre = trim((string)($data['especialidadNombre'] ?? ''));
+    $doctorNombre       = trim((string)($data['doctor'] ?? ''));
+    $idUsuario          = filter_var($data['id_usuario'] ?? null, FILTER_VALIDATE_INT);
+    $fecha              = trim((string)($data['fecha'] ?? ''));   // formato YYYY-MM-DD
+    $hora               = trim((string)($data['horario'] ?? '')); // ej. 10:15:00-04 o 10:15:00
+
+    if ($propietario === '' || $especialidadNombre === '' || $doctorNombre === '' ||
+        !$idUsuario || $fecha === '' || $hora === '') {
+      echo json_encode(["error" => true, "mensaje" => "Faltan campos requeridos."]);
+      exit;
+    }
+
+    // 1) Obtener ID del doctor por nombre
+    $stmt = $pdo->prepare('SELECT id_doctores FROM doctores WHERE nombre = :nom LIMIT 1');
+    $stmt->execute([':nom' => $doctorNombre]);
+    $doc = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$doc) {
+      echo json_encode(["error" => true, "mensaje" => "Doctor no encontrado."]);
+      exit;
+    }
+    $idDoctor = (int)$doc['id_doctores'];
+
+    // 2) Verificar choque de horario
+    $stmt = $pdo->prepare(
+      'SELECT COUNT(*)::int AS count
+         FROM cita
+        WHERE id_doctor = :id_doctor
+          AND fecha = :fecha
+          AND horario = :horario'
+    );
+    $stmt->execute([
+      ':id_doctor' => $idDoctor,
+      ':fecha'     => $fecha,
+      ':horario'   => $hora
     ]);
+    $existing = (int)$stmt->fetchColumn();
+
+    if ($existing > 0) {
+      echo json_encode([
+        "error"   => true,
+        "mensaje" => "El doctor ya tiene una cita en ese horario."
+      ]);
+      exit;
+    }
+
+    // 3) Insertar cita
+    $stmt = $pdo->prepare(
+      'INSERT INTO cita (propietario, servicio, doctor, id_usuario, id_doctor, fecha, horario)
+       VALUES (:propietario, :servicio, :doctor, :id_usuario, :id_doctor, :fecha, :horario)
+       RETURNING id_cita'
+    );
+    $stmt->execute([
+      ':propietario' => $propietario,
+      ':servicio'    => $especialidadNombre,
+      ':doctor'      => $doctorNombre,
+      ':id_usuario'  => $idUsuario,
+      ':id_doctor'   => $idDoctor,
+      ':fecha'       => $fecha,
+      ':horario'     => $hora
+    ]);
+
+    $idCita = $stmt->fetchColumn();
+    if ($idCita) {
+      echo json_encode([
+        "id_cita" => (int)$idCita,
+        "mensaje" => "Cita registrada con éxito."
+      ]);
+    } else {
+      echo json_encode([
+        "error"   => true,
+        "mensaje" => "No se pudo registrar la cita."
+      ]);
+    }
+    exit;
+  }
+
+  // Método no permitido
+  http_response_code(405);
+  echo json_encode(["error" => true, "mensaje" => "Método de solicitud no soportado."]);
+  exit;
+
+} catch (Throwable $e) {
+  error_log('citas.php: ' . $e->getMessage());
+  http_response_code(500);
+  echo json_encode(["error" => true, "mensaje" => "Error del servidor: " . $e->getMessage()]);
+  exit;
 }
-?>
