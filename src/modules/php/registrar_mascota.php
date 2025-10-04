@@ -4,57 +4,49 @@ declare(strict_types=1);
 header('Content-Type: application/json; charset=UTF-8');
 
 try {
+  /** Conexión PDO */
   /** @var PDO $pdo */
   $pdo = require __DIR__ . '/conexion.php';
   $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
   $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-  try { $pdo->exec("SET TIME ZONE 'America/La_Paz'"); } catch (Throwable $e) {}
 
-  // Acepta JSON o x-www-form-urlencoded
-  $raw  = file_get_contents('php://input') ?: '';
-  $json = json_decode($raw, true);
+  // Leer POST
+  $nombre_mascota    = trim($_POST['nombre_mascota']    ?? '');
+  $fecha_nacimiento  = trim($_POST['fecha_nacimiento']  ?? '');
+  $tipo              = trim($_POST['tipo']              ?? '');
+  $raza              = trim($_POST['raza']              ?? '');
+  $nombre_propietario= trim($_POST['nombre_propietario']?? '');
 
-  $nombre_mascota     = trim($json['nombre_mascota']     ?? ($_POST['nombre_mascota']     ?? ''));
-  $fecha_nacimiento   = trim($json['fecha_nacimiento']   ?? ($_POST['fecha_nacimiento']   ?? ''));
-  $tipo               = trim($json['tipo']               ?? ($_POST['tipo']               ?? ''));
-  $raza               = trim($json['raza']               ?? ($_POST['raza']               ?? ''));
-  $nombre_propietario = trim($json['nombre_propietario'] ?? ($_POST['nombre_propietario'] ?? ''));
-
-  // Validaciones
+  // Validaciones básicas
   if ($nombre_mascota === '' || $fecha_nacimiento === '' || $tipo === '' || $raza === '' || $nombre_propietario === '') {
-    http_response_code(400);
-    echo json_encode(['estado' => 'error', 'mensaje' => 'Todos los campos son obligatorios']);
+    echo json_encode(["estado" => "error", "mensaje" => "Todos los campos son obligatorios"], JSON_UNESCAPED_UNICODE);
     exit;
   }
 
-  $dt = DateTime::createFromFormat('Y-m-d', $fecha_nacimiento);
-  $errors = DateTime::getLastErrors();
-  if (!$dt || $errors['warning_count'] > 0 || $errors['error_count'] > 0) {
-    http_response_code(400);
-    echo json_encode(['estado' => 'error', 'mensaje' => 'La fecha de nacimiento debe tener formato YYYY-MM-DD']);
+  // (Opcional) validar fecha simple: YYYY-MM-DD
+  if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha_nacimiento)) {
+    echo json_encode(["estado" => "error", "mensaje" => "Formato de fecha inválido (YYYY-MM-DD)"], JSON_UNESCAPED_UNICODE);
     exit;
   }
-  $fecha_nacimiento = $dt->format('Y-m-d');
 
-  // Buscar propietario por NOMBRE
-  $stmt = $pdo->prepare("SELECT id_usuario FROM usuario WHERE nombre = :nombre LIMIT 1");
-  $stmt->execute([':nombre' => $nombre_propietario]);
-  $owner = $stmt->fetch(PDO::FETCH_ASSOC);
+  // Buscar propietario por NOMBRE (no por email)
+  $stmtUser = $pdo->prepare("SELECT id_usuario FROM usuario WHERE nombre = :nombre LIMIT 1");
+  $stmtUser->execute([':nombre' => $nombre_propietario]);
+  $rowUser = $stmtUser->fetch(PDO::FETCH_ASSOC);
 
-  if (!$owner) {
-    http_response_code(404);
-    echo json_encode(['estado' => 'error', 'mensaje' => 'El propietario no existe']);
+  if (!$rowUser) {
+    echo json_encode(["estado" => "error", "mensaje" => "El propietario no existe"], JSON_UNESCAPED_UNICODE);
     exit;
   }
-  $id_usuario = (int)$owner['id_usuario'];
+  $id_usuario = (int)$rowUser['id_usuario'];
 
-  // Insertar mascota
-  $stmt = $pdo->prepare("
-    INSERT INTO mascota (nombre_mascota, fecha_nacimiento, tipo, raza, id_usuario)
-    VALUES (:nombre_mascota, :fecha_nacimiento, :tipo, :raza, :id_usuario)
-    RETURNING id_mascota
-  ");
-  $stmt->execute([
+  // Insertar mascota y devolver id_mascota
+  $stmtIns = $pdo->prepare(
+    "INSERT INTO mascota (nombre_mascota, fecha_nacimiento, tipo, raza, id_usuario)
+     VALUES (:nombre_mascota, :fecha_nacimiento, :tipo, :raza, :id_usuario)
+     RETURNING id_mascota"
+  );
+  $stmtIns->execute([
     ':nombre_mascota'   => $nombre_mascota,
     ':fecha_nacimiento' => $fecha_nacimiento,
     ':tipo'             => $tipo,
@@ -62,19 +54,19 @@ try {
     ':id_usuario'       => $id_usuario,
   ]);
 
-  $newId = $stmt->fetchColumn();
+  $newId = $stmtIns->fetchColumn();
   if ($newId === false) {
-    throw new RuntimeException('No se pudo obtener el ID de la mascota creada.');
+    echo json_encode(["estado" => "error", "mensaje" => "No se pudo registrar la mascota"], JSON_UNESCAPED_UNICODE);
+    exit;
   }
 
   echo json_encode([
-    'estado'     => 'success',
-    'mensaje'    => 'Mascota registrada exitosamente',
-    'id_mascota' => (int)$newId,
-  ]);
+    "estado" => "success",
+    "mensaje" => "Mascota registrada exitosamente",
+    "id_mascota" => (int)$newId
+  ], JSON_UNESCAPED_UNICODE);
 
 } catch (Throwable $e) {
-  error_log('registrar_mascota.php: ' . $e->getMessage());
-  http_response_code(500);
-  echo json_encode(['estado' => 'error', 'mensaje' => 'Error al registrar la mascota']);
+  error_log('registrar_mascota error: ' . $e->getMessage());
+  echo json_encode(["estado" => "error", "mensaje" => "Error del servidor"], JSON_UNESCAPED_UNICODE);
 }

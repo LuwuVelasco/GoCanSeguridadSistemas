@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-    emailjs.init("XhWMaSqNfASzICac5");
+    emailjs.init({ publicKey: 'lxBqvP8DcEyWXTcxi' });
     document.getElementById('crearCuentaBtn').addEventListener('click', registrarUsuario);
     
     function validarEmail(email) {
@@ -71,20 +71,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 return; // Detener si el correo ya existe
             }
             // Enviar el token al correo usando EmailJS
-            emailjs.send("service_nhpwkm8", "template_guvck1n", {
-                to_email: email,
-                nombre: nombre,
-                token: token
-            }).then(function () {
-                console.log('Correo electrónico enviado con éxito');
-                promptForToken(token, email, nombre, password);
-            }).catch(function (error) {
-                console.error('Error al enviar el correo electrónico:', error);
-                Swal.fire({
-                    title: 'Error',
-                    text: 'Error al enviar el correo electrónico',
-                    icon: 'error'
-                });
+            emailjs.send('service_l3j8jvq', 'template_6vb9c17', {
+            to_email: email,
+            nombre: nombre,
+            token: token
+            })
+            .then(() => {
+            console.log('Correo enviado');
+            promptForToken(token, email, nombre, password);
+            })
+            .catch(err => {
+            console.error('Error al enviar el correo electrónico:', err);
+            Swal.fire({ title: 'Error', text: 'Error al enviar el correo electrónico', icon: 'error' });
             });
         });
     }    

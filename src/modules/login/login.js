@@ -249,7 +249,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // ====== Recuperación de contraseña ======
-  try { emailjs.init('XhWMaSqNfASzICac5'); } catch (_) {}
+  try { emailjs.init({ publicKey: 'lxBqvP8DcEyWXTcxi' }); } catch (_) {}
 
   if (forgotPasswordLink) {
     forgotPasswordLink.addEventListener('click', function (e) {
@@ -292,14 +292,16 @@ document.addEventListener('DOMContentLoaded', function () {
     const verificationCode = generateRandomCode();
     sessionStorage.setItem('verificationCode', verificationCode);
 
-    emailjs.send('service_nhpwkm8', 'template_48zopgh', {
+// ya no uses service_nhpwkm8/template_48zopgh
+    emailjs.send('service_l3j8jvq', 'template_nyxmk6j', {
       to_email: email,
       verification_code: verificationCode
-    }).then(() => {
+    })
+    .then(() => {
       Swal.fire({ icon: 'success', title: 'Código enviado', text: 'Revisa tu correo.' });
-      if (forgotPasswordModal) forgotPasswordModal.style.display = 'none';
-      if (resetPasswordModal) resetPasswordModal.style.display = 'block';
-    }).catch(err => {
+      // ...
+    })
+    .catch(err => {
       console.error(err);
       Swal.fire({ icon: 'error', title: 'Error', text: 'No se pudo enviar el correo.' });
     });
