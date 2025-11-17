@@ -1,0 +1,21 @@
+import pg from 'pg';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const { Pool } = pg;
+//cambiar segun se necesite
+const pool = new Pool({
+  host: process.env.DB_HOST || 'localhost',
+  port: process.env.DB_PORT || 5432,
+  database: process.env.DB_NAME || 'gocan',
+  user: process.env.DB_USER || 'postgres',
+  password: process.env.DB_PASSWORD || 'admin',
+});
+
+pool.on('error', (err) => {
+  console.error('Error inesperado en el cliente de PostgreSQL', err);
+  process.exit(-1);
+});
+
+export default pool;
