@@ -43,13 +43,7 @@ public class InicioSesionTest {
         WebElement botonLogin = driver.findElement(By.xpath("/html/body/header/div/div/a/button"));
         botonLogin.click();
 
-        try{
-            TimeUnit.SECONDS.sleep(3);
-        }
-        catch(InterruptedException e){
-            e.printStackTrace();
-     
-        }
+        esperar(3);
 
         WebElement campoUsuario = driver.findElement(By.id("email"));
         campoUsuario.sendKeys("luwu@gmail.com");
@@ -60,16 +54,18 @@ public class InicioSesionTest {
         WebElement botonIniciarSesion = driver.findElement(By.id("ingresarBtn"));
         botonIniciarSesion.click();
 
-        try{
-            TimeUnit.SECONDS.sleep(3);
-        }
-        catch(InterruptedException e){
-            e.printStackTrace();
-     
-        }
+        esperar(3);
 
         //3. Verificación
         WebElement primerBotonPaginaAdmin = driver.findElement(By.xpath("//*[@id=\"bt0\"]"));
         Assert.assertTrue(primerBotonPaginaAdmin.isDisplayed());
+    }
+
+    private void esperar(int segundos) {
+        try {
+            TimeUnit.SECONDS.sleep(segundos);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
