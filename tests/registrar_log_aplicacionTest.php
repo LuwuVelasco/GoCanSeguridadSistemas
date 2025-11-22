@@ -31,7 +31,7 @@ final class registrar_log_aplicacionTest extends TestCase
         ");
     }
 
-    public function testRegistroCorrecto(): void
+    public function testRegistroCorrectoDeLogDeAplicacion(): void
     {
         //2. Lógica
         $resp = registrar_log_aplicacion(
@@ -55,6 +55,8 @@ final class registrar_log_aplicacionTest extends TestCase
         );
 
         $row = $this->pdo->query("SELECT * FROM log_aplicacion")->fetch();
+
+        //3. Verificación
         $this->assertNull($row['id_usuario']);
     }
 
@@ -68,7 +70,7 @@ final class registrar_log_aplicacionTest extends TestCase
         );
     }
 
-    public function testFechaHoraEsGuardada(): void
+    public function testFechaYHoraEnTiempoRealEsGuardada(): void
     {
         //2. Lógica
         registrar_log_aplicacion(
@@ -81,17 +83,14 @@ final class registrar_log_aplicacionTest extends TestCase
         $this->assertNotEmpty($row['fecha_hora']);
     }
 
-    public function testDescripcionYValoresGuardados(): void
+    public function testDatoModificadoVacioLanzaExcepcion(): void
     {
         //2. Lógica
-        registrar_log_aplicacion(
-            $this->pdo, 1, "Tester", "update", "Mi descripcion", "func", "dato", "valor"
-        );
-
-        $row = $this->pdo->query("SELECT descripcion, valor_original FROM log_aplicacion")->fetch();
-
         //3. Verificación
-        $this->assertEquals("Mi descripcion", $row['descripcion']);
-        $this->assertEquals("valor", $row['valor_original']);
+        $this->expectException(InvalidArgumentException::class);
+
+        registrar_log_aplicacion(
+            $this->pdo, 1, "Tester", "update", "Mi descripcion", "func", "", "valor"
+        );
     }
 }

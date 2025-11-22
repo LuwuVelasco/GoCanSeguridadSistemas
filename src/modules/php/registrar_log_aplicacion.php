@@ -20,6 +20,10 @@ function registrar_log_aplicacion(
         throw new InvalidArgumentException("La acción no puede estar vacía.");
     }
 
+    if ($datoModificado === '') {
+        throw new InvalidArgumentException("El dato modificado no puede estar vacío.");
+    }
+
     $now = (new DateTimeImmutable('now', new DateTimeZone('America/La_Paz')))
         ->format('Y-m-d H:i:s');
 
