@@ -1,4 +1,5 @@
-import io.github.bonigarcia.wdm.WebDriverManager;
+// Lu - 1
+//import io.github.bonigarcia.wdm.WebDriverManager; no funcionó
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -22,7 +23,6 @@ public class InicioSesionTest {
         driver = new EdgeDriver(options);
 
         driver.manage().window().maximize();
-        // Espera implícita pequeña
         driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
     }
 
@@ -69,3 +69,21 @@ public class InicioSesionTest {
         }
     }
 }
+
+/*@BeforeTest
+public void setDriver() {
+
+    // 1. DRIVER LOCAL — fallback
+    System.setProperty("webdriver.edge.driver", "C:\\drivers\\edgedriver\\msedgedriver.exe");
+
+    // 2. WebDriverManager — si hay internet, se actualiza solo
+    io.github.bonigarcia.wdm.WebDriverManager.edgedriver().setup();
+
+    // 3. Crear driver
+    EdgeOptions options = new EdgeOptions();
+    driver = new EdgeDriver(options);
+
+    driver.manage().window().maximize();
+    driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+}
+*/

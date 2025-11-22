@@ -1,4 +1,4 @@
-import io.github.bonigarcia.wdm.WebDriverManager;
+// Lu - 3
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -22,7 +22,6 @@ public class CrearFuncionarioTest {
         driver = new EdgeDriver(options);
 
         driver.manage().window().maximize();
-        // Espera implícita pequeña
         driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
     }
 
