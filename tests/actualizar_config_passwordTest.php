@@ -11,7 +11,7 @@ final class actualizar_config_passwordTest extends TestCase
 
     protected function setUp(): void
     {
-        // BD solo para pruebas (no toca tu MySQL real)
+        // BD solo para pruebas
         $this->pdo = new PDO('sqlite::memory:');
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
