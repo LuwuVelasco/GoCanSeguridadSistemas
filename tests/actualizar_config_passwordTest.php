@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 
-require_once __DIR__ . '\..\src\modules\php\actualizar_config_password.php';
+require_once __DIR__ . '/../src/modules/php/actualizar_config_password.php';
 
 final class actualizar_config_passwordTest extends TestCase
 {
@@ -21,6 +21,20 @@ final class actualizar_config_passwordTest extends TestCase
                 tiempo_vida_util INTEGER,
                 numero_historico INTEGER,
                 fecha_configuracion TEXT
+            );
+        ");
+
+        $this->pdo->exec("
+            CREATE TABLE log_aplicacion (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id_usuario INTEGER,
+                nombre_usuario TEXT,
+                accion TEXT,
+                descripcion TEXT,
+                funcion_afectada TEXT,
+                dato_modificado TEXT,
+                valor_original TEXT,
+                fecha_hora TEXT
             );
         ");
     }
