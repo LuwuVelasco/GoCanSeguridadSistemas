@@ -34,7 +34,7 @@ public class CrearFuncionarioTest {
     }
 
     @Test
-    public void crearUnRol() {
+    public void crearUnFuncionario() {
         //1. Preparación
         String loginUrl = "http://localhost/GoCanSeguridadSistemas/src/modules/core/";
         driver.get(loginUrl);
@@ -62,10 +62,10 @@ public class CrearFuncionarioTest {
         esperar(3);
 
         WebElement nombreFuncionario = driver.findElement(By.id("nombre"));
-        nombreFuncionario.sendKeys("Funcionario Test");
+        nombreFuncionario.sendKeys("Funcionario Prueba");
 
         WebElement correoFuncionario = driver.findElement(By.id("correo"));
-        correoFuncionario.sendKeys("funcionario@gmail.com");
+        correoFuncionario.sendKeys("funcionarioPrueba@gmail.com");
 
         WebElement esVeterinario = driver.findElement(By.id("esVeterinario"));
         esVeterinario.click();

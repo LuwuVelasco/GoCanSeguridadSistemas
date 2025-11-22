@@ -34,7 +34,7 @@ public class InicioSesionTest {
     }
 
     @Test
-    public void crearUnRol() {
+    public void iniciarSesion() {
         //1. Preparación
         String loginUrl = "http://localhost/GoCanSeguridadSistemas/src/modules/core/";
         driver.get(loginUrl);
