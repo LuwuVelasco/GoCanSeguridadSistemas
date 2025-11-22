@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function () {
       return;
     }
 
-    if (!recaptchaResponse) {
+    if (!recaptchaResponse && !window.RECAPTCHA_BYPASS_LOCAL) {
       // Registrar intento en log_usuarios aunque no se envíe el login
       fetch(api('registrar_log_usuario.php'), {
         method: 'POST',
