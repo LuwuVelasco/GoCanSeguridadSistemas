@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
-Test set: AgendarCitaClienteTest
+Test set: EliminarMascotaTest
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 22.62 s -- in AgendarCitaClienteTest
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 19.44 s -- in EliminarMascotaTest

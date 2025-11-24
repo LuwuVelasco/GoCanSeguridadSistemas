@@ -1,7 +1,9 @@
 C:\xampp\htdocs\GoCanSeguridadSistemas\gocan-aceptacion\src\test\java\AgendarCitaClienteTest.java
+C:\xampp\htdocs\GoCanSeguridadSistemas\gocan-aceptacion\src\test\java\CerrarSesionTest.java
 C:\xampp\htdocs\GoCanSeguridadSistemas\gocan-aceptacion\src\test\java\CrearFuncionarioTest.java
 C:\xampp\htdocs\GoCanSeguridadSistemas\gocan-aceptacion\src\test\java\CrearUnRolTest.java
 C:\xampp\htdocs\GoCanSeguridadSistemas\gocan-aceptacion\src\test\java\EditarInformacionMascotaTest.java
+C:\xampp\htdocs\GoCanSeguridadSistemas\gocan-aceptacion\src\test\java\EliminarMascotaTest.java
 C:\xampp\htdocs\GoCanSeguridadSistemas\gocan-aceptacion\src\test\java\InicioSesionTest.java
 C:\xampp\htdocs\GoCanSeguridadSistemas\gocan-aceptacion\src\test\java\LoginPasswordIncorrectaTest.java
 C:\xampp\htdocs\GoCanSeguridadSistemas\gocan-aceptacion\src\test\java\PasswordGenericaTest.java

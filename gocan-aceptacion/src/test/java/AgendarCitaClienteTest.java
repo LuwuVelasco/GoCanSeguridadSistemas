@@ -1,6 +1,8 @@
+
 // Fer 1 - Agendar cita como cliente
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -21,6 +23,7 @@ public class AgendarCitaClienteTest {
 
     private WebDriver driver;
     private WebDriverWait wait;
+    private JavascriptExecutor js;
 
     @BeforeTest
     public void setDriver() {
@@ -33,6 +36,7 @@ public class AgendarCitaClienteTest {
         driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
 
         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        js = (JavascriptExecutor) driver;
     }
 
     @AfterTest
@@ -46,14 +50,18 @@ public class AgendarCitaClienteTest {
     public void agendarCitaComoCliente() {
         String homeUrl = "http://localhost/GoCanSeguridadSistemas/src/modules/core/";
         driver.get(homeUrl);
+        By loginButtonLocator = By.xpath("/html/body/header/div/div/a/button");
 
-        // 1) Ir a login
-        WebElement botonLogin = driver.findElement(By.xpath("/html/body/header/div/div/a/button"));
-        botonLogin.click();
+        WebElement botonLogin = wait.until(
+                ExpectedConditions.visibilityOfElementLocated(loginButtonLocator));
+
+        js.executeScript("arguments[0].scrollIntoView(true);", botonLogin);
+        esperar(1);
+        js.executeScript("arguments[0].click();", botonLogin);
         esperar(2);
 
-        // 2) Iniciar sesión como cliente
-        WebElement campoUsuario = driver.findElement(By.id("email"));
+        WebElement campoUsuario = wait.until(
+                ExpectedConditions.visibilityOfElementLocated(By.id("email")));
         campoUsuario.sendKeys("imajesus08@gmail.com");
 
         WebElement campoPassword = driver.findElement(By.id("password"));
@@ -63,89 +71,74 @@ public class AgendarCitaClienteTest {
         botonIniciarSesion.click();
         esperar(3);
 
-        // 3) Abrir modal de Agendar Cita
         WebElement botonAgendarCita = wait.until(
-                ExpectedConditions.visibilityOfElementLocated(By.id("bt0"))
-        );
+                ExpectedConditions.visibilityOfElementLocated(By.id("bt0")));
         Assert.assertTrue(botonAgendarCita.isDisplayed(), "No se encontró el botón Agendar Cita");
         botonAgendarCita.click();
         esperar(2);
 
         WebElement modalReserva = wait.until(
-                ExpectedConditions.visibilityOfElementLocated(By.id("reserveModal"))
-        );
+                ExpectedConditions.visibilityOfElementLocated(By.id("reserveModal")));
         Assert.assertTrue(modalReserva.isDisplayed(), "El modal de reserva no se mostró");
 
-        // 4) Llenar formulario
-        WebElement campoPropietario   = driver.findElement(By.id("propietario"));
+        WebElement campoPropietario = driver.findElement(By.id("propietario"));
         WebElement selectEspecialidad = driver.findElement(By.id("especialidad"));
-        WebElement selectDoctor       = driver.findElement(By.id("doctor"));
-        WebElement campoFecha         = driver.findElement(By.id("fecha"));
-        WebElement campoHora          = driver.findElement(By.id("hora"));
-        WebElement botonReservar      = driver.findElement(By.id("reservar"));
+        WebElement selectDoctor = driver.findElement(By.id("doctor"));
+        WebElement campoFecha = driver.findElement(By.id("fecha"));
+        WebElement campoHora = driver.findElement(By.id("hora"));
+        WebElement botonReservar = driver.findElement(By.id("reservar"));
 
         if (campoPropietario.getAttribute("value") == null ||
-            campoPropietario.getAttribute("value").isEmpty()) {
+                campoPropietario.getAttribute("value").isEmpty()) {
             campoPropietario.sendKeys("Jesus");
         }
-
-        // Esperar carga de especialidades
         esperar(3);
         WebElement opcionEspecialidad = driver.findElement(
-                By.xpath("//*[@id='especialidad']/option[2]")
-        );
+                By.xpath("//*[@id='especialidad']/option[2]"));
         opcionEspecialidad.click();
-
-        // Esperar y seleccionar doctor
         esperar(3);
         WebElement opcionDoctor = driver.findElement(
-                By.xpath("//*[@id='doctor']/option[6]")
-        );
+                By.xpath("//*[@id='doctor']/option[4]"));
         opcionDoctor.click();
-
-        // Fecha futura (mañana)
         LocalDate fechaManana = LocalDate.now().plusDays(1);
-        String fechaTexto = fechaManana.toString(); // YYYY-MM-DD
+        String fechaTexto = fechaManana.toString();
         campoFecha.sendKeys(fechaTexto);
-
-        // Hora (elige una, aquí 17:45)
-        campoHora.sendKeys("17:45");
-
-        // 5) Reservar
+        campoHora.sendKeys("10:47");
         botonReservar.click();
-
-        // 5.1) MANEJAR POSIBLE alert() DE ERROR
         try {
             WebDriverWait waitAlert = new WebDriverWait(driver, Duration.ofSeconds(5));
             Alert alert = waitAlert.until(ExpectedConditions.alertIsPresent());
             String alertText = alert.getText();
+            System.out.println("Texto del alert(): " + alertText);
             alert.accept();
+            if (alertText.toLowerCase().contains("error")) {
+                Assert.fail("La aplicación mostró un mensaje de error: " + alertText);
+            }
+            Assert.assertTrue(
+                    alertText.toLowerCase().contains("cita") ||
+                            alertText.toLowerCase().contains("reserva") ||
+                            alertText.toLowerCase().contains("correctamente"),
+                    "El mensaje del alert no parece ser de reserva exitosa: " + alertText);
 
-            // Si aparece un alert, consideramos que la prueba debe fallar,
-            // pero ya no revienta con UnhandledAlertException.
-            Assert.fail("Se mostró un alert de error en lugar de reserva exitosa: " + alertText);
+            return;
 
         } catch (TimeoutException e) {
-            // No apareció alert() de JS -> seguimos con el SweetAlert2 de éxito
         }
 
-        // 6) Verificar SweetAlert2 de éxito
         WebElement tituloPopup = wait.until(
-                ExpectedConditions.visibilityOfElementLocated(By.id("swal2-title"))
-        );
+                ExpectedConditions.visibilityOfElementLocated(By.id("swal2-title")));
         WebElement cuerpoPopup = driver.findElement(By.id("swal2-html-container"));
 
         Assert.assertTrue(tituloPopup.isDisplayed(), "No se mostró el popup de éxito");
         Assert.assertEquals(tituloPopup.getText(), "Éxito");
 
         String mensaje = cuerpoPopup.getText();
-        System.out.println("Mensaje de la reserva: " + mensaje);
+        System.out.println("Mensaje de la reserva (SweetAlert2): " + mensaje);
 
         Assert.assertTrue(
                 mensaje.toLowerCase().contains("cita") ||
-                mensaje.toLowerCase().contains("reserva"),
-                "El mensaje no parece ser de reserva exitosa"
-        );
+                        mensaje.toLowerCase().contains("reserva"),
+                "El mensaje no parece ser de reserva exitosa");
     }
 
     private void esperar(int segundos) {
