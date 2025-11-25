@@ -88,6 +88,17 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     if (!recaptchaResponse) {
+      // Registrar intento en log_usuarios aunque no se envíe el login
+      fetch(api('registrar_log_usuario.php'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: urlEncode({
+          // id_usuario opcional (aún no lo conocemos)
+          accion: 'captcha_fallido',
+          descripcion: `Intento de login SIN reCAPTCHA para ${email || '(sin email)'}`
+        })
+      }).catch(() => { /* no romper la UX por el log */ });
+
       Swal.fire({ icon: 'warning', title: 'Verificación requerida', text: 'Resuelve el reCAPTCHA.' });
       return;
     }

@@ -30,26 +30,30 @@ export function initConfigPasswordForm() {
       })
       .then(response => response.json())
       .then(data => {
-          console.log("Respuesta del servidor:", data);
-          if (data.estado === "success") {
-              Swal.fire({
-                  icon: "success",
-                  title: "Configuración actualizada",
-                  text: data.mensaje
-              });
-              // Cerrar el modal
-              const modalElement = document.getElementById("passwordConfigModal");
-              if (modalElement) modalElement.style.display = "none";
+        console.log("Respuesta del servidor:", data);
+        if (data.estado === "success") {
+            Swal.fire({
+                icon: "success",
+                title: "Configuración actualizada",
+                text: data.mensaje
+            });
 
-              // Reiniciar el formulario
-              configForm.reset();
-          } else {
-              Swal.fire({
-                  icon: "error",
-                  title: "Error",
-                  text: data.mensaje
-              });
-          }
+            // 🔔 Refrescar log de aplicación en la interfaz
+            window.dispatchEvent(new CustomEvent('log:aplicacion:changed'));
+
+            // Cerrar el modal
+            const modalElement = document.getElementById("passwordConfigModal");
+            if (modalElement) modalElement.style.display = "none";
+
+            // Reiniciar el formulario
+            configForm.reset();
+        } else {
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: data.mensaje
+            });
+        }
       })
       .catch(error => {
           console.error("Error al actualizar la configuración:", error);

@@ -111,6 +111,9 @@ document.querySelector('#permissionsForm').addEventListener('submit', function (
         if (data.success) {
             alert('Permisos actualizados con éxito.');
             closeModal('editPermissionsModal');
+
+            // 🔔 Refrescar log de aplicación
+            window.dispatchEvent(new CustomEvent('log:aplicacion:changed'));
         } else {
             alert('Error al actualizar permisos: ' + data.message);
         }
@@ -150,6 +153,9 @@ function deleteRole(roleId) {
                             'success'
                         );
                         loadRoles('http://localhost/GoCanSeguridadSistemas/src/modules/php/obtener_roles.php', '#rolesTable');
+
+                        // 🔔 Refrescar log de aplicación
+                        window.dispatchEvent(new CustomEvent('log:aplicacion:changed'));
                     } else {
                         Swal.fire(
                             'Error',
