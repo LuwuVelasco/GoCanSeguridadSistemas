@@ -17,8 +17,5 @@ try {
     ]);
     return $pdo;  // <--- IMPORTANTE
 } catch (PDOException $e) {
-    http_response_code(500);
-    header('Content-Type: application/json; charset=UTF-8');
-    echo json_encode(["estado"=>"error","mensaje"=>"No se pudo conectar a la base de datos"]);
-    exit;
+    throw new RuntimeException("No se pudo conectar a la base de datos: " . $e->getMessage());
 }
