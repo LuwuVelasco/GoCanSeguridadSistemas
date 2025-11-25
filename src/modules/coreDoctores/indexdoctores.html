@@ -1,307 +1,435 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.2.0/remixicon.min.css">
-    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.3.0/uicons-solid-rounded/css/uicons-solid-rounded.css">
-    <link rel="stylesheet" href="styleDoc.css">
-    <link rel="stylesheet" href="../core/style.css">
-    <link rel="stylesheet" href="modalStyle.css">
-    <link rel="stylesheet" href="../../assets/css/dropdown.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.2.0/remixicon.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn-uicons.flaticon.com/2.3.0/uicons-solid-rounded/css/uicons-solid-rounded.css"
+    />
+    <link rel="stylesheet" href="styleDoc.css" />
+    <link rel="stylesheet" href="../core/style.css" />
+    <link rel="stylesheet" href="modalStyle.css" />
+    <link rel="stylesheet" href="../../assets/css/dropdown.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../components/toggleDropdown.js"></script>
     <title>GoCan / Doctor</title>
     <style>
-        textarea {
-            resize: vertical;
-        }
-        .reporte {
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            padding: 10px;
-            transition: box-shadow 0.3s;
-        }
-        .reporte:hover {
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-        .reporte-resumen {
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .reporte-detalle {
-            display: none;
-            margin-top: 10px;
-        }
-        .search-input {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
+      textarea {
+        resize: vertical;
+      }
+      .reporte {
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        padding: 10px;
+        transition: box-shadow 0.3s;
+      }
+      .reporte:hover {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+      .reporte-resumen {
+        cursor: pointer;
+        font-weight: bold;
+      }
+      .reporte-detalle {
+        display: none;
+        margin-top: 10px;
+      }
+      .search-input {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <header class="header" data-header>
-        <div class="container">
-            <a href="#" class="logo">GoCan</a>
+      <div class="container">
+        <a href="#" class="logo">GoCan</a>
 
-            <div class="profile" onclick="toggleDropdown()">
-                <img src="../../assets/Images/user-md.png" alt="Perfil">
-                <div class="profile-dropdown" id="profileDropdown">
-                    <ul>
-                        <li><a href="http://localhost/GoCanSeguridadSistemas/src/modules/login/sesionindex.html">Cambiar de usuario</a></li>
-                        <li><a href="http://localhost/GoCanSeguridadSistemas/src/modules/core/index.html">Cerrar sesión</a></li>
-                    </ul>
-                </div>
-            </div>            
+        <div class="profile" onclick="toggleDropdown()">
+          <img src="../../assets/Images/user-md.png" alt="Perfil" />
+          <div class="profile-dropdown" id="profileDropdown">
+            <ul>
+              <li>
+                <a
+                  href="http://localhost/GoCanSeguridadSistemas/src/modules/login/sesionindex.html"
+                  >Cambiar de usuario</a
+                >
+              </li>
+              <li>
+                <a
+                  href="http://localhost/GoCanSeguridadSistemas/src/modules/core/index.html"
+                  >Cerrar sesión</a
+                >
+              </li>
+            </ul>
+          </div>
         </div>
+      </div>
     </header>
 
     <main>
-        <article>
-            <section id="home" aria-label="home" style="background-image: url('../../assets/Images/banner_InicioAd.png')">
-                <div class="container"></div>
-            </section>
-            <div class="main">
-                <h3 class="separator">Opciones</h3>
+      <article>
+        <section
+          id="home"
+          aria-label="home"
+          style="
+            background-image: url('../../assets/Images/banner_InicioAd.png');
+          "
+        >
+          <div class="container"></div>
+        </section>
+        <div class="main">
+          <h3 class="separator">Opciones</h3>
 
-                <div class="quick-access">
-                    <div id="bt0" class="button" onclick="openModal('petModal')">
-                        <i class="fi fi-sr-paw-heart"></i>
-                        <h5>Registro mascotas</h5>
-                    </div>
-                    <div id="bt3" class="button" onclick="openModal('tablaModal')">
-                        <i class="fi fi-sr-pets"></i>
-                        <h5>Información Mascotas</h5>
-                    </div>
-                    <div id="bt1" class="button" onclick="openModal('reportModal')">
-                        <i class="fi fi-sr-clipboard-list"></i>
-                        <h5>Registro consulta</h5>
-                    </div>
-                    <div id="bt2" class="button" onclick="openModal('historyModal')">
-                        <i class="fi fi-sr-time-past"></i>
-                        <h5>Reportes consultas</h5>
-                    </div>
-                    <div id="bt4" class="button" onclick="openModal('clientesModal')">
-                        <i class="fi fi-sr-target-audience"></i>
-                        <h5>Clientes registrados</h5>
-                    </div>
-                </div>
-
-                <div class="separator">
-                    <h3>Citas Próximas</h3>
-                    <button id="sortButton" onclick="sortCitas()">Ordenar por Fecha</button>
-                    <input type="text" id="searchInput" oninput="filtrarCitas()" placeholder="Buscar por propietario...">
-                </div>
-                
-                <table>
-                    <tbody>
-                        <!-- Las filas de citas se agregarán aquí dinámicamente -->
-                    </tbody>
-                </table>
+          <div class="quick-access">
+            <div id="bt0" class="button" onclick="openModal('petModal')">
+              <i class="fi fi-sr-paw-heart"></i>
+              <h5>Registro mascotas</h5>
             </div>
-
-            <div class="right-section">
-                <div class="widgets">
-                    <div class="bottom"></div>
-                </div>
+            <div id="bt3" class="button" onclick="openModal('tablaModal')">
+              <i class="fi fi-sr-pets"></i>
+              <h5>Información Mascotas</h5>
             </div>
-        </article>
+            <div id="bt1" class="button" onclick="openModal('reportModal')">
+              <i class="fi fi-sr-clipboard-list"></i>
+              <h5>Registro consulta</h5>
+            </div>
+            <div id="bt2" class="button" onclick="openModal('historyModal')">
+              <i class="fi fi-sr-time-past"></i>
+              <h5>Reportes consultas</h5>
+            </div>
+            <div id="bt4" class="button" onclick="openModal('clientesModal')">
+              <i class="fi fi-sr-target-audience"></i>
+              <h5>Clientes registrados</h5>
+            </div>
+          </div>
+
+          <div class="separator">
+            <h3>Citas Próximas</h3>
+            <button id="sortButton" onclick="sortCitas()">
+              Ordenar por Fecha
+            </button>
+            <input
+              type="text"
+              id="searchInput"
+              oninput="filtrarCitas()"
+              placeholder="Buscar por propietario..."
+            />
+          </div>
+
+          <table>
+            <tbody>
+              <!-- Las filas de citas se agregarán aquí dinámicamente -->
+            </tbody>
+          </table>
+        </div>
+
+        <div class="right-section">
+          <div class="widgets">
+            <div class="bottom"></div>
+          </div>
+        </div>
+      </article>
     </main>
 
     <div id="reportModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('reportModal'); clearForm('reportForm')">&times;</span>
-            <h2>Registrar Consulta</h2>
-            <form id="reportForm">
-                <input type="hidden" id="id_reporte" name="id_reporte"> <!-- Campo oculto para el ID del reporte -->
-                <label for="propietario">Propietario:</label>
-                <input type="text" id="propietario" name="propietario" required>
-            
-                <label for="sintomas">Síntomas:</label>
-                <textarea id="sintomas" name="sintomas" required style="resize: vertical;"></textarea>
-                
-                <label for="diagnostico">Diagnóstico:</label>
-                <textarea id="diagnostico" name="diagnostico" required style="resize: vertical;"></textarea>
-                
-                <label for="receta">Receta:</label>
-                <textarea id="receta" name="receta" required style="resize: vertical;"></textarea>
-                
-                <label for="fecha">Fecha:</label>
-                <input type="date" id="fecha" name="fecha" required>
+      <div class="modal-content">
+        <span
+          class="close"
+          onclick="closeModal('reportModal'); clearForm('reportForm')"
+          >&times;</span
+        >
+        <h2>Registrar Consulta</h2>
+        <form id="reportForm">
+          <input type="hidden" id="id_reporte" name="id_reporte" />
+          <!-- Campo oculto para el ID del reporte -->
+          <label for="propietario">Propietario:</label>
+          <input type="text" id="propietario" name="propietario" required />
 
-                <label for="nombre_mascota">Nombre de la Mascota:</label>
-                <input type="text" id="nombre_mascota" name="nombre_mascota" required>
+          <label for="sintomas">Síntomas:</label>
+          <textarea
+            id="sintomas"
+            name="sintomas"
+            required
+            style="resize: vertical"
+          ></textarea>
 
-                <button type="button" onclick="closeModal('reportModal'); clearForm('reportForm')">Cancelar</button>
-                <button type="submit">Registrar</button>
-            </form>            
-        </div>
+          <label for="diagnostico">Diagnóstico:</label>
+          <textarea
+            id="diagnostico"
+            name="diagnostico"
+            required
+            style="resize: vertical"
+          ></textarea>
+
+          <label for="receta">Receta:</label>
+          <textarea
+            id="receta"
+            name="receta"
+            required
+            style="resize: vertical"
+          ></textarea>
+
+          <label for="fecha">Fecha:</label>
+          <input type="date" id="fecha" name="fecha" required />
+
+          <label for="nombre_mascota">Nombre de la Mascota:</label>
+          <input
+            type="text"
+            id="nombre_mascota"
+            name="nombre_mascota"
+            required
+          />
+
+          <button
+            type="button"
+            onclick="closeModal('reportModal'); clearForm('reportForm')"
+          >
+            Cancelar
+          </button>
+          <button type="submit">Registrar</button>
+        </form>
+      </div>
     </div>
 
     <!-- Modal para registro de mascotas -->
     <div id="petModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="clearForm('petForm'); closeModal('petModal')">&times;</span>
-            <h2>Registrar Mascota</h2>
-            <form id="petForm">
-                <label for="nombre_mascota">Nombre de la Mascota:</label>
-                <input type="text" id="nombre_mascota" name="nombre_mascota" required>
-    
-                <label for="fecha_nacimiento">Fecha de Nacimiento:</label>
-                <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" required>
-    
-                <label for="tipo">Tipo:</label>
-                <select id="tipo" name="tipo" required>
-                    <option value="">Seleccionar tipo de animal...</option>
-                    <option value="Perro">Perro</option>
-                    <option value="Gato">Gato</option>
-                    <option value="Pájaro">Pájaro</option>
-                    <option value="Conejo">Conejo</option>
-                    <option value="Pez">Pez</option>
-                </select>
-    
-                <label for="raza">Raza:</label>
-                <input type="text" id="raza" name="raza" required>
-    
-                <label for="nombre_propietario">Nombre Propietario:</label>
-                <input type="text" id="nombre_propietario" name="nombre_propietario" required>
-    
-                <button type="button" onclick="closeModal('petModal'); clearForm('petForm')">Cancelar</button>
-                <button type="submit">Registrar</button>
-            </form>
-        </div>
-    </div>     
+      <div class="modal-content">
+        <span
+          class="close"
+          onclick="clearForm('petForm'); closeModal('petModal')"
+          >&times;</span
+        >
+        <h2>Registrar Mascota</h2>
+        <form id="petForm">
+          <label for="nombre_mascota">Nombre de la Mascota:</label>
+          <input
+            type="text"
+            id="nombre_mascota"
+            name="nombre_mascota"
+            required
+          />
+
+          <label for="fecha_nacimiento">Fecha de Nacimiento:</label>
+          <input
+            type="date"
+            id="fecha_nacimiento"
+            name="fecha_nacimiento"
+            required
+          />
+
+          <label for="tipo">Tipo:</label>
+          <select id="tipo" name="tipo" required>
+            <option value="">Seleccionar tipo de animal...</option>
+            <option value="Perro">Perro</option>
+            <option value="Gato">Gato</option>
+            <option value="Pájaro">Pájaro</option>
+            <option value="Conejo">Conejo</option>
+            <option value="Pez">Pez</option>
+          </select>
+
+          <label for="raza">Raza:</label>
+          <input type="text" id="raza" name="raza" required />
+
+          <label for="nombre_propietario">Nombre Propietario:</label>
+          <input
+            type="text"
+            id="nombre_propietario"
+            name="nombre_propietario"
+            required
+          />
+
+          <button
+            type="button"
+            onclick="closeModal('petModal'); clearForm('petForm')"
+          >
+            Cancelar
+          </button>
+          <button type="submit">Registrar</button>
+        </form>
+      </div>
+    </div>
 
     <!-- Modal para editar mascotas -->
-    <div id="tablaModal" class="modal" style="width: 600;">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('tablaModal')">&times;</span>
-            <h2>Editar Mascotas</h2>
-            <table id="petTable">
-                <thead>
-                    <tr>
-                        <th>Código</th>
-                        <th>Nombre</th>
-                        <th>Fecha de Nacimiento</th>
-                        <th>Tipo</th>
-                        <th>Raza</th>
-                        <th>Propietario</th>
-                        <th>Editar</th>
-                        <th>Eliminar</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Las filas de la tabla se agregarán dinámicamente aquí -->
-                </tbody>
-            </table>
-            <button type="submit" onclick="closeModal('tablaModal')">Cancelar</button>
-        </div>
+    <div id="tablaModal" class="modal" style="width: 600">
+      <div class="modal-content">
+        <span class="close" onclick="closeModal('tablaModal')">&times;</span>
+        <h2>Editar Mascotas</h2>
+        <table id="petTable">
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Nombre</th>
+              <th>Fecha de Nacimiento</th>
+              <th>Tipo</th>
+              <th>Raza</th>
+              <th>Propietario</th>
+              <th>Editar</th>
+              <th>Eliminar</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Las filas de la tabla se agregarán dinámicamente aquí -->
+          </tbody>
+        </table>
+        <button type="submit" onclick="closeModal('tablaModal')">
+          Cancelar
+        </button>
+      </div>
     </div>
 
     <!-- Modal de confirmación eliminación-->
     <div id="confirmModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('confirmModal')">&times;</span>
-            <h2>Confirmar Eliminación</h2>
-            <p>¿Estás seguro de que quieres eliminar esta mascota?</p>
-            <div class="button-container">
-                <button type="eliminar" id="confirmDelete">Eliminar</button>
-                <button type="button" onclick="closeModal('confirmModal')">Cancelar</button>
-            </div>
+      <div class="modal-content">
+        <span class="close" onclick="closeModal('confirmModal')">&times;</span>
+        <h2>Confirmar Eliminación</h2>
+        <p>¿Estás seguro de que quieres eliminar esta mascota?</p>
+        <div class="button-container">
+          <button type="eliminar" id="confirmDelete">Eliminar</button>
+          <button type="button" onclick="closeModal('confirmModal')">
+            Cancelar
+          </button>
         </div>
+      </div>
     </div>
 
     <!-- Modal para editar mascota -->
     <div id="editModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="clearForm('editForm'); closeModal('editModal')">&times;</span>
-            <h2>Información Mascota</h2>
-            <form id="editForm">
-                <input type="hidden" id="edit_id_mascota" name="id_mascota">
-    
-                <label for="edit_nombre_mascota">Nombre de la Mascota:</label>
-                <input type="text" id="edit_nombre_mascota" name="nombre_mascota" required>
-    
-                <label for="edit_fecha_nacimiento">Fecha de Nacimiento:</label>
-                <input type="date" id="edit_fecha_nacimiento" name="fecha_nacimiento" required>
-    
-                <label for="edit_tipo">Tipo:</label>
-                <select id="edit_tipo" name="tipo" required>
-                    <option value="">Seleccionar tipo de animal...</option>
-                    <option value="Perro">Perro</option>
-                    <option value="Gato">Gato</option>
-                    <option value="Pájaro">Pájaro</option>
-                    <option value="Conejo">Conejo</option>
-                    <option value="Pez">Pez</option>
-                </select>
-    
-                <label for="edit_raza">Raza:</label>
-                <input type="text" id="edit_raza" name="raza" required>
-    
-                <label for="edit_nombre_propietario">Nombre del Propietario:</label>
-                <input type="text" id="edit_nombre_propietario" name="nombre_propietario" required>
-                
-                <button type="button" onclick="closeModal('editModal'); clearForm('editForm')">Cancelar</button>
-                <button type="submit">Guardar Cambios</button>
-            </form>
-        </div>
-    </div>    
+      <div class="modal-content">
+        <span
+          class="close"
+          onclick="clearForm('editForm'); closeModal('editModal')"
+          >&times;</span
+        >
+        <h2>Información Mascota</h2>
+        <form id="editForm">
+          <input type="hidden" id="edit_id_mascota" name="id_mascota" />
+
+          <label for="edit_nombre_mascota">Nombre de la Mascota:</label>
+          <input
+            type="text"
+            id="edit_nombre_mascota"
+            name="nombre_mascota"
+            required
+          />
+
+          <label for="edit_fecha_nacimiento">Fecha de Nacimiento:</label>
+          <input
+            type="date"
+            id="edit_fecha_nacimiento"
+            name="fecha_nacimiento"
+            required
+          />
+
+          <label for="edit_tipo">Tipo:</label>
+          <select id="edit_tipo" name="tipo" required>
+            <option value="">Seleccionar tipo de animal...</option>
+            <option value="Perro">Perro</option>
+            <option value="Gato">Gato</option>
+            <option value="Pájaro">Pájaro</option>
+            <option value="Conejo">Conejo</option>
+            <option value="Pez">Pez</option>
+          </select>
+
+          <label for="edit_raza">Raza:</label>
+          <input type="text" id="edit_raza" name="raza" required />
+
+          <label for="edit_nombre_propietario">Nombre del Propietario:</label>
+          <input
+            type="text"
+            id="edit_nombre_propietario"
+            name="nombre_propietario"
+            required
+          />
+
+          <button
+            type="button"
+            onclick="closeModal('editModal'); clearForm('editForm')"
+          >
+            Cancelar
+          </button>
+          <button type="submit">Guardar Cambios</button>
+        </form>
+      </div>
+    </div>
 
     <!-- Modal para historial de reportes -->
     <div id="historyModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('historyModal')">&times;</span>
-            <h2>Reportes Consultas</h2>
-            <input type="text" id="historySearchInput" class="search-input" placeholder="Buscar por propietario o mascota...">
-            <div id="reportHistory">
-                <!-- Los reportes se agregarán aquí dinámicamente -->
-            </div>
-            <button type="button" onclick="closeModal('historyModal')">Cancelar</button>
+      <div class="modal-content">
+        <span class="close" onclick="closeModal('historyModal')">&times;</span>
+        <h2>Reportes Consultas</h2>
+        <input
+          type="text"
+          id="historySearchInput"
+          class="search-input"
+          placeholder="Buscar por propietario o mascota..."
+        />
+        <div id="reportHistory">
+          <!-- Los reportes se agregarán aquí dinámicamente -->
         </div>
+        <button type="button" onclick="closeModal('historyModal')">
+          Cancelar
+        </button>
+      </div>
     </div>
-    
+
     <div id="confirmEditModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('confirmEditModal')">&times;</span>
-            <h2>Confirmar Edición</h2>
-            <p>¿Estás seguro de que quieres editar esta mascota?</p>
-            <div class="button-container">
-                <button type="button" onclick="closeModal('confirmEditModal')">Cancelar</button>
-                <button type="editar" id="confirmEdit">Editar</button>
-            </div>
+      <div class="modal-content">
+        <span class="close" onclick="closeModal('confirmEditModal')"
+          >&times;</span
+        >
+        <h2>Confirmar Edición</h2>
+        <p>¿Estás seguro de que quieres editar esta mascota?</p>
+        <div class="button-container">
+          <button type="button" onclick="closeModal('confirmEditModal')">
+            Cancelar
+          </button>
+          <button type="editar" id="confirmEdit">Editar</button>
         </div>
+      </div>
     </div>
 
     <!-- Modal para mostrar clientes -->
-    <div id="clientesModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('clientesModal')">&times;</span>
-            <h2>Clientes Registrados</h2>
-            <input type="text" id="clienteSearchInput" class="search-input" placeholder="Buscar por nombre...">
-            <table id="clientesTable">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Email</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Los clientes se agregarán aquí dinámicamente -->
-                </tbody>
-            </table>
-            <button type="button" onclick="closeModal('clientesModal')">Cerrar</button>
-        </div>
+    <div id="clientesModal" class="modal" style="display: none">
+      <div class="modal-content">
+        <span class="close" onclick="closeModal('clientesModal')">&times;</span>
+        <h2>Clientes Registrados</h2>
+        <input
+          type="text"
+          id="clienteSearchInput"
+          class="search-input"
+          placeholder="Buscar por nombre..."
+        />
+        <table id="clientesTable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Email</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Los clientes se agregarán aquí dinámicamente -->
+          </tbody>
+        </table>
+        <button type="button" onclick="closeModal('clientesModal')">
+          Cerrar
+        </button>
+      </div>
     </div>
 
     <script src="../coreDoctores/doctores.js" type="module"></script>
     <script src="../components/reportesSubmit.js"></script>
     <script src="../components/clearForm.js"></script>
-</body>
-
+  </body>
 </html>
