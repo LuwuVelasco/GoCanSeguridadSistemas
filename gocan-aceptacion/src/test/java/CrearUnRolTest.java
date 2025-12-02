@@ -36,18 +36,32 @@ public class CrearUnRolTest {
         }
     }
 
+    /*
+     * CASO DE PRUEBA: Verificar el añadir un rol de la sección de administración de roles
+     */
     @Test
     public void crearUnRol() {
-        //1. Preparación
+        // ===============================================
+        // PASO 1: PREPARACIÓN
+        // ===============================================
         String loginUrl = "http://localhost/GoCanSeguridadSistemas/src/modules/core/";
         driver.get(loginUrl);
 
-        //2. Lógica de la prueba
+        // ===============================================
+        // FASE 2: LÓGICA DE PRUEBA
+        // ===============================================
+        
+        // PASO 1: En la pantalla del home, dirigirse al navbar y hacer clic en el ícono de la derecha.
+        // RESULTADO ESPERADO: Visualizar la pantalla de inicio de sesión.
         WebElement botonLogin = driver.findElement(By.xpath("/html/body/header/div/div/a/button"));
         botonLogin.click();
 
         esperar(3);
 
+        // PASO 2: Iniciar sesión con un usuario y contraseña de administrador correcto
+        // RESULTADO ESPERADO: Visualizar la pantalla de administrador, donde se ve las opciones de
+        // configuración de contraseñas, registro de funcionarios, administración de roles, la lista
+        // de funcionarios, registro de usuarios en la página
         WebElement campoUsuario = driver.findElement(By.id("email"));
         campoUsuario.sendKeys("luwu@gmail.com");
 
@@ -59,16 +73,24 @@ public class CrearUnRolTest {
 
         esperar(3);
 
+        // PASO 3: Entrar a la sección de administración de roles
+        // RESULTADO ESPERADO: Se visualiza una tabla donde se muestran todos los roles con las
+        // acciones de editar y eliminar
         WebElement botonAdminRoles = driver.findElement(By.xpath("//*[@id=\"bt2\"]"));
         botonAdminRoles.click();
 
         esperar(3);
 
+        // PASO 4: Presionar el botón de añadir rol
+        // RESULTADO ESPERADO: Se muestra una ventana emergente donde se le dará el nombre al nuevo
+        // rol y se podrá darle los permisos del sistema
         WebElement botonAnadirRol = driver.findElement(By.id("addRoleButton"));   
         botonAnadirRol.click();
 
         esperar(3);
 
+        // PASO 5: Poner su nombre del nuevo rol y marcar los permisos y presionar el botón de guardar rol
+        // RESULTADO ESPERADO: Se guarda el rol correctamente
         WebElement campoNombreRol = driver.findElement(By.id("roleName"));
         campoNombreRol.sendKeys("Role Test");
 
@@ -78,7 +100,10 @@ public class CrearUnRolTest {
         WebElement botonCrearRol = driver.findElement(By.xpath("/html/body/div[3]/div/div[2]/form/div[3]/button[2]"));
         botonCrearRol.click();
 
-        //3. Verificación
+        // ===============================================
+        // FASE 3: ASSERT O VERIFICACIÓN
+        // ===============================================
+        // Verificar que el rol fue creado correctamente esperando la alerta de confirmación
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
         Alert alert = wait.until(ExpectedConditions.alertIsPresent());
 

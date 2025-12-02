@@ -32,18 +32,32 @@ public class CrearFuncionarioTest {
         }
     }
 
+    /*
+     * CASO DE PRUEBA: Verificar el registro correcto de funcionarios
+     */
     @Test
     public void crearUnFuncionario() {
-        //1. Preparación
+        // ===============================================
+        // PASO 1: PREPARACIÓN
+        // ===============================================
         String loginUrl = "http://localhost/GoCanSeguridadSistemas/src/modules/core/";
         driver.get(loginUrl);
 
-        //2. Lógica de la prueba
+        // ===============================================
+        // FASE 2: LÓGICA DE PRUEBA
+        // ===============================================
+        
+        // PASO 1: En la pantalla del home, dirigirse al navbar y hacer clic en el ícono de la derecha.
+        // RESULTADO ESPERADO: Visualizar la pantalla de inicio de sesión.
         WebElement botonLogin = driver.findElement(By.xpath("/html/body/header/div/div/a/button"));
         botonLogin.click();
 
         esperar(3);
 
+        // PASO 2: Iniciar sesión con un usuario y contraseña de administrador correcto
+        // RESULTADO ESPERADO: Visualizar la pantalla de administrador, donde se ve las opciones de
+        // configuración de contraseñas, registro de funcionarios, administración de roles, la lista
+        // de funcionarios, registro de usuarios en la página
         WebElement campoUsuario = driver.findElement(By.id("email"));
         campoUsuario.sendKeys("luwu@gmail.com");
 
@@ -55,11 +69,17 @@ public class CrearFuncionarioTest {
 
         esperar(3);
 
+        // PASO 3: Entrar a la sección de registro funcionarios
+        // RESULTADO ESPERADO: Se muestra una ventana emergente donde se puede visualizar campos para
+        // rellenar como el nombre completo, correo, escoger el rol, etc
         WebElement botonRegistroFuncionarios = driver.findElement(By.xpath("//*[@id=\"bt1\"]"));
         botonRegistroFuncionarios.click();
 
         esperar(3);
 
+        // PASO 4: Rellenar los campos de nombre, Correo, seleccionar la de veterinario y seleccionar
+        // el rol del funcionario y registrar el funcionario
+        // RESULTADO ESPERADO: Se registra correctamente al funcionario y se muestra en la lista de funcionarios
         WebElement nombreFuncionario = driver.findElement(By.id("nombre"));
         nombreFuncionario.sendKeys("Funcionario Prueba");
 
@@ -78,7 +98,10 @@ public class CrearFuncionarioTest {
         WebElement botonCrearFuncionario = driver.findElement(By.xpath("/html/body/div[4]/div/form/div[8]/button[2]"));
         botonCrearFuncionario.click();
 
-        //3. Verificación
+        // ===============================================
+        // FASE 3: ASSERT O VERIFICACIÓN
+        // ===============================================
+        // Verificar que el funcionario fue registrado correctamente comprobando el mensaje de éxito
         WebElement mensajeExito = driver.findElement(By.xpath("//*[@id=\"swal2-title\"]"));
         Assert.assertTrue(mensajeExito.isDisplayed());
         Assert.assertEquals("Éxito", mensajeExito.getText());
