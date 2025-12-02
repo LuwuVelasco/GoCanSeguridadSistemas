@@ -36,46 +36,68 @@ public class PasswordGenericaTest {
 
     @Test
     public void verificarRechazoPasswordConSecuenciaNumerica() {
-        // 1. Preparación
+        // 1. Preparación - Ingresar a la pantalla principal del sistema
+        // PASO 1:
+        // "En la pantalla de inicio de sesión se debe presionar en el texto 
+        //  'Registrarse' que está debajo del botón de ingresar. Debe cambiar 
+        //   a la pantalla de registro con los campos correspondientes."
         String coreUrl = "http://localhost/GoCanSeguridadSistemas/src/modules/core/";
         driver.get(coreUrl);
         esperar(3);
+        // Abrir login
         WebElement botonLogin = driver.findElement(By.xpath("/html/body/header/div/div/a/button"));
         botonLogin.click();
         esperar(3);
+        // Clic en "Regístrese"
         WebElement enlaceRegistro = driver.findElement(By.linkText("Regístrese"));
         enlaceRegistro.click();
         esperar(3);
-        // 2. Lógica de la prueba
+        // 2. Logica de la prueba
+        // PASO 2:
+        // "Ingresar el correo y nombre de usuario, pero en contraseña colocar 
+        //  una secuencia de números como '123'. Se espera un pop-up con el mensaje 
+        //  'Contraseña no válida' y que indique que no puede contener secuencias".
+        // Ingresar correo válido
         WebElement campoEmail = driver.findElement(By.id("email"));
         campoEmail.clear();
         campoEmail.sendKeys("usuario.prueba@gmail.com");
         esperar(2);
+        // Ingresar nombre de usuario
         WebElement campoNombre = driver.findElement(By.id("nombre"));
         campoNombre.clear();
         campoNombre.sendKeys("Usuario Prueba");
         esperar(2);
+        // Ingresar contraseña con secuencia numérica
         WebElement campoPassword = driver.findElement(By.id("password"));
         campoPassword.clear();
-        campoPassword.sendKeys("Password123!");
+        campoPassword.sendKeys("123");   // ← secuencia genérica según el caso
         esperar(2);
+        // Intentar registrar
         WebElement botonCrearCuenta = driver.findElement(By.id("crearCuentaBtn"));
         botonCrearCuenta.click();
         esperar(3);
         // 3. Verificación
+        // Debe aparecer un pop-up indicando:
+        //   "Contraseña no válida"
+        //   y el texto indicando que no debe contener secuencias comunes.
+        // Esperar pop-up de advertencia
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("swal2-popup")));
+        // Validar título del mensaje
         WebElement tituloMensaje = driver.findElement(By.id("swal2-title"));
         Assert.assertTrue(tituloMensaje.isDisplayed());
         Assert.assertEquals("Contraseña no válida", tituloMensaje.getText());
+        // Validar mensaje relacionado a secuencias numéricas
         WebElement contenidoMensaje = driver.findElement(By.id("swal2-html-container"));
         String textoContenido = contenidoMensaje.getText();
-        Assert.assertTrue(textoContenido.contains("secuencias comunes") || textoContenido.contains("123"));
-
+        Assert.assertTrue(
+                textoContenido.contains("secuencias comunes") ||
+                textoContenido.contains("123")
+        );
+        // Cerrar mensaje
         WebElement botonOk = driver.findElement(By.cssSelector(".swal2-confirm"));
         botonOk.click();
         esperar(2);
     }
-
     private void esperar(int segundos) {
         try {
             TimeUnit.SECONDS.sleep(segundos);
