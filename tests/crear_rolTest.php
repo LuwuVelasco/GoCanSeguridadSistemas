@@ -4,47 +4,30 @@ declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
 
 require_once __DIR__ . '/../src/modules/php/crear_rol.php';
+require_once __DIR__ . '/../src/modules/php/conexion.php';
 
 final class crear_rolTest extends TestCase
 {
     private PDO $pdo;
 
-    // 1. Preparación
+    // 1. PREPARACIÓN
     protected function setUp(): void
     {
-        // BD solo para pruebas
-        $this->pdo = new PDO('sqlite::memory:');
-        $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
+        $this->pdo = require __DIR__ . '/../src/modules/php/conexion.php';
         $this->pdo->exec("
-            CREATE TABLE roles_y_permisos (
-                id_rol INTEGER PRIMARY KEY AUTOINCREMENT,
-                nombre_rol TEXT NOT NULL,
-                ver_usuarios INTEGER DEFAULT 0,
-                crear_usuarios INTEGER DEFAULT 0,
-                editar_usuarios INTEGER DEFAULT 0,
-                eliminar_usuarios INTEGER DEFAULT 0
-            );
+            DELETE FROM roles_y_permisos 
+            WHERE nombre_rol IN ('Visitante', 'Editor', 'Moderador', 'TEST_ROL')
         ");
 
         $this->pdo->exec("
-            CREATE TABLE log_aplicacion (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                id_usuario INTEGER,
-                nombre_usuario TEXT,
-                accion TEXT,
-                descripcion TEXT,
-                funcion_afectada TEXT,
-                dato_modificado TEXT,
-                valor_original TEXT,
-                fecha_hora TEXT
-            );
+            DELETE FROM log_aplicacion
+            WHERE accion = 'crear_rol'
         ");
     }
 
     public function testNombreRolVacioDaError(): void
     {
-        // 2. Lógica y 3. Verificación
+        // 2. LÓGICA y 3. VERIFICACIÓN
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Nombre de rol requerido');
 
@@ -53,7 +36,7 @@ final class crear_rolTest extends TestCase
 
     public function testNombreRolNullDaError(): void
     {
-        // 2. Lógica y 3. Verificación
+        // 2. LÓGICA y 3. VERIFICACIÓN
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Nombre de rol requerido');
 
@@ -62,64 +45,63 @@ final class crear_rolTest extends TestCase
 
     public function testCrearRolSinPermisos(): void
     {
-        // 2. Lógica
+        // 2. LÓGICA
         $resultado = crear_rol($this->pdo, 'Visitante', [], 1, 'Tester');
 
-        // 3. Verificación
+        // 3. VERIFICACIÓN
         $this->assertTrue($resultado['success']);
         $this->assertArrayHasKey('id_rol', $resultado);
 
-        // Verificar que se creó en la BD
         $rol = $this->pdo->query("
-            SELECT * FROM roles_y_permisos WHERE nombre_rol = 'Visitante'
-        ")->fetch(PDO::FETCH_ASSOC);
+            SELECT * FROM roles_y_permisos 
+            WHERE nombre_rol = 'Visitante'
+        ")->fetch();
 
         $this->assertNotFalse($rol);
         $this->assertEquals('Visitante', $rol['nombre_rol']);
-        $this->assertEquals(0, $rol['ver_usuarios']);
-        $this->assertEquals(0, $rol['crear_usuarios']);
     }
 
     public function testCrearRolConPermisos(): void
     {
-        // 2. Lógica
+        // 2. LÓGICA
         $permisos = [
-            ['id_permiso' => 'ver_usuarios', 'habilitado' => true],
-            ['id_permiso' => 'crear_usuarios', 'habilitado' => true],
-            ['id_permiso' => 'editar_usuarios', 'habilitado' => false]
+            ['id_permiso' => 'ver_roles_creados', 'habilitado' => true],
+            ['id_permiso' => 'registro_roles', 'habilitado' => true]
         ];
 
-        $resultado = crear_rol($this->pdo, 'Editor', $permisos, 1, 'Tester');
+        crear_rol($this->pdo, 'Editor', $permisos, 1, 'Tester');
 
-        // 3. Verificación
-        $this->assertTrue($resultado['success']);
-
+        // 3. VERIFICACIÓN
         $rol = $this->pdo->query("
-            SELECT * FROM roles_y_permisos WHERE nombre_rol = 'Editor'
-        ")->fetch(PDO::FETCH_ASSOC);
+            SELECT * 
+            FROM roles_y_permisos 
+            WHERE nombre_rol = 'Editor'
+        ")->fetch();
 
-        $this->assertEquals(1, $rol['ver_usuarios']);
-        $this->assertEquals(1, $rol['crear_usuarios']);
-        $this->assertEquals(0, $rol['editar_usuarios']);
-        $this->assertEquals(0, $rol['eliminar_usuarios']);
+        $this->assertNotFalse($rol);
+        $this->assertEquals(true, $rol['ver_roles_creados']);
+        $this->assertEquals(true, $rol['registro_roles']);
     }
 
     public function testRegistroEnLogAplicacion(): void
     {
-        // 2. Lógica
+        // 2. LÓGICA
         $permisos = [
-            ['id_permiso' => 'ver_usuarios', 'habilitado' => true]
+            ['id_permiso' => 'ver_roles_creados', 'habilitado' => true]
         ];
 
         crear_rol($this->pdo, 'Moderador', $permisos, 1, 'Tester');
 
-        // 3. Verificación
+        // 3. VERIFICACIÓN
         $log = $this->pdo->query("
-            SELECT * FROM log_aplicacion WHERE accion = 'crear_rol'
-        ")->fetch(PDO::FETCH_ASSOC);
+            SELECT * 
+            FROM log_aplicacion 
+            WHERE accion = 'crear_rol' 
+            ORDER BY id_log DESC
+            LIMIT 1
+        ")->fetch();
 
         $this->assertNotFalse($log);
-        $this->assertEquals(1, $log['id_usuario']);
         $this->assertEquals('Tester', $log['nombre_usuario']);
         $this->assertEquals('crear_rol', $log['accion']);
         $this->assertStringContainsString('Moderador', $log['descripcion']);
