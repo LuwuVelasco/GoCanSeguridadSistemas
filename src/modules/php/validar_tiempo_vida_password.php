@@ -11,6 +11,7 @@ function validar_tiempo_vida_password(
     ?DateTimeImmutable $ahora = null
 ): array {
 
+    // Validación básica del parámetro
     if ($id_usuario <= 0) {
         throw new InvalidArgumentException('id_usuario inválido');
     }
@@ -31,11 +32,12 @@ function validar_tiempo_vida_password(
     $tiempo_vida_util = (int)$cfg['tiempo_vida_util'];
 
     // 2) Obtener la contraseña activa más reciente del usuario
+    //    IMPORTANTE: estado es BOOLEAN en PostgreSQL → usamos IS TRUE
     $stmtHist = $pdo->prepare(
         "SELECT fecha_creacion
            FROM historial_passwords
           WHERE id_usuario = :id
-            AND estado = 1
+            AND estado IS TRUE
           ORDER BY fecha_creacion DESC
           LIMIT 1"
     );
@@ -46,13 +48,21 @@ function validar_tiempo_vida_password(
         throw new RuntimeException('No se encontró una contraseña activa para el usuario');
     }
 
+    // Si no se pasó "ahora", usamos la hora actual de La Paz
     if ($ahora === null) {
         $ahora = new DateTimeImmutable('now', new DateTimeZone('America/La_Paz'));
     }
 
-    $fecha_creacion   = new DateTimeImmutable($registro['fecha_creacion'], new DateTimeZone('America/La_Paz'));
+    // Fecha de creación de la contraseña
+    $fecha_creacion   = new DateTimeImmutable(
+        $registro['fecha_creacion'],
+        new DateTimeZone('America/La_Paz')
+    );
+
+    // Fecha de expiración = fecha_creacion + tiempo_vida_util días
     $fecha_expiracion = $fecha_creacion->add(new DateInterval("P{$tiempo_vida_util}D"));
 
+    // Comparación para ver si ya expiró
     if ($ahora > $fecha_expiracion) {
         return [
             "estado"  => "error",
