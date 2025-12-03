@@ -42,6 +42,7 @@ public class InicioSesionTest {
         // ===============================================
         String loginUrl = "http://localhost/GoCanSeguridadSistemas/src/modules/core/";
         driver.get(loginUrl);
+        esperar(2);
 
         // ===============================================
         // FASE 2: LÓGICA DE PRUEBA

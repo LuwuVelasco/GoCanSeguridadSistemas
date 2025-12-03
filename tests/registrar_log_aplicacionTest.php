@@ -4,93 +4,178 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 
-require_once __DIR__ . '/../src/modules/php/registrar_log_aplicacion.php';
+require_once __DIR__ . '/../src/modules/php/registrar_log_aplicacion.php'; // Incluye la función a probar
 
 final class registrar_log_aplicacionTest extends TestCase
 {
-    private PDO $pdo;
+    private PDO $pdo; // Conexión PDO a la base de datos real
 
-    //1. Preparación
+    // ===============================================
+    // PASO 1: PREPARACIÓN
+    // ===============================================
     protected function setUp(): void
     {
-        $this->pdo = new PDO('sqlite::memory:');
-        $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-        $this->pdo->exec("
-            CREATE TABLE log_aplicacion (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                id_usuario INTEGER,
-                nombre_usuario TEXT,
-                accion TEXT,
-                descripcion TEXT,
-                funcion_afectada TEXT,
-                dato_modificado TEXT,
-                valor_original TEXT,
-                fecha_hora TEXT
-            );
-        ");
+        // Conecta a la base de datos real
+        require __DIR__ . '/../src/modules/php/conexion.php'; // Carga la conexión a PostgreSQL
+        $this->pdo = $pdo; // Asigna la conexión PDO al atributo de la clase
     }
 
+    /**
+     * Prueba que verifica que se registra correctamente un log en la aplicación
+     */
     public function testRegistroCorrectoDeLogDeAplicacion(): void
     {
-        //2. Lógica
+        // ===============================================
+        // FASE 2: LÓGICA DE PRUEBA
+        // ===============================================
+        // Llama a la función para registrar un log con datos válidos
         $resp = registrar_log_aplicacion(
-            $this->pdo, 1, "Tester", "update", "desc", "func", "dato", "valor"
+            $this->pdo, // Conexión a la base de datos
+            1,          // ID del usuario
+            "Tester",   // Nombre del usuario
+            "update",   // Acción realizada
+            "desc",     // Descripción de la acción
+            "func",     // Función afectada
+            "dato",     // Dato modificado
+            "valor"     // Valor original
         );
 
-        //3. Verificación
+        // ===============================================
+        // FASE 3: ASSERT O VERIFICACIÓN
+        // ===============================================
+        // Verifica que la respuesta tenga estado 'success'
         $this->assertSame("success", $resp["estado"]);
 
-        $row = $this->pdo->query("SELECT * FROM log_aplicacion")->fetch();
+        // Consulta el último registro insertado en la base de datos
+        $row = $this->pdo->query("SELECT * FROM log_aplicacion WHERE nombre_usuario = 'Tester' ORDER BY fecha_hora DESC LIMIT 1")->fetch();
+        // Verifica que el id_usuario sea 1
         $this->assertEquals(1, $row['id_usuario']);
+        // Verifica que el nombre_usuario sea 'Tester'
         $this->assertEquals("Tester", $row['nombre_usuario']);
+        // Verifica que la acción sea 'update'
         $this->assertEquals("update", $row['accion']);
+
+        // Limpia el registro insertado en la base de datos real
+        $this->pdo->exec("DELETE FROM log_aplicacion WHERE nombre_usuario = 'Tester'");
     }
 
+    /**
+     * Prueba que verifica que un ID de usuario no numérico se convierte a NULL
+     */
     public function testIdUsuarioNoNumericoSeVuelveNull(): void
     {
-        //2. Lógica
+        // ===============================================
+        // FASE 2: LÓGICA DE PRUEBA
+        // ===============================================
+        // Llama a la función con un id_usuario no numérico ("abc")
         registrar_log_aplicacion(
-            $this->pdo, "abc", "Tester", "update", "desc", "func", "dato", "valor"
+            $this->pdo,  // Conexión a la base de datos
+            "abc",       // ID de usuario inválido (no numérico)
+            "Tester",    // Nombre del usuario
+            "update",    // Acción realizada
+            "desc",      // Descripción
+            "func",      // Función afectada
+            "dato",      // Dato modificado
+            "valor"      // Valor original
         );
 
-        $row = $this->pdo->query("SELECT * FROM log_aplicacion")->fetch();
+        // Consulta el último registro insertado
+        $row = $this->pdo->query("SELECT * FROM log_aplicacion WHERE nombre_usuario = 'Tester' ORDER BY fecha_hora DESC LIMIT 1")->fetch();
 
-        //3. Verificación
+        // ===============================================
+        // FASE 3: ASSERT O VERIFICACIÓN
+        // ===============================================
+        // Verifica que el id_usuario sea NULL cuando el valor no es numérico
         $this->assertNull($row['id_usuario']);
+
+        // Limpia el registro insertado en la base de datos real
+        $this->pdo->exec("DELETE FROM log_aplicacion WHERE nombre_usuario = 'Tester'");
     }
 
+    /**
+     * Prueba que verifica que una acción vacía lanza una excepción
+     */
     public function testAccionVaciaLanzaExcepcion(): void
     {
-        //2. Lógica
-        //3. Verificación
+        // ===============================================
+        // FASE 2: LÓGICA DE PRUEBA
+        // ===============================================
+        // Se espera que lance una excepción de tipo InvalidArgumentException
         $this->expectException(InvalidArgumentException::class);
+
+        // ===============================================
+        // FASE 3: ASSERT O VERIFICACIÓN
+        // ===============================================
+        // Llama a la función con una acción vacía (inválida)
         registrar_log_aplicacion(
-            $this->pdo, 1, "Tester", "", "desc", "func", "dato", "valor"
+            $this->pdo, // Conexión a la base de datos
+            1,          // ID del usuario
+            "Tester",   // Nombre del usuario
+            "",         // Acción vacía (inválida)
+            "desc",     // Descripción
+            "func",     // Función afectada
+            "dato",     // Dato modificado
+            "valor"     // Valor original
         );
     }
 
+    /**
+     * Prueba que verifica que la fecha y hora se guarda correctamente en tiempo real
+     */
     public function testFechaYHoraEnTiempoRealEsGuardada(): void
     {
-        //2. Lógica
+        // ===============================================
+        // FASE 2: LÓGICA DE PRUEBA
+        // ===============================================
+        // Llama a la función para registrar un log
         registrar_log_aplicacion(
-            $this->pdo, 1, "Tester", "update", "desc", "func", "dato", "valor"
+            $this->pdo, // Conexión a la base de datos
+            1,          // ID del usuario
+            "Tester",   // Nombre del usuario
+            "update",   // Acción realizada
+            "desc",     // Descripción
+            "func",     // Función afectada
+            "dato",     // Dato modificado
+            "valor"     // Valor original
         );
 
-        $row = $this->pdo->query("SELECT fecha_hora FROM log_aplicacion")->fetch();
+        // Consulta la fecha_hora del último registro insertado
+        $row = $this->pdo->query("SELECT fecha_hora FROM log_aplicacion WHERE nombre_usuario = 'Tester' ORDER BY fecha_hora DESC LIMIT 1")->fetch();
 
-        //3. Verificación
+        // ===============================================
+        // FASE 3: ASSERT O VERIFICACIÓN
+        // ===============================================
+        // Verifica que el campo fecha_hora no esté vacío
         $this->assertNotEmpty($row['fecha_hora']);
+
+        // Limpia el registro insertado en la base de datos real
+        $this->pdo->exec("DELETE FROM log_aplicacion WHERE nombre_usuario = 'Tester'");
     }
 
+    /**
+     * Prueba que verifica que un dato modificado vacío lanza una excepción
+     */
     public function testDatoModificadoVacioLanzaExcepcion(): void
     {
-        //2. Lógica
-        //3. Verificación
+        // ===============================================
+        // FASE 2: LÓGICA DE PRUEBA
+        // ===============================================
+        // Se espera que lance una excepción de tipo InvalidArgumentException
         $this->expectException(InvalidArgumentException::class);
 
+        // ===============================================
+        // FASE 3: ASSERT O VERIFICACIÓN
+        // ===============================================
+        // Llama a la función con dato_modificado vacío (inválido)
         registrar_log_aplicacion(
-            $this->pdo, 1, "Tester", "update", "Mi descripcion", "func", "", "valor"
+            $this->pdo,             // Conexión a la base de datos
+            1,                      // ID del usuario
+            "Tester",               // Nombre del usuario
+            "update",               // Acción realizada
+            "Mi descripcion",       // Descripción
+            "func",                 // Función afectada
+            "",                     // Dato modificado vacío (inválido)
+            "valor"                 // Valor original
         );
     }
 }
