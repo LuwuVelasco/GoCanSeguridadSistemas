@@ -39,9 +39,24 @@ public class CambiarUsuarioTest {
         }
     }
 
+    /*
+     * CASO DE PRUEBA: GC-64
+     * Verificar que podamos acceder al inicio de sesión desde otra cuenta de usuario
+     *
+     * PRECONDICIONES:
+     * - Tener buena conexión a Internet.
+     * - Contar con un navegador web.
+     * - Ingresar a la página GoCan.
+     * - Conexión con la base de datos.
+     * - Tener dos cuentas de usuario.
+     */
+
     @Test
     public void cambiarUsuario_exitosa() {
-        // Paso 1.- Preparación
+        // ===========================================
+        // PASO 1: Entrar al home mediante la URL
+        // RESULTADO ESPERADO: Visualizar la pantalla de home.
+        // ===========================================
         String baseUrl = "http://localhost/GoCanSeguridadSistemas/src/modules/core/";
         driver.get(baseUrl);
 
@@ -64,7 +79,7 @@ public class CambiarUsuarioTest {
 
         espera(3);
 
-        // Cambiar de usuario
+        // Buscar y hacer clic en la opción de cambiar usuario en el submenú
         WebElement botonSubMenu = driver.findElement(By.xpath("/html/body/header/div/div"));
         botonSubMenu.click();
         espera(2);

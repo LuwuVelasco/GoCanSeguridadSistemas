@@ -40,6 +40,17 @@ public class RegistroLogCrearFuncionarioTest {
         }
     }
 
+    /*
+     * CASO DE PRUEBA: GC-13
+     * Verificar el registro correcto de funcionarios
+     *
+     * PRECONDICIONES:
+     * - Tener buena conexión a Internet.
+     * - Contar con un navegador web.
+     * - Ingresar a la página GoCan.
+     * - Conexión con la base de datos.
+     * - Tener dos cuentas de usuario.
+     */
     @Test
     public void registrarLogCrearFuncionario_exitosa() {
         // Paso 1.- Preparación
@@ -65,14 +76,19 @@ public class RegistroLogCrearFuncionarioTest {
 
         espera(3);
 
-        List<WebElement> listaFuncionarioPrevia = driver.findElements(By.xpath("//*[@id='lista-veterinarios-table']/tbody/tr"));
+        // Navegar a la sección de listas de funcionarios
+        List<WebElement> listaFuncionarioPrevia = driver
+                .findElements(By.xpath("//*[@id='lista-veterinarios-table']/tbody/tr"));
+        
+        // Obtener el tamaño de la lista previa
         int tamanioListaPrevia = listaFuncionarioPrevia.size();
 
+        // Hacer clic en el botón de registro de funcionarios
         WebElement botonRegistroFuncionarios = driver.findElement(By.xpath("//*[@id=\"bt1\"]"));
         botonRegistroFuncionarios.click();
 
         espera(3);
-
+        // Rellenar el formulario de creación de funcionario
         WebElement nombreFuncionario = driver.findElement(By.id("nombre"));
         nombreFuncionario.sendKeys("Funcionario Prueba");
 
@@ -95,7 +111,8 @@ public class RegistroLogCrearFuncionarioTest {
         botonCerrarMensaje.click();
 
         espera(4);
-
+        
+        // Manejar posible alerta
         try {
             Alert alert = driver.switchTo().alert();
             System.out.println("Texto del alert: " + alert.getText());
@@ -104,12 +121,16 @@ public class RegistroLogCrearFuncionarioTest {
             // No hay alerta presente, continuar con la ejecución normal
         }
 
+        // Verificar que el nuevo funcionario aparezca en la lista
         driver.navigate().refresh();
         espera(3);
 
+        // Obtener la lista actual de funcionarios después de la creación
         List<WebElement> listaFuncionarioActual = driver.findElements(By.xpath("//*[@id='lista-veterinarios-table']/tbody/tr"));
         int tamanioListaActual = listaFuncionarioActual.size();
-
+        
+        //En esta parte se cumple el paso del caso de prueba: 
+        // Paso 4: Se registra correctamente al funcionario  y SE MUESTRA EN LA LISTA DE FUNCIONARIOS
         // Verificar que el tamaño de la lista actual sea igual al de la lista previa + 1
         Assert.assertEquals(tamanioListaActual, tamanioListaPrevia + 1);
     }

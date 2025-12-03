@@ -3,7 +3,6 @@
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.*;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.edge.EdgeOptions;
 import org.testng.Assert;
@@ -41,9 +40,24 @@ public class ConfigurarPasswordsTest {
         }
     }
 
+    /*
+     * CASO DE PRUEBA: GC-14
+     * Verificar la configuración de las contraseñas
+     *
+     * PRECONDICIONES:
+     * - Tener buena conexión a Internet.
+     * - Contar con un navegador web.
+     * - Ingresar a la página GoCan.
+     * - Conexión con la base de datos.
+     * - Tener dos cuentas de usuario.
+     */
+
     @Test
     public void configurarContrasenia_exitosa() {
-        // Paso 1.- Preparación
+        // ===========================================
+        // PASO 1: Entrar al home mediante la URL
+        // RESULTADO ESPERADO: Visualizar la pantalla de home.
+        // ===========================================
         String baseUrl = "http://localhost/GoCanSeguridadSistemas/src/modules/core/";
         driver.get(baseUrl);
 
@@ -53,7 +67,7 @@ public class ConfigurarPasswordsTest {
         espera(2);
 
         // Paso 2.- Lógica
-        // Iniciar sesión con un usuario existente
+        // Iniciar sesión con un usuario existente (Usuario de administrador)
 
         WebElement campoUsuario = driver.findElement(By.id("email"));
         campoUsuario.sendKeys("pruebota@gmail.com");
@@ -61,22 +75,25 @@ public class ConfigurarPasswordsTest {
         WebElement campoPassword = driver.findElement(By.id("password"));
         campoPassword.sendKeys("choche123");
 
+        //Pulsar el botón de iniciar sesión
         WebElement botonIniciarSesion = driver.findElement(By.id("ingresarBtn"));
         botonIniciarSesion.click();
 
         espera(3);
 
+        // Navegar a la sección de configuración de contraseñas
         WebElement botonConfigPass = driver.findElement(By.xpath("//*[@id=\"bt0\"]"));
         botonConfigPass.click();
 
         espera(2);
-
+        // Rellenar el formulario de configuración de contraseñas
         WebElement campoTiempoVidaUtil = driver.findElement(By.xpath("//*[@id=\"tiempoVidaUtil\"]"));
         campoTiempoVidaUtil.sendKeys("30");
 
         WebElement campoNumeroPassHistoricas = driver.findElement(By.xpath("//*[@id=\"numeroHistorico\"]"));
         campoNumeroPassHistoricas.sendKeys("5");
 
+        // Guardar la configuración
         WebElement botonGuardarConfiguracion = driver.findElement(By.xpath("//*[@id=\"passwordConfigForm\"]/div[3]/button[2]"));
         botonGuardarConfiguracion.click();
 
