@@ -18,6 +18,9 @@ final class registrar_log_aplicacionTest extends TestCase
         // Conecta a la base de datos real
         require __DIR__ . '/../src/modules/php/conexion.php'; // Carga la conexión a PostgreSQL
         $this->pdo = $pdo; // Asigna la conexión PDO al atributo de la clase
+        
+        // Limpia registros de pruebas anteriores para evitar interferencia entre tests
+        $this->pdo->exec("DELETE FROM log_aplicacion WHERE nombre_usuario = 'Tester'");
     }
 
     /**
@@ -54,9 +57,6 @@ final class registrar_log_aplicacionTest extends TestCase
         $this->assertEquals("Tester", $row['nombre_usuario']);
         // Verifica que la acción sea 'update'
         $this->assertEquals("update", $row['accion']);
-
-        // Limpia el registro insertado en la base de datos real
-        $this->pdo->exec("DELETE FROM log_aplicacion WHERE nombre_usuario = 'Tester'");
     }
 
     /**
@@ -87,9 +87,6 @@ final class registrar_log_aplicacionTest extends TestCase
         // ===============================================
         // Verifica que el id_usuario sea NULL cuando el valor no es numérico
         $this->assertNull($row['id_usuario']);
-
-        // Limpia el registro insertado en la base de datos real
-        $this->pdo->exec("DELETE FROM log_aplicacion WHERE nombre_usuario = 'Tester'");
     }
 
     /**
@@ -147,9 +144,6 @@ final class registrar_log_aplicacionTest extends TestCase
         // ===============================================
         // Verifica que el campo fecha_hora no esté vacío
         $this->assertNotEmpty($row['fecha_hora']);
-
-        // Limpia el registro insertado en la base de datos real
-        $this->pdo->exec("DELETE FROM log_aplicacion WHERE nombre_usuario = 'Tester'");
     }
 
     /**
