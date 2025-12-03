@@ -4,6 +4,14 @@ declare(strict_types=1);
 /**
  * LÓGICA TESTEABLE
  * ----------------
+ *
+ * Esta función:
+ * - Valida campos de entrada.
+ * - Inserta en:
+ *      1) doctores
+ *      2) usuario
+ *      3) historial_passwords (usando la última configuración de configuracion_passwords)
+ *
  */
 function registrar_veterinario(
     PDO $pdo,
@@ -14,6 +22,7 @@ function registrar_veterinario(
     int $rol
 ): array {
 
+    // Normalizamos y validamos parámetros
     $nombre        = trim($nombre);
     $correo        = trim($correo);
     $password      = trim($password);
@@ -34,41 +43,57 @@ function registrar_veterinario(
 
     $driver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
 
-    $pdo->beginTransaction();
+    $yaEnTransaccion = $pdo->inTransaction();
+
+    // Si NO hay transacción, esta función se hace responsable de iniciar una
+    if (!$yaEnTransaccion) {
+        $pdo->beginTransaction();
+    }
 
     try {
         $fechaRegistro  = date('Y-m-d H:i:s');
         $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
+        // =========================================
+        // 1) INSERTAR EN doctores
+        // =========================================
         if ($driver === 'pgsql') {
+            // En PostgreSQL usamos RETURNING para obtener el ID
             $stmtDoctor = $pdo->prepare("
                 INSERT INTO doctores (nombre, id_especialidad)
                 VALUES (:nombre, :idEspecialidad)
                 RETURNING id_doctores
             ");
             $stmtDoctor->execute([
-                ':nombre'        => $nombre,
-                ':idEspecialidad'=> $idEspecialidad,
+                ':nombre'         => $nombre,
+                ':idEspecialidad' => $idEspecialidad,
             ]);
             $idDoctor = $stmtDoctor->fetchColumn();
             $stmtDoctor->closeCursor();
         } else {
+            // En otros motores (MySQL, etc.) usamos lastInsertId()
             $stmtDoctor = $pdo->prepare("
                 INSERT INTO doctores (nombre, id_especialidad)
                 VALUES (:nombre, :idEspecialidad)
             ");
             $stmtDoctor->execute([
-                ':nombre'        => $nombre,
-                ':idEspecialidad'=> $idEspecialidad,
+                ':nombre'         => $nombre,
+                ':idEspecialidad' => $idEspecialidad,
             ]);
             $idDoctor = $pdo->lastInsertId();
         }
 
         if (!$idDoctor) {
-            $pdo->rollBack();
+            // Si falló obtener el ID del doctor, revertimos (solo si somos dueños de la TX)
+            if (!$yaEnTransaccion && $pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
             throw new RuntimeException('No se pudo obtener el ID del doctor.');
         }
 
+        // =========================================
+        // 2) INSERTAR EN usuario (ligado al doctor)
+        // =========================================
         if ($driver === 'pgsql') {
             $stmtUsuario = $pdo->prepare("
                 INSERT INTO usuario (email, nombre, password, rol_id, id_doctores, fecha_registro)
@@ -102,11 +127,15 @@ function registrar_veterinario(
         }
 
         if (!$idUsuario) {
-            $pdo->rollBack();
+            if (!$yaEnTransaccion && $pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
             throw new RuntimeException('No se pudo obtener el ID del usuario (veterinario).');
         }
 
-
+        // =========================================
+        // 3) OBTENER LA ÚLTIMA CONFIGURACIÓN DE CONTRASEÑAS
+        // =========================================
         $stmtConfig = $pdo->query("
             SELECT id_configuracion
             FROM configuracion_passwords
@@ -117,11 +146,16 @@ function registrar_veterinario(
         $stmtConfig->closeCursor();
 
         if (!$config) {
-            $pdo->rollBack();
+            if (!$yaEnTransaccion && $pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
             throw new RuntimeException('No se encontró configuración de contraseña');
         }
         $idConfig = (int)$config['id_configuracion'];
 
+        // =========================================
+        // 4) REGISTRAR EN historial_passwords
+        // =========================================
         $stmtHist = $pdo->prepare("
             INSERT INTO historial_passwords (id_usuario, password, fecha_creacion, id_configuracion, estado)
             VALUES (:id_usuario, :password, :fecha_creacion, :id_configuracion, :estado)
@@ -135,17 +169,23 @@ function registrar_veterinario(
         ]);
         $stmtHist->closeCursor();
 
-        $pdo->commit();
+        // =========================================
+        // 5) COMMIT (solo si la función abrió la transacción)
+        // =========================================
+        if (!$yaEnTransaccion && $pdo->inTransaction()) {
+            $pdo->commit();
+        }
 
         return [
-            "estado"          => "success",
-            "mensaje"         => "Veterinario registrado exitosamente.",
-            "id_usuario"      => (int)$idUsuario,
-            "id_configuracion"=> $idConfig,
+            "estado"           => "success",
+            "mensaje"          => "Veterinario registrado exitosamente.",
+            "id_usuario"       => (int)$idUsuario,
+            "id_configuracion" => $idConfig,
         ];
 
     } catch (Throwable $e) {
-        if ($pdo->inTransaction()) {
+        // Si la transacción la iniciamos aquí, también nos encargamos del rollback
+        if (!$yaEnTransaccion && $pdo->inTransaction()) {
             $pdo->rollBack();
         }
         throw $e;
@@ -156,6 +196,7 @@ function registrar_veterinario(
 /**
  * ENDPOINT HTTP
  * -------------
+ * Solo se ejecuta cuando este archivo se llama directamente vía HTTP,
  */
 if (php_sapi_name() !== 'cli' && basename(__FILE__) === basename($_SERVER['SCRIPT_FILENAME'] ?? '')) {
 
@@ -168,6 +209,7 @@ if (php_sapi_name() !== 'cli' && basename(__FILE__) === basename($_SERVER['SCRIP
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
+        // Validamos que vengan todos los campos requeridos por POST
         if (
             !isset($_POST['nombre'], $_POST['correo'], $_POST['password'],
                     $_POST['especialidad'], $_POST['rol'])
@@ -179,12 +221,14 @@ if (php_sapi_name() !== 'cli' && basename(__FILE__) === basename($_SERVER['SCRIP
             exit;
         }
 
-        $nombre        = $_POST['nombre']        ?? '';
-        $correo        = $_POST['correo']        ?? '';
-        $password      = $_POST['password']      ?? '';
-        $idEspecialidad= (int)($_POST['especialidad'] ?? 0);
-        $rol           = (int)($_POST['rol']           ?? 0);
+        // Leemos y normalizamos parámetros de entrada
+        $nombre         = $_POST['nombre']        ?? '';
+        $correo         = $_POST['correo']        ?? '';
+        $password       = $_POST['password']      ?? '';
+        $idEspecialidad = (int)($_POST['especialidad'] ?? 0);
+        $rol            = (int)($_POST['rol']           ?? 0);
 
+        // Llamamos a la función testable
         $resp = registrar_veterinario(
             $pdo,
             $nombre,
