@@ -212,7 +212,6 @@ final class registrar_veterinarioTest extends TestCase
         $this->assertNotFalse($doctor, 'No se encontró el doctor asociado al usuario');
 
         // 3) Verificamos que exista un historial de password para ese usuario
-        //    OJO: en tu BD real no existe la columna id_historial, así que ordenamos por fecha_creacion
         $historial = $this->pdo->query("
             SELECT *
             FROM historial_passwords
