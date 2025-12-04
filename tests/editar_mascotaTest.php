@@ -9,38 +9,40 @@ require_once __DIR__ . '/../src/modules/php/conexion.php';
 final class editar_mascotaTest extends TestCase
 {
     private PDO $pdo;
+    private int $testUserId = 9999;
+    private int $testMascotaId = 9999;
 
     // 1. PREPARACIÓN
     protected function setUp(): void
     {
         $this->pdo = require __DIR__ . '/../src/modules/php/conexion.php';
+        
+        // Limpiar datos de prueba anteriores
+        $this->pdo->exec("DELETE FROM mascota WHERE id_mascota = {$this->testMascotaId}");
+        $this->pdo->exec("DELETE FROM usuario WHERE id_usuario = {$this->testUserId}");
+        $this->pdo->exec("DELETE FROM log_aplicacion WHERE accion = 'editar_mascota' AND descripcion LIKE '%ID {$this->testMascotaId}%'");
+        
+        // Insertar usuario de prueba
         $this->pdo->exec("
-            DELETE FROM mascota 
-            WHERE id_mascota = 1
+            INSERT INTO usuario (id_usuario, nombre, email)
+            VALUES ({$this->testUserId}, 'Juan Perez', 'juan.perez.test@example.com')
         ");
-        $stmt = $this->pdo->prepare("
-            SELECT id_usuario 
-            FROM usuario 
-            WHERE id_usuario = 1
-        ");
-        $stmt->execute();
-
-        if (!$stmt->fetch()) {
-            $this->pdo->exec("
-                INSERT INTO usuario (id_usuario, nombre)
-                VALUES (1, 'Juan Perez')
-            ");
-        }
+        
+        // Insertar mascota de prueba
         $this->pdo->exec("
             INSERT INTO mascota 
             (id_mascota, nombre_mascota, fecha_nacimiento, tipo, raza, id_usuario)
             VALUES 
-            (1, 'Firulais', '2020-01-15', 'Perro', 'Labrador', 1)
+            ({$this->testMascotaId}, 'Firulais', '2020-01-15', 'Perro', 'Labrador', {$this->testUserId})
         ");
-        $this->pdo->exec("
-            DELETE FROM log_aplicacion 
-            WHERE accion = 'editar_mascota'
-        ");
+    }
+
+    protected function tearDown(): void
+    {
+        // Limpiar después de cada test
+        $this->pdo->exec("DELETE FROM mascota WHERE id_mascota = {$this->testMascotaId}");
+        $this->pdo->exec("DELETE FROM usuario WHERE id_usuario = {$this->testUserId}");
+        $this->pdo->exec("DELETE FROM log_aplicacion WHERE accion = 'editar_mascota' AND descripcion LIKE '%ID {$this->testMascotaId}%'");
     }
 
     public function testCamposObligatoriosFaltantesDaError(): void
@@ -51,8 +53,8 @@ final class editar_mascotaTest extends TestCase
 
         editar_mascota(
             $this->pdo,
-            1,
-            '',
+            $this->testMascotaId,
+            '',  // nombre vacío
             '2020-01-15',
             'Perro',
             'Labrador',
@@ -68,9 +70,9 @@ final class editar_mascotaTest extends TestCase
 
         editar_mascota(
             $this->pdo,
-            1,
+            $this->testMascotaId,
             'Max',
-            '15-01-2020',
+            '15-01-2020',  // formato inválido
             'Perro',
             'Labrador',
             'Juan Perez'
@@ -85,12 +87,12 @@ final class editar_mascotaTest extends TestCase
 
         editar_mascota(
             $this->pdo,
-            1,
+            $this->testMascotaId,
             'Max',
             '2020-01-15',
             'Perro',
             'Labrador',
-            'Pedro Inexistente'
+            'Pedro Inexistente'  // propietario que no existe
         );
     }
 
@@ -99,7 +101,7 @@ final class editar_mascotaTest extends TestCase
         // 2. LÓGICA 
         $resp = editar_mascota(
             $this->pdo,
-            1,
+            $this->testMascotaId,
             'Firulais',
             '2020-01-15',
             'Perro',
@@ -109,7 +111,7 @@ final class editar_mascotaTest extends TestCase
 
         // 3. VERIFICACIÓN
         $this->assertSame('success', $resp['estado']);
-        $this->assertSame('Mascota actualizada', $resp['mensaje']);
+        $this->assertSame('No hubo cambios', $resp['mensaje']);
     }
 
     public function testActualizacionExitosaDeMascota(): void
@@ -117,7 +119,7 @@ final class editar_mascotaTest extends TestCase
         // 2. LÓGICA
         $resp = editar_mascota(
             $this->pdo,
-            1,
+            $this->testMascotaId,
             'Max',
             '2021-05-10',
             'Gato',
@@ -133,7 +135,7 @@ final class editar_mascotaTest extends TestCase
 
         // Verificar que sí se actualizaron los datos
         $mascota = $this->pdo
-            ->query("SELECT * FROM mascota WHERE id_mascota = 1")
+            ->query("SELECT * FROM mascota WHERE id_mascota = {$this->testMascotaId}")
             ->fetch(PDO::FETCH_ASSOC);
 
         $this->assertNotFalse($mascota);
@@ -141,5 +143,18 @@ final class editar_mascotaTest extends TestCase
         $this->assertEquals('2021-05-10', $mascota['fecha_nacimiento']);
         $this->assertEquals('Gato', $mascota['tipo']);
         $this->assertEquals('Persa', $mascota['raza']);
+        
+        // Verificar que se registró en el log
+        $stmt = $this->pdo->prepare("
+            SELECT * FROM log_aplicacion 
+            WHERE accion = 'editar_mascota' 
+            AND descripcion LIKE :descripcion
+        ");
+        $stmt->execute([':descripcion' => "%ID {$this->testMascotaId}%"]);
+        $log = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        $this->assertNotFalse($log, 'Debe existir un registro en log_aplicacion');
+        $this->assertEquals(1, $log['id_usuario']);
+        $this->assertEquals('Tester', $log['nombre_usuario']);
     }
 }
