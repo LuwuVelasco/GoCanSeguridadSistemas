@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 define('TESTING_MODE', true);
 
 // Incluimos las funciones refactorizadas
-require_once __DIR__ . '/../src/eliminar_mascota_refactor.php';
+require_once __DIR__ . '/../src/modules/php/eliminar_mascota.php';
 
 class eliminar_mascotaTest extends TestCase
 {
